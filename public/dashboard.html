@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fondo Solidario - Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: {
+                            50: '#f0f9f4',
+                            100: '#dcf2e4',
+                            200: '#bce5cd',
+                            300: '#8dd1ab',
+                            400: '#57b582',
+                            500: '#339966',
+                            600: '#2a7d54',
+                            700: '#236446',
+                            800: '#1e5038',
+                            900: '#1a4230'
+                        },
+                        secondary: {
+                            50: '#f0f9ff',
+                            100: '#e0f2fe',
+                            200: '#bae6fd',
+                            300: '#7dd3fc',
+                            400: '#38bdf8',
+                            500: '#0ea5e9',
+                            600: '#0284c7',
+                            700: '#0369a1',
+                            800: '#075985',
+                            900: '#0c4a6e'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <!-- Top Navigation Bar -->
+    <nav class="bg-white border-b border-gray-200 shadow-sm">
+        <div class="px-6 py-4">
+            <div class="flex items-center justify-between">
+                <!-- Logo and Title -->
+                <div class="flex items-center gap-4">
+                    <img src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/LogoFondoBlanco-oKKkrA6edv1XnSs9HXshtlyWLdv9nx.png" alt="JAEC Logo" class="h-10 object-contain">
+                    <div>
+                        <h1 class="text-xl font-semibold text-primary-600">Fondo Solidario</h1>
+                        <p class="text-sm text-gray-600">Sistema de Gestión JAEC</p>
+                    </div>
+                </div>
+
+                <!-- User Actions -->
+                <div class="flex items-center gap-4">
+                    <!-- Notifications -->
+                    <div class="relative">
+                        <button onclick="toggleNotifications()" class="p-2 text-gray-600 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition-colors">
+                            <i class="fas fa-bell text-lg"></i>
+                            <span class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">3</span>
+                        </button>
+                        
+                        <!-- Notifications Dropdown -->
+                        <div id="notificationsDropdown" class="hidden absolute right-0 mt-2 w-80 bg-white border border-gray-200 rounded-lg shadow-lg z-50">
+                            <div class="p-4 border-b border-gray-200">
+                                <h3 class="font-semibold text-gray-900">Notificaciones</h3>
+                            </div>
+                            <div class="max-h-64 overflow-y-auto">
+                                <div class="p-3 border-b border-gray-100 hover:bg-gray-50">
+                                    <p class="text-sm font-medium text-gray-900">Reintegro pendiente</p>
+                                    <p class="text-xs text-gray-600">Caso #148 requiere documentación</p>
+                                    <p class="text-xs text-gray-500 mt-1">Hace 2 horas</p>
+                                </div>
+                                <div class="p-3 border-b border-gray-100 hover:bg-gray-50">
+                                    <p class="text-sm font-medium text-gray-900">Reintegro autorizado</p>
+                                    <p class="text-xs text-gray-600">$1,200 aprobados para Caso #145</p>
+                                    <p class="text-xs text-gray-500 mt-1">Hace 4 horas</p>
+                                </div>
+                                <div class="p-3 hover:bg-gray-50">
+                                    <p class="text-sm font-medium text-gray-900">Nuevo accidente reportado</p>
+                                    <p class="text-xs text-gray-600">Juan Pérez - 5to A</p>
+                                    <p class="text-xs text-gray-500 mt-1">Ayer</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- User Menu -->
+                    <div class="relative">
+                        <button onclick="toggleUserMenu()" class="flex items-center gap-2 p-2 text-gray-600 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition-colors">
+                            <i class="fas fa-user-circle text-lg"></i>
+                            <span class="text-sm font-medium">Mi Cuenta</span>
+                            <i class="fas fa-chevron-down text-xs"></i>
+                        </button>
+                        
+                        <!-- User Dropdown -->
+                        <div id="userDropdown" class="hidden absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-lg shadow-lg z-50">
+                            <div class="p-3 border-b border-gray-200">
+                                <p class="text-sm font-medium text-gray-900">Usuario Escuela</p>
+                                <p class="text-xs text-gray-600">usuario@escuela.edu.ar</p>
+                            </div>
+                            <div class="py-1">
+                                <a href="#" class="flex items-center gap-2 px-3 py-2 text-sm text-gray-700 hover:bg-gray-50">
+                                    <i class="fas fa-user"></i>
+                                    Mi Perfil
+                                </a>
+                                <a href="#" class="flex items-center gap-2 px-3 py-2 text-sm text-gray-700 hover:bg-gray-50">
+                                    <i class="fas fa-cog"></i>
+                                    Configuración
+                                </a>
+                                <hr class="my-1">
+                                <button onclick="logout()" class="flex items-center gap-2 w-full px-3 py-2 text-sm text-red-600 hover:bg-red-50">
+                                    <i class="fas fa-sign-out-alt"></i>
+                                    Cerrar Sesión
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="flex">
+        <!-- Sidebar -->
+        <div class="w-64 bg-white border-r border-gray-200 min-h-screen">
+            <!-- Navigation -->
+            <nav class="p-4 space-y-2">
+                <!-- Accidentes -->
+                <div class="menu-item">
+                    <button onclick="toggleMenu('accidentes')" class="w-full flex items-center justify-between p-3 text-left font-medium text-gray-700 hover:bg-primary-50 hover:text-primary-700 rounded-lg transition-colors">
+                        <div class="flex items-center gap-3">
+                            <i class="fas fa-exclamation-triangle text-red-500"></i>
+                            <span class="text-sm">Accidentes</span>
+                        </div>
+                        <i id="accidentes-icon" class="fas fa-chevron-down text-xs"></i>
+                    </button>
+                    <div id="accidentes-menu" class="ml-6 mt-1 space-y-1">
+                        <a href="#" class="block px-3 py-2 text-sm text-gray-600 hover:text-primary-600 hover:bg-primary-50 rounded transition-colors">Registrar Accidente</a>
+                        <a href="#" class="block px-3 py-2 text-sm text-gray-600 hover:text-primary-600 hover:bg-primary-50 rounded transition-colors">Ver Accidentes</a>
+                        <a href="#" class="block px-3 py-2 text-sm text-gray-600 hover:text-primary-600 hover:bg-primary-50 rounded transition-colors">Generar Derivación</a>
+                        <a href="#" class="block px-3 py-2 text-sm text-gray-600 hover:text-primary-600 hover:bg-primary-50 rounded transition-colors">Solicitar Reintegros</a>
+                    </div>
+                </div>
+
+                <!-- Alumnos -->
+                <div class="menu-item">
+                    <button onclick="toggleMenu('alumnos')" class="w-full flex items-center justify-between p-3 text-left font-medium text-gray-700 hover:bg-primary-50 hover:text-primary-700 rounded-lg transition-colors">
+                        <div class="flex items-center gap-3">
+                            <i class="fas fa-users text-blue-500"></i>
+                            <span class="text-sm">Alumnos</span>
+                        </div>
+                        <i id="alumnos-icon" class="fas fa-chevron-right text-xs"></i>
+                    </button>
+                    <div id="alumnos-menu" class="ml-6 mt-1 space-y-1 hidden">
+                        <a href="#" class="block px-3 py-2 text-sm text-gray-600 hover:text-primary-600 hover:bg-primary-50 rounded transition-colors">Registrar Alumno</a>
+                        <a href="#" class="block px-3 py-2 text-sm text-gray-600 hover:text-primary-600 hover:bg-primary-50 rounded transition-colors">Buscar Alumnos</a>
+                    </div>
+                </div>
+
+                <!-- Salidas Educativas -->
+                <div class="menu-item">
+                    <button onclick="toggleMenu('salidas')" class="w-full flex items-center justify-between p-3 text-left font-medium text-gray-700 hover:bg-primary-50 hover:text-primary-700 rounded-lg transition-colors">
+                        <div class="flex items-center gap-3">
+                            <i class="fas fa-map-marker-alt text-green-500"></i>
+                            <span class="text-sm">Salidas Educativas</span>
+                        </div>
+                        <i id="salidas-icon" class="fas fa-chevron-right text-xs"></i>
+                    </button>
+                    <div id="salidas-menu" class="ml-6 mt-1 space-y-1 hidden">
+                        <a href="#" class="block px-3 py-2 text-sm text-gray-600 hover:text-primary-600 hover:bg-primary-50 rounded transition-colors">Nueva Salida</a>
+                        <a href="#" class="block px-3 py-2 text-sm text-gray-600 hover:text-primary-600 hover:bg-primary-50 rounded transition-colors">Ver Salidas</a>
+                    </div>
+                </div>
+
+                <!-- Pasantías -->
+                <div class="menu-item">
+                    <button onclick="toggleMenu('pasantias')" class="w-full flex items-center justify-between p-3 text-left font-medium text-gray-700 hover:bg-primary-50 hover:text-primary-700 rounded-lg transition-colors">
+                        <div class="flex items-center gap-3">
+                            <i class="fas fa-briefcase text-purple-500"></i>
+                            <span class="text-sm">Pasantías</span>
+                        </div>
+                        <i id="pasantias-icon" class="fas fa-chevron-right text-xs"></i>
+                    </button>
+                    <div id="pasantias-menu" class="ml-6 mt-1 space-y-1 hidden">
+                        <a href="#" class="block px-3 py-2 text-sm text-gray-600 hover:text-primary-600 hover:bg-primary-50 rounded transition-colors">Nueva Pasantía</a>
+                        <a href="#" class="block px-3 py-2 text-sm text-gray-600 hover:text-primary-600 hover:bg-primary-50 rounded transition-colors">Ver Pasantías</a>
+                    </div>
+                </div>
+
+                <!-- Personal -->
+                <div class="menu-item">
+                    <button onclick="toggleMenu('personal')" class="w-full flex items-center justify-between p-3 text-left font-medium text-gray-700 hover:bg-primary-50 hover:text-primary-700 rounded-lg transition-colors">
+                        <div class="flex items-center gap-3">
+                            <i class="fas fa-user-check text-indigo-500"></i>
+                            <span class="text-sm">Personal</span>
+                        </div>
+                        <i id="personal-icon" class="fas fa-chevron-right text-xs"></i>
+                    </button>
+                    <div id="personal-menu" class="ml-6 mt-1 space-y-1 hidden">
+                        <a href="#" class="block px-3 py-2 text-sm text-gray-600 hover:text-primary-600 hover:bg-primary-50 rounded transition-colors">Ver Empleados</a>
+                        <a href="#" class="block px-3 py-2 text-sm text-gray-600 hover:text-primary-600 hover:bg-primary-50 rounded transition-colors">Beneficiarios SVO</a>
+                    </div>
+                </div>
+
+                <!-- Documentos -->
+                <div class="menu-item">
+                    <button onclick="toggleMenu('documentos')" class="w-full flex items-center justify-between p-3 text-left font-medium text-gray-700 hover:bg-primary-50 hover:text-primary-700 rounded-lg transition-colors">
+                        <div class="flex items-center gap-3">
+                            <i class="fas fa-file-alt text-orange-500"></i>
+                            <span class="text-sm">Documentos</span>
+                        </div>
+                        <i id="documentos-icon" class="fas fa-chevron-right text-xs"></i>
+                    </button>
+                    <div id="documentos-menu" class="ml-6 mt-1 space-y-1 hidden">
+                        <a href="#" class="block px-3 py-2 text-sm text-gray-600 hover:text-primary-600 hover:bg-primary-50 rounded transition-colors">Subir Documentos</a>
+                        <a href="#" class="block px-3 py-2 text-sm text-gray-600 hover:text-primary-600 hover:bg-primary-50 rounded transition-colors">Ver Documentos</a>
+                    </div>
+                </div>
+            </nav>
+        </div>
+
+        <!-- Main Content -->
+        <main class="flex-1 p-6">
+            <!-- Header -->
+            <div class="mb-6">
+                <h2 class="text-2xl font-bold text-gray-900">Dashboard</h2>
+                <p class="text-gray-600">Bienvenido al sistema - Escuela San José</p>
+            </div>
+
+            <!-- Stats Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+                <div class="bg-white rounded-lg border border-gray-200 p-6 shadow-sm">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm font-medium text-gray-600">Accidentes Reportados</p>
+                            <p class="text-3xl font-bold text-gray-900 mt-2">12</p>
+                        </div>
+                        <div class="p-3 rounded-full bg-red-100">
+                            <i class="fas fa-exclamation-triangle text-red-600 text-xl"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-lg border border-gray-200 p-6 shadow-sm">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm font-medium text-gray-600">Alumnos Registrados</p>
+                            <p class="text-3xl font-bold text-gray-900 mt-2">450</p>
+                        </div>
+                        <div class="p-3 rounded-full bg-blue-100">
+                            <i class="fas fa-users text-blue-600 text-xl"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-lg border border-gray-200 p-6 shadow-sm">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm font-medium text-gray-600">Reintegros Pendientes</p>
+                            <p class="text-3xl font-bold text-gray-900 mt-2">3</p>
+                        </div>
+                        <div class="p-3 rounded-full bg-yellow-100">
+                            <i class="fas fa-clock text-yellow-600 text-xl"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-lg border border-gray-200 p-6 shadow-sm">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm font-medium text-gray-600">Documentos Subidos</p>
+                            <p class="text-3xl font-bold text-gray-900 mt-2">28</p>
+                        </div>
+                        <div class="p-3 rounded-full bg-green-100">
+                            <i class="fas fa-file-alt text-green-600 text-xl"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Content Grid -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <!-- Recent Activity -->
+                <div class="lg:col-span-2 bg-white rounded-lg border border-gray-200 p-6 shadow-sm">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4">Actividad Reciente</h3>
+                    
+                    <div class="space-y-4">
+                        <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                            <div class="flex items-center gap-3">
+                                <div class="p-2 bg-red-100 rounded-full">
+                                    <i class="fas fa-exclamation-triangle text-red-600"></i>
+                                </div>
+                                <div>
+                                    <p class="font-medium text-gray-900">Accidente reportado</p>
+                                    <p class="text-sm text-gray-600">Juan Pérez - 5to A</p>
+                                </div>
+                            </div>
+                            <p class="text-xs text-gray-500">Hace 2 horas</p>
+                        </div>
+                        
+                        <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                            <div class="flex items-center gap-3">
+                                <div class="p-2 bg-green-100 rounded-full">
+                                    <i class="fas fa-check-circle text-green-600"></i>
+                                </div>
+                                <div>
+                                    <p class="font-medium text-gray-900">Reintegro autorizado</p>
+                                    <p class="text-sm text-gray-600">Farmacia Central - $1,200</p>
+                                </div>
+                            </div>
+                            <p class="text-xs text-gray-500">Hace 4 horas</p>
+                        </div>
+                        
+                        <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                            <div class="flex items-center gap-3">
+                                <div class="p-2 bg-blue-100 rounded-full">
+                                    <i class="fas fa-file-medical text-blue-600"></i>
+                                </div>
+                                <div>
+                                    <p class="font-medium text-gray-900">Derivación generada</p>
+                                    <p class="text-sm text-gray-600">María González - Clínica Norte</p>
+                                </div>
+                            </div>
+                            <p class="text-xs text-gray-500">Ayer</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="bg-white rounded-lg border border-gray-200 p-6 shadow-sm">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4">Acciones Rápidas</h3>
+                    
+                    <div class="space-y-3">
+                        <button class="w-full flex items-center gap-3 p-3 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            <span>Reportar Accidente</span>
+                        </button>
+                        
+                        <button class="w-full flex items-center gap-3 p-3 border border-primary-200 text-primary-700 hover:bg-primary-50 rounded-lg transition-colors">
+                            <i class="fas fa-users"></i>
+                            <span>Registrar Alumno</span>
+                        </button>
+                        
+                        <button class="w-full flex items-center gap-3 p-3 border border-secondary-200 text-secondary-700 hover:bg-secondary-50 rounded-lg transition-colors">
+                            <i class="fas fa-file-medical"></i>
+                            <span>Generar Derivación</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        function toggleMenu(menuId) {
+            const menu = document.getElementById(menuId + '-menu');
+            const icon = document.getElementById(menuId + '-icon');
+            
+            if (menu.classList.contains('hidden')) {
+                menu.classList.remove('hidden');
+                icon.className = 'fas fa-chevron-down text-xs';
+            } else {
+                menu.classList.add('hidden');
+                icon.className = 'fas fa-chevron-right text-xs';
+            }
+        }
+
+        function toggleNotifications() {
+            const dropdown = document.getElementById('notificationsDropdown');
+            dropdown.classList.toggle('hidden');
+            
+            // Close user dropdown if open
+            document.getElementById('userDropdown').classList.add('hidden');
+        }
+
+        function toggleUserMenu() {
+            const dropdown = document.getElementById('userDropdown');
+            dropdown.classList.toggle('hidden');
+            
+            // Close notifications dropdown if open
+            document.getElementById('notificationsDropdown').classList.add('hidden');
+        }
+
+        function logout() {
+            if (confirm('¿Está seguro que desea cerrar sesión?')) {
+                window.location.href = 'login.html';
+            }
+        }
+
+        // Close dropdowns when clicking outside
+        document.addEventListener('click', function(e) {
+            if (!e.target.closest('.relative')) {
+                document.getElementById('notificationsDropdown').classList.add('hidden');
+                document.getElementById('userDropdown').classList.add('hidden');
+            }
+        });
+
+        // Initialize with accidents menu open
+        document.addEventListener('DOMContentLoaded', function() {
+            const accidentesMenu = document.getElementById('accidentes-menu');
+            accidentesMenu.classList.remove('hidden');
+        });
+    </script>
+</body>
+</html>
