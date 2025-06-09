@@ -22,10 +22,10 @@
 2. Selecciona "Deploy from GitHub repo"
 3. Busca y selecciona: `ttrcastanon/personal-fondo-solidario`
 
-#### 2.3 Configurar Base de Datos
-1. En el dashboard del proyecto, click en "New"
-2. Selecciona "Database" → "PostgreSQL"
-3. Railway creará automáticamente la base de datos
+#### 2.3 Base de Datos MySQL
+✅ Ya tienes configurada una base de datos MySQL gratuita en FreeSQLDatabase.com
+- No necesitas crear nada adicional en Railway
+- Las credenciales ya están disponibles
 
 #### 2.4 Configurar Variables de Entorno
 En el servicio de tu aplicación, ve a "Variables" y agrega:
@@ -37,13 +37,13 @@ APP_DEBUG=false
 APP_KEY= (se generará automáticamente)
 APP_URL= (Railway lo proporcionará)
 
-# Base de datos (Railway las configurará automáticamente)
-DB_CONNECTION=pgsql
-DB_HOST=${{Postgres.PGHOST}}
-DB_PORT=${{Postgres.PGPORT}}
-DB_DATABASE=${{Postgres.PGDATABASE}}
-DB_USERNAME=${{Postgres.PGUSER}}
-DB_PASSWORD=${{Postgres.PGPASSWORD}}
+# Base de datos MySQL - FreeSQLDatabase
+DB_CONNECTION=mysql
+DB_HOST=sql5.freesqldatabase.com
+DB_PORT=3306
+DB_DATABASE=sql5783875
+DB_USERNAME=sql5783875
+DB_PASSWORD=JrFPaSyHnu
 
 # Cache y Session
 CACHE_DRIVER=file
