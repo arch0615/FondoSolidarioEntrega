@@ -1,22 +1,31 @@
-# Configuración para Railway - Laravel
+# Configuración para Railway - Laravel v2
 
+# Define los paquetes del sistema a instalar. Forzamos PHP 8.2 y Node.js 18.
+[phases.setup]
+nixPkgs = ["php82", "nodejs-18_x"]
+
+# Define variables de entorno para el proceso de construcción.
 [variables]
-PHP_VERSION = "8.2"
-NODE_VERSION = "18"
+NIXPACKS_PHP_ROOT_DIR = "public" # Establece el document root a /public para Laravel
 
 [phases.install]
 cmds = [
-    "composer install --no-dev --optimize-autoloader --ignore-platform-reqs",
+    # Instala dependencias de Composer sin flags peligrosos.
+    "composer install --no-dev --optimize-autoloader",
     "npm ci"
 ]
 
 [phases.build]
 cmds = [
     "npm run build",
-    "php artisan config:cache || true",
-    "php artisan route:cache || true",
-    "php artisan view:cache || true"
+    # Comandos de optimización de Laravel para producción.
+    "php artisan key:generate --force",
+    "php artisan config:cache",
+    "php artisan route:cache",
+    "php artisan view:cache",
+    # Ejecuta las migraciones durante el build para asegurar que la BD está lista.
+    "php artisan migrate --force"
 ]
 
-[start]
-cmd = "php artisan serve --host=0.0.0.0 --port=$PORT"
+# No se define un comando [start].
+# Dejamos que Nixpacks use su servidor web Apache por defecto, que es lo correcto para producción.
