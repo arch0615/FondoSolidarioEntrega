@@ -23,7 +23,7 @@ return new class extends Migration
             $table->string('horario', 100)->nullable();
             $table->text('descripcion_tareas')->nullable();
             $table->integer('id_usuario_carga')->index('id_usuario_carga');
-            $table->dateTime('fecha_carga')->nullable()->useCurrent();
+            $table->dateTime('fecha_carga')->nullable();
 
             $table->index(['fecha_inicio', 'fecha_fin'], 'idx_fechas');
         });

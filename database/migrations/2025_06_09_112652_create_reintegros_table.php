@@ -15,7 +15,7 @@ return new class extends Migration
             $table->integer('id_reintegro', true);
             $table->integer('id_accidente')->index('idx_accidente');
             $table->integer('id_usuario_solicita')->index('id_usuario_solicita');
-            $table->dateTime('fecha_solicitud')->nullable()->useCurrent()->index('idx_fecha_solicitud');
+            $table->dateTime('fecha_solicitud')->nullable()->index('idx_fecha_solicitud');
             $table->integer('id_tipo_gasto')->nullable()->index('idx_tipo_gasto');
             $table->string('descripcion_gasto', 500)->nullable();
             $table->decimal('monto_solicitado', 10);

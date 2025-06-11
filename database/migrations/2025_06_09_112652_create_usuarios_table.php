@@ -19,7 +19,7 @@ return new class extends Migration
             $table->string('apellido', 100);
             $table->integer('id_rol')->index('idx_rol');
             $table->integer('id_escuela')->nullable()->index('idx_escuela');
-            $table->dateTime('fecha_registro')->nullable()->useCurrent();
+            $table->dateTime('fecha_registro')->nullable();
             $table->boolean('email_verificado')->nullable()->default(false);
             $table->string('token_verificacion')->nullable();
             $table->boolean('activo')->nullable()->default(true)->index('idx_activo');

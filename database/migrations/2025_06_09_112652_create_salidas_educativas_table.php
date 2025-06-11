@@ -24,7 +24,7 @@ return new class extends Migration
             $table->integer('cantidad_alumnos')->nullable();
             $table->string('docentes_acompa??antes', 500)->nullable();
             $table->string('transporte', 200)->nullable();
-            $table->dateTime('fecha_carga')->nullable()->useCurrent();
+            $table->dateTime('fecha_carga')->nullable();
         });
     }
 

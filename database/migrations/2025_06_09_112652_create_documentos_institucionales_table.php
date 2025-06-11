@@ -19,7 +19,7 @@ return new class extends Migration
             $table->date('fecha_documento')->nullable();
             $table->date('fecha_vencimiento')->nullable()->index('idx_fecha_vencimiento');
             $table->integer('id_usuario_carga')->index('id_usuario_carga');
-            $table->dateTime('fecha_carga')->nullable()->useCurrent();
+            $table->dateTime('fecha_carga')->nullable();
             $table->integer('id_tipo_documento')->nullable()->index('fk_documentos_tipo');
         });
     }

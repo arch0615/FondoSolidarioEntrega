@@ -19,7 +19,7 @@ return new class extends Migration
             $table->string('apellido', 100);
             $table->string('dni', 10)->nullable();
             $table->decimal('porcentaje', 5)->nullable();
-            $table->date('fecha_alta')->nullable()->default('CURRENT_DATE');
+            $table->date('fecha_alta')->nullable();
             $table->boolean('activo')->nullable()->default(true)->index('idx_activo');
             $table->integer('id_parentesco')->nullable()->index('fk_beneficiarios_parentesco');
         });

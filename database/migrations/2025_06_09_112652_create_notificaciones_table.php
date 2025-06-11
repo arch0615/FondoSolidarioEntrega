@@ -19,7 +19,7 @@ return new class extends Migration
             $table->text('mensaje')->nullable();
             $table->integer('id_entidad_referencia')->nullable();
             $table->string('tipo_entidad', 50)->nullable();
-            $table->dateTime('fecha_creacion')->nullable()->useCurrent()->index('idx_fecha_creacion');
+            $table->dateTime('fecha_creacion')->nullable()->index('idx_fecha_creacion');
             $table->boolean('leida')->nullable()->default(false)->index('idx_leida');
             $table->dateTime('fecha_lectura')->nullable();
         });

@@ -19,7 +19,7 @@ return new class extends Migration
             $table->string('lugar_fallecimiento', 300)->nullable();
             $table->text('observaciones')->nullable();
             $table->integer('id_usuario_carga')->index('id_usuario_carga');
-            $table->dateTime('fecha_carga')->nullable()->useCurrent();
+            $table->dateTime('fecha_carga')->nullable();
         });
     }
 

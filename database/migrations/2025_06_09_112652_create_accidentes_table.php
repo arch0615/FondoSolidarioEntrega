@@ -27,7 +27,7 @@ return new class extends Migration
             $table->time('hora_llamada')->nullable();
             $table->string('servicio_emergencia', 100)->nullable();
             $table->integer('id_estado_accidente')->nullable()->index('idx_estado_accidente');
-            $table->dateTime('fecha_carga')->nullable()->useCurrent();
+            $table->dateTime('fecha_carga')->nullable();
 
             $table->index(['fecha_accidente', 'id_escuela'], 'idx_accidentes_fecha_escuela');
             $table->unique(['numero_expediente'], 'uk_numero_expediente');

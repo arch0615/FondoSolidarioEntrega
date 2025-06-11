@@ -16,7 +16,7 @@ return new class extends Migration
             $table->integer('id_accidente');
             $table->integer('id_alumno')->index('id_alumno');
             $table->timestamp('created_at')->useCurrent();
-            $table->timestamp('updated_at')->useCurrentOnUpdate()->useCurrent();
+            $table->timestamp('updated_at')->nullable();
 
             $table->unique(['id_accidente', 'id_alumno'], 'unique_accidente_alumno');
         });

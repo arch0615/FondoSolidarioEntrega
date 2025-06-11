@@ -21,7 +21,7 @@ return new class extends Migration
             $table->string('ruta_archivo', 500);
             $table->string('descripcion', 500)->nullable();
             $table->integer('id_usuario_carga')->index('idx_usuario_carga');
-            $table->dateTime('fecha_carga')->nullable()->useCurrent()->index('idx_fecha_carga');
+            $table->dateTime('fecha_carga')->nullable()->index('idx_fecha_carga');
 
             $table->index(['tipo_entidad', 'id_entidad'], 'idx_entidad');
         });

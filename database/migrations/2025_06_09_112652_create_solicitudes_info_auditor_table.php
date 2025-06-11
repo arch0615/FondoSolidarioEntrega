@@ -15,7 +15,7 @@ return new class extends Migration
             $table->integer('id_solicitud', true);
             $table->integer('id_reintegro')->index('idx_reintegro');
             $table->integer('id_auditor')->index('idx_auditor');
-            $table->dateTime('fecha_solicitud')->nullable()->useCurrent()->index('idx_fecha_solicitud');
+            $table->dateTime('fecha_solicitud')->nullable()->index('idx_fecha_solicitud');
             $table->text('descripcion_solicitud')->nullable();
             $table->string('documentos_requeridos', 500)->nullable();
             $table->integer('id_estado_solicitud')->nullable()->index('idx_estado_solicitud');

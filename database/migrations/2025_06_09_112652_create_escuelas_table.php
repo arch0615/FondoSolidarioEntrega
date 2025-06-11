@@ -19,7 +19,7 @@ return new class extends Migration
             $table->string('telefono', 50)->nullable();
             $table->string('email', 100)->nullable();
             $table->decimal('aporte_por_alumno', 10)->nullable()->default(0);
-            $table->date('fecha_alta')->nullable()->default('CURRENT_DATE');
+            $table->date('fecha_alta')->nullable();
             $table->boolean('activo')->nullable()->default(true)->index('idx_activo');
         });
     }

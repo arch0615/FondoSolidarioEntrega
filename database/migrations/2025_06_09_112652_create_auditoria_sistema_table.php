@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('auditoria_sistema', function (Blueprint $table) {
             $table->integer('id_auditoria', true);
             $table->integer('id_usuario')->index('idx_usuario');
-            $table->dateTime('fecha_hora')->nullable()->useCurrent()->index('idx_fecha_hora');
+            $table->dateTime('fecha_hora')->nullable()->index('idx_fecha_hora');
             $table->string('accion', 100)->index('idx_accion');
             $table->string('tabla_afectada', 50)->nullable()->index('idx_tabla');
             $table->integer('id_registro')->nullable();
