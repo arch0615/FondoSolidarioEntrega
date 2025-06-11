@@ -9,7 +9,7 @@ NIXPACKS_PHP_ROOT_DIR = "public"
 [phases.install]
 cmds = [
     "composer install --no-dev --optimize-autoloader --no-interaction",
-    "npm ci --only=production"
+    "npm ci"
 ]
 
 [phases.build]
