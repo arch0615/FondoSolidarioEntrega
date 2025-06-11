@@ -1,7 +1,7 @@
 # Configuración para Railway - Laravel
 
 [variables]
-PHP_VERSION = "8.1"
+PHP_VERSION = "8.2"
 NODE_VERSION = "18"
 
 [phases.install]
