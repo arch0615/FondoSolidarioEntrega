@@ -55,26 +55,18 @@
             <h3 class="text-lg font-semibold text-green-800 mb-4">Acciones Médicas</h3>
             
             <div class="space-y-3">
-                <button class="w-full flex items-center gap-3 p-3 bg-amber-600 hover:bg-amber-700 text-white rounded-lg transition-all duration-200 hover:shadow-md">
+                <a href="{{ route('reintegros.pendientes') }}" class="w-full flex items-center gap-3 p-3 bg-amber-600 hover:bg-amber-700 text-white rounded-lg transition-all duration-200 hover:shadow-md">
                     <i class="fas fa-clipboard-check"></i>
                     <span>Revisar Pendientes</span>
                     @if($stats['reintegros_pendientes']['total'] > 0)
                     <span class="ml-auto bg-white text-amber-600 text-xs rounded-full px-2 py-1">{{ $stats['reintegros_pendientes']['total'] }}</span>
                     @endif
-                </button>
+                </a>
                 
-                <button class="w-full flex items-center gap-3 p-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-all duration-200 hover:shadow-md">
-                    <i class="fas fa-info-circle"></i>
-                    <span>Info. Solicitada</span>
-                    @if($stats['solicitudes_informacion']['total'] > 0)
-                    <span class="ml-auto bg-white text-blue-600 text-xs rounded-full px-2 py-1">{{ $stats['solicitudes_informacion']['total'] }}</span>
-                    @endif
-                </button>
-
-                <button class="w-full flex items-center gap-3 p-3 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-all duration-200 hover:shadow-md">
-                    <i class="fas fa-check-circle"></i>
-                    <span>Historial Autorizados</span>
-                </button>
+                <a href="{{ route('auditoria.historial-auditorias') }}" class="w-full flex items-center gap-3 p-3 bg-gray-600 hover:bg-gray-700 text-white rounded-lg transition-all duration-200 hover:shadow-md">
+                    <i class="fas fa-history"></i>
+                    <span>Historial de Auditorías</span>
+                </a>
             </div>
         </div>
     </div>

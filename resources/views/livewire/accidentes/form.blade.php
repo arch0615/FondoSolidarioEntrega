@@ -342,6 +342,158 @@
             </div>
             @endif
 
+            <!-- Documentos Adjuntos -->
+            <div class="border-b border-secondary-200 pb-6">
+                <h3 class="text-lg font-medium text-secondary-900 mb-4">Documentos Adjuntos</h3>
+                
+                <!-- Información explicativa -->
+                <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+                    <div class="flex items-start">
+                        <svg class="w-5 h-5 text-blue-600 mt-0.5 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                        <div>
+                            <h4 class="text-sm font-medium text-blue-800 mb-1">Subida de Documentos</h4>
+                            <p class="text-sm text-blue-700">
+                                Puede adjuntar múltiples documentos relacionados con el accidente (fotos, informes médicos, facturas, etc.).
+                                Formatos permitidos: PDF, JPG, JPEG, PNG. Tamaño máximo por archivo: 10MB.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Subida de archivos -->
+                @if($modo != 'show')
+                <div class="mb-6">
+                    <label class="block text-sm font-medium text-secondary-700 mb-2">
+                        Seleccionar Archivos
+                    </label>
+                    <div class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-secondary-300 border-dashed rounded-lg hover:border-secondary-400 transition-colors duration-200">
+                        <div class="space-y-1 text-center">
+                            <svg class="mx-auto h-12 w-12 text-secondary-400" stroke="currentColor" fill="none" viewBox="0 0 48 48">
+                                <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                            </svg>
+                            <div class="flex text-sm text-secondary-600">
+                                <label for="archivos_accidente" class="relative cursor-pointer bg-white rounded-md font-medium text-primary-600 hover:text-primary-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-primary-500">
+                                    <span>Subir archivos</span>
+                                    <input
+                                        id="archivos_accidente"
+                                        name="archivos_accidente[]"
+                                        type="file"
+                                        class="sr-only"
+                                        multiple
+                                        accept=".pdf,.jpg,.jpeg,.png"
+                                    >
+                                </label>
+                                <p class="pl-1">o arrastrar y soltar</p>
+                            </div>
+                            <p class="text-xs text-secondary-500">
+                                PDF, JPG, JPEG, PNG hasta 10MB cada uno
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Campo para descripción general de archivos -->
+                <div class="mb-4">
+                    <label for="descripcion_archivos" class="block text-sm font-medium text-secondary-700 mb-2">
+                        Descripción de los Documentos (Opcional)
+                    </label>
+                    <textarea
+                        name="descripcion_archivos"
+                        id="descripcion_archivos"
+                        rows="2"
+                        class="block w-full px-3 py-2 border border-secondary-300 rounded-lg text-sm placeholder-secondary-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                        placeholder="Breve descripción de los documentos adjuntos..."
+                    ></textarea>
+                </div>
+                @endif
+
+                <!-- Lista de archivos seleccionados/existentes -->
+                <div id="lista_archivos_container">
+                    <label class="block text-sm font-medium text-secondary-700 mb-2">
+                        {{ $modo == 'show' ? 'Documentos del Accidente:' : 'Archivos Seleccionados:' }}
+                    </label>
+                    <div id="lista_archivos" class="space-y-2">
+                        @php
+                            // Simular archivos existentes para el mockup según el ID del accidente
+                            $archivosExistentes = [];
+                            if (isset($accidente_id) && $modo != 'create') {
+                                switch($accidente_id) {
+                                    case 1:
+                                        $archivosExistentes = [
+                                            ['nombre' => 'foto_lesion_brazo.jpg', 'tipo' => 'jpg', 'tamaño' => '2.3 MB', 'fecha' => '15/01/2024 10:45'],
+                                            ['nombre' => 'informe_medico_inicial.pdf', 'tipo' => 'pdf', 'tamaño' => '1.1 MB', 'fecha' => '15/01/2024 11:20']
+                                        ];
+                                        break;
+                                    case 2:
+                                        $archivosExistentes = [
+                                            ['nombre' => 'radiografia_rodilla.jpg', 'tipo' => 'jpg', 'tamaño' => '3.2 MB', 'fecha' => '20/01/2024 14:30']
+                                        ];
+                                        break;
+                                    case 3:
+                                        $archivosExistentes = [
+                                            ['nombre' => 'declaracion_testigos.pdf', 'tipo' => 'pdf', 'tamaño' => '856 KB', 'fecha' => '25/01/2024 09:15'],
+                                            ['nombre' => 'foto_lugar_accidente.png', 'tipo' => 'png', 'tamaño' => '4.1 MB', 'fecha' => '25/01/2024 09:20'],
+                                            ['nombre' => 'certificado_medico.pdf', 'tipo' => 'pdf', 'tamaño' => '1.8 MB', 'fecha' => '25/01/2024 16:45']
+                                        ];
+                                        break;
+                                }
+                            }
+                        @endphp
+                        
+                        @if(empty($archivosExistentes))
+                            <div class="text-center py-8 border-2 border-dashed border-secondary-200 rounded-lg">
+                                <svg class="mx-auto h-8 w-8 text-secondary-400 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                                </svg>
+                                <p class="text-sm text-secondary-500">{{ $modo == 'show' ? 'No hay documentos adjuntos' : 'No hay archivos seleccionados' }}</p>
+                            </div>
+                        @else
+                            @foreach($archivosExistentes as $index => $archivo)
+                            <div class="archivo-item flex items-center justify-between bg-white border border-secondary-200 rounded-lg p-3" data-index="{{ $index }}">
+                                <div class="flex items-center flex-1">
+                                    <!-- Icono según tipo de archivo -->
+                                    @if($archivo['tipo'] == 'pdf')
+                                        <svg class="w-8 h-8 text-red-500 mr-3 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z" clip-rule="evenodd"></path>
+                                        </svg>
+                                    @else
+                                        <svg class="w-8 h-8 text-green-500 mr-3 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clip-rule="evenodd"></path>
+                                        </svg>
+                                    @endif
+                                    <div class="flex-1 min-w-0">
+                                        <div class="font-medium text-secondary-900 truncate">{{ $archivo['nombre'] }}</div>
+                                        <div class="text-sm text-secondary-600">
+                                            {{ $archivo['tamaño'] }} • {{ $archivo['fecha'] }}
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="flex items-center ml-4">
+                                    <!-- Botón para ver/descargar -->
+                                    <button type="button" class="text-primary-600 hover:text-primary-800 p-1 mr-2" title="Ver archivo">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                                        </svg>
+                                    </button>
+                                    @if($modo != 'show')
+                                    <!-- Botón para eliminar -->
+                                    <button type="button" class="btn-eliminar-archivo text-red-600 hover:text-red-800 p-1" data-index="{{ $index }}" title="Eliminar archivo">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                                        </svg>
+                                    </button>
+                                    @endif
+                                </div>
+                            </div>
+                            @endforeach
+                        @endif
+                    </div>
+                </div>
+            </div>
+
             <!-- Botones de Acción -->
             <div class="flex items-center justify-between pt-6 border-t border-secondary-200">
                 <a href="{{ route('accidentes.index') }}" class="inline-flex items-center px-4 py-2 border border-secondary-300 rounded-lg text-sm font-medium text-secondary-700 bg-white hover:bg-secondary-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-colors duration-200">
@@ -861,6 +1013,165 @@ document.addEventListener('DOMContentLoaded', function() {
             }, 2000);
         });
     }
+
+    // **FUNCIONALIDAD BÁSICA DE SUBIDA DE ARCHIVOS (PROTOTIPO)**
+    const inputArchivos = document.getElementById('archivos_accidente');
+    const listaArchivos = document.getElementById('lista_archivos');
+
+    if (inputArchivos && !inputArchivos.disabled) {
+        console.log('Inicializando funcionalidad de archivos (prototipo)...');
+
+        // Manejar selección de archivos
+        inputArchivos.addEventListener('change', function(e) {
+            const archivos = Array.from(e.target.files);
+            if (archivos.length > 0) {
+                mostrarArchivosSeleccionados(archivos);
+            }
+        });
+
+        // Simular drag and drop visual
+        const dropZone = inputArchivos.closest('.border-dashed');
+        if (dropZone) {
+            dropZone.addEventListener('dragover', function(e) {
+                e.preventDefault();
+                dropZone.classList.add('border-primary-400', 'bg-primary-50');
+            });
+
+            dropZone.addEventListener('dragleave', function(e) {
+                e.preventDefault();
+                dropZone.classList.remove('border-primary-400', 'bg-primary-50');
+            });
+
+            dropZone.addEventListener('drop', function(e) {
+                e.preventDefault();
+                dropZone.classList.remove('border-primary-400', 'bg-primary-50');
+                alert('Funcionalidad de arrastrar archivos simulada para prototipo');
+            });
+        }
+    }
+
+    function mostrarArchivosSeleccionados(archivos) {
+        console.log('Archivos seleccionados:', archivos.length);
+        
+        // Limpiar lista actual
+        listaArchivos.innerHTML = '';
+        
+        archivos.forEach((archivo, index) => {
+            const tipoArchivo = archivo.name.split('.').pop().toLowerCase();
+            const tamañoFormateado = formatearTamaño(archivo.size);
+            
+            const archivoDiv = document.createElement('div');
+            archivoDiv.className = 'archivo-item flex items-center justify-between bg-white border border-secondary-200 rounded-lg p-3';
+            archivoDiv.dataset.index = index;
+            
+            archivoDiv.innerHTML = `
+                <div class="flex items-center flex-1">
+                    ${tipoArchivo === 'pdf' ? `
+                        <svg class="w-8 h-8 text-red-500 mr-3 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z" clip-rule="evenodd"></path>
+                        </svg>
+                    ` : `
+                        <svg class="w-8 h-8 text-green-500 mr-3 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clip-rule="evenodd"></path>
+                        </svg>
+                    `}
+                    <div class="flex-1 min-w-0">
+                        <div class="font-medium text-secondary-900 truncate">${archivo.name}</div>
+                        <div class="text-sm text-secondary-600">
+                            ${tamañoFormateado} • Seleccionado para subir
+                        </div>
+                    </div>
+                </div>
+                <div class="flex items-center ml-4">
+                    <button type="button" class="btn-eliminar-archivo text-red-600 hover:text-red-800 p-1" data-index="${index}" title="Eliminar archivo">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                        </svg>
+                    </button>
+                </div>
+            `;
+            
+            listaArchivos.appendChild(archivoDiv);
+        });
+        
+        // Agregar eventos para eliminar archivos
+        document.querySelectorAll('.btn-eliminar-archivo').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const archivoItem = this.closest('.archivo-item');
+                archivoItem.remove();
+                console.log('Archivo eliminado (prototipo)');
+                
+                // Si no quedan archivos, mostrar mensaje
+                if (listaArchivos.children.length === 0) {
+                    listaArchivos.innerHTML = `
+                        <div class="text-center py-8 border-2 border-dashed border-secondary-200 rounded-lg">
+                            <svg class="mx-auto h-8 w-8 text-secondary-400 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                            </svg>
+                            <p class="text-sm text-secondary-500">No hay archivos seleccionados</p>
+                        </div>
+                    `;
+                }
+            });
+        });
+        
+        // Mostrar mensaje de confirmación
+        const mensaje = archivos.length === 1 ?
+            `1 archivo seleccionado` :
+            `${archivos.length} archivos seleccionados`;
+        
+        mostrarNotificacion(mensaje, 'success');
+    }
+
+    function formatearTamaño(bytes) {
+        if (bytes === 0) return '0 Bytes';
+        const k = 1024;
+        const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+        return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+    }
+
+    function mostrarNotificacion(mensaje, tipo = 'info') {
+        // Crear notificación temporal simple
+        const notificacion = document.createElement('div');
+        notificacion.className = `fixed top-4 right-4 z-50 px-4 py-2 rounded-lg text-white ${
+            tipo === 'success' ? 'bg-green-500' :
+            tipo === 'error' ? 'bg-red-500' : 'bg-blue-500'
+        } shadow-lg transition-opacity duration-300`;
+        notificacion.textContent = mensaje;
+        
+        document.body.appendChild(notificacion);
+        
+        // Eliminar después de 3 segundos
+        setTimeout(() => {
+            notificacion.style.opacity = '0';
+            setTimeout(() => {
+                if (document.body.contains(notificacion)) {
+                    document.body.removeChild(notificacion);
+                }
+            }, 300);
+        }, 3000);
+    }
+
+    // **FUNCIONALIDAD PARA ARCHIVOS EXISTENTES (SIMULADA)**
+    document.querySelectorAll('.btn-eliminar-archivo').forEach(btn => {
+        btn.addEventListener('click', function() {
+            if (confirm('¿Está seguro de que desea eliminar este archivo?')) {
+                const archivoItem = this.closest('.archivo-item');
+                archivoItem.remove();
+                mostrarNotificacion('Archivo eliminado', 'success');
+            }
+        });
+    });
+
+    // Simulación de vista de archivos
+    document.querySelectorAll('button[title="Ver archivo"]').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const archivoItem = this.closest('.archivo-item');
+            const nombreArchivo = archivoItem.querySelector('.font-medium').textContent;
+            alert(`Vista previa de: ${nombreArchivo}\n(Funcionalidad simulada para prototipo)`);
+        });
+    });
 });
 </script>
 @endpush

@@ -1,0 +1,1 @@
+<!-- Empty component to fix optimization error --><?php /**PATH C:\Users\rican\OneDrive\Documentos\workana\Fondo Solidario\resources\views\components\dropdown-link.blade.php ENDPATH**/ ?>

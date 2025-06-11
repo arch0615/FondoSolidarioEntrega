@@ -78,7 +78,18 @@
                                 @endif
                             </div>
                             <div class="py-1">
-                                <a href="#" class="flex items-center gap-2 px-3 py-2 text-sm text-gray-700 hover:bg-gray-50">
+                                @php
+                                    $user = Auth::user();
+                                    $userRole = $user->rol ?? null;
+                                    $profileRoute = '#';
+                                    
+                                    if ($userRole === 'usuario_general') {
+                                        $profileRoute = route('perfil.escuela');
+                                    } elseif (in_array($userRole, ['admin', 'medico_auditor'])) {
+                                        $profileRoute = route('perfil.usuario');
+                                    }
+                                @endphp
+                                <a href="{{ $profileRoute }}" class="flex items-center gap-2 px-3 py-2 text-sm text-gray-700 hover:bg-gray-50">
                                     <i class="fas fa-user"></i>
                                     Mi Perfil
                                 </a>
@@ -114,7 +125,11 @@
             @endif
 
             <!-- Page Content -->
-            @yield('content')
+            @if (isset($slot))
+                {{ $slot }}
+            @else
+                @yield('content')
+            @endif
         </main>
     </div>
 

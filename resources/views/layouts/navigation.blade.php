@@ -34,8 +34,21 @@
                     </x-slot>
 
                     <x-slot name="content">
-                        <x-dropdown-link :href="route('profile.edit')">
-                            {{ __('Profile') }}
+                        @php
+                            $user = Auth::user();
+                            $userRole = $user->rol ?? null;
+                            $profileRoute = '#';
+                            
+                            // Debug temporal - eliminado
+                            
+                            if ($userRole === 'usuario_general') {
+                                $profileRoute = route('perfil.escuela');
+                            } elseif (in_array($userRole, ['admin', 'medico_auditor'])) {
+                                $profileRoute = route('perfil.usuario');
+                            }
+                        @endphp
+                        <x-dropdown-link :href="$profileRoute">
+                            {{ __('Mi Perfil') }}
                         </x-dropdown-link>
 
                         <!-- Authentication -->
@@ -80,8 +93,19 @@
             </div>
 
             <div class="mt-3 space-y-1">
-                <x-responsive-nav-link :href="route('profile.edit')">
-                    {{ __('Profile') }}
+                @php
+                    $user = Auth::user();
+                    $userRole = $user->rol ?? null;
+                    $profileRoute = '#';
+                    
+                    if ($userRole === 'usuario_general') {
+                        $profileRoute = route('perfil.escuela');
+                    } elseif (in_array($userRole, ['admin', 'medico_auditor'])) {
+                        $profileRoute = route('perfil.usuario');
+                    }
+                @endphp
+                <x-responsive-nav-link :href="$profileRoute">
+                    {{ __('Mi Perfil') }}
                 </x-responsive-nav-link>
 
                 <!-- Authentication -->

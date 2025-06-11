@@ -1,0 +1,38 @@
+*******************************************************************************************
+********************* PROMPT PARA GENERAR UN CATÁLOGO IDÉNTICO A OTRO *********************
+*******************************************************************************************
+Revisa los archivos fondo_solidario_requirements.md y plan-desarrollo-fondo-solidario.md para que tengas contexto del proyecto.
+
+Toma como base (casi casi copy/paste) la pantalla de index y form de "Derivaciones" y crea el mockup de la pantalla de "Reintegros" (index y form).
+
+Revisa el archivo diccionario-datos-fondo-solidario.md para que sepas que campos debe llevar esta pantalla de "Reintegros".
+
+NOTA Importante: la pantalla de reintegros debe permitir subir "n" archivos igual que como lo hace la pantalla "Accidentes", prácticamente es copy/paste de esa funcionalidad.
+
+Al final debes modificar:
+1.- El menu de escuela para que la opción de "Solicitar Reintegros" solo diga "Reintegros" y esta opción redirija al listado de reintegros.
+2.- En la lista de accidentes hay un botón de "Solicitar Reintegro", debe redireccionar a la pantalla para capturar un nuevo reintegro.
+3.- En menu de admin en la sección de "Reintegros" debe enviar al listado de reintegros.
+
+Debe tener armonía con el diseño ya manejado y no es necesario conectarlo en este momento con el backend, ya que solo son mockups.
+
+*******************************************************************************************
+************************** PROMPT PARA GENERAR PANTALLA ESPECÍFICA ************************
+*******************************************************************************************
+
+Revisa los archivos fondo_solidario_requirements.md y plan-desarrollo-fondo-solidario.md para que tengas contexto del proyecto.
+
+Necesito que crees la pantalla de gestión de pagos, es donde se deben ver los reintegros autorizados por el médico y el administrador debe indicar si ya fue pagado. En esa misma pantalla debe poder visualizar el historial de pagos y los pendientes.
+
+Revisa el archivo diccionario-datos-fondo-solidario.md por si necesitas ver que campos se manejan en reintegros y gestión de pagos.
+
+Debes respetar los estilos y diseño que manejamos y debe tener armonía con el diseño ya manejado.
+
+Una vez que ya termines de crear la pantalla debes dar acceso en el menú de admin, ya hay un menú de gestión de pagos, debe redireccionar a esta pantalla.
+
+NOTA IMPORTANTE: NO LO VAS A CONECTAR EN ESTE MOMENTO CON BASE DE DATOS, ESTAMOS TRABAJANDO EN ESTE MOMENTO SOLO CON BACKEND
+
+
+
+
+

@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
+use App\Livewire\GestionPagos\Index as GestionPagosIndex;
 
 /*
 |--------------------------------------------------------------------------
@@ -72,6 +73,28 @@ Route::middleware('auth')->group(function () {
         Route::get('/{id}', function ($id) {
             // Simular carga de empleado para visualización
             return view('livewire.empleados.form', ['modo' => 'show', 'empleado_id' => $id]);
+        })->name('show');
+    });
+
+    // Mockup de rutas para Prestadores (sin controlador real aún)
+    Route::prefix('prestadores')->name('prestadores.')->group(function () {
+        Route::get('/', function () {
+            // Simular datos para el mockup de la lista
+            return view('livewire.prestadores.index');
+        })->name('index');
+
+        Route::get('/create', function () {
+            return view('livewire.prestadores.form', ['modo' => 'create']);
+        })->name('create');
+
+        Route::get('/{id}/edit', function ($id) {
+            // Simular carga de prestador para edición
+            return view('livewire.prestadores.form', ['modo' => 'edit', 'prestador_id' => $id]);
+        })->name('edit');
+
+        Route::get('/{id}', function ($id) {
+            // Simular carga de prestador para visualización
+            return view('livewire.prestadores.form', ['modo' => 'show', 'prestador_id' => $id]);
         })->name('show');
     });
 
@@ -229,6 +252,71 @@ Route::middleware('auth')->group(function () {
         })->name('show');
     });
 
+    // Mockup de rutas para Reintegros
+    Route::prefix('reintegros')->name('reintegros.')->group(function () {
+        Route::get('/', function () {
+            $reintegrosMockup = collect([
+                [
+                    'id_reintegro' => 'REI-001',
+                    'id_accidente' => 'ACC-001',
+                    'nombre_alumno' => 'Juan Pérez',
+                    'escuela' => 'Colegio San Martín',
+                    'fecha_solicitud' => '2024-05-20',
+                    'monto_solicitado' => 1500.00,
+                    'estado' => 'En Proceso',
+                    'solicitud_informacion' => null,
+                ],
+                [
+                    'id_reintegro' => 'REI-002',
+                    'id_accidente' => 'ACC-002',
+                    'nombre_alumno' => 'Ana López',
+                    'escuela' => 'Instituto Belgrano',
+                    'fecha_solicitud' => '2024-05-22',
+                    'monto_solicitado' => 8250.50,
+                    'estado' => 'Autorizado',
+                    'solicitud_informacion' => null,
+                ],
+                [
+                    'id_reintegro' => 'REI-003',
+                    'id_accidente' => 'ACC-003',
+                    'nombre_alumno' => 'Carlos Sanchez',
+                    'escuela' => 'Colegio San Martín',
+                    'fecha_solicitud' => '2024-05-25',
+                    'monto_solicitado' => 3100.00,
+                    'estado' => 'Solicitud de Información',
+                    'solicitud_informacion' => 'Falta el comprobante de la farmacia. Por favor, adjúntelo.',
+                ],
+                 [
+                    'id_reintegro' => 'REI-004',
+                    'id_accidente' => 'ACC-004',
+                    'nombre_alumno' => 'Laura Gomez',
+                    'escuela' => 'Instituto Belgrano',
+                    'fecha_solicitud' => '2024-05-28',
+                    'monto_solicitado' => 500.00,
+                    'estado' => 'Rechazado',
+                    'solicitud_informacion' => null,
+                ],
+            ]);
+            return view('livewire.reintegros.index', ['reintegros' => $reintegrosMockup]);
+        })->name('index');
+
+        Route::get('/pendientes', \App\Livewire\Reintegros\Pendientes::class)->name('pendientes');
+
+        Route::get('/create', function () {
+            return view('livewire.reintegros.form', ['modo' => 'create', 'estado' => 'En Proceso']);
+        })->name('create');
+
+        Route::get('/{id}/edit', function ($id) {
+            // Mockup: En un caso real, se cargaría el estado del reintegro
+            return view('livewire.reintegros.form', ['modo' => 'edit', 'reintegro_id' => $id, 'estado' => 'En Proceso']);
+        })->name('edit');
+
+        Route::get('/{id}', function ($id) {
+            // Mockup: En un caso real, se cargaría el estado del reintegro
+            return view('livewire.reintegros.form', ['modo' => 'show', 'reintegro_id' => $id, 'estado' => 'Autorizado']);
+        })->name('show');
+    });
+
     // Mockup de rutas para Documentos (sin controlador real aún)
     Route::prefix('documentos')->name('documentos.')->group(function () {
         Route::get('/', function () {
@@ -259,6 +347,22 @@ Route::middleware('auth')->group(function () {
         Route::get('/operaciones', function () {
             return view('livewire.auditoria.operaciones-sistema');
         })->name('operaciones');
+    });
+
+    // Ruta de Historial de Auditorías para múltiples roles
+    Route::prefix('auditoria')->name('auditoria.')->middleware(['auth', 'role:admin,medico_auditor,usuario_general'])->group(function () {
+        Route::get('/historial-auditorias', \App\Livewire\Auditoria\HistorialAuditorias::class)->name('historial-auditorias');
+    });
+
+    // Rutas de Perfil
+    Route::prefix('perfil')->name('perfil.')->middleware('auth')->group(function () {
+        Route::get('/escuela', \App\Livewire\Perfil\PerfilEscuela::class)->name('escuela')->middleware('role:usuario_general');
+        Route::get('/usuario', \App\Livewire\Perfil\PerfilUsuario::class)->name('usuario')->middleware('role:admin,medico_auditor');
+    });
+
+    // Rutas de Administración
+    Route::prefix('admin')->name('admin.')->middleware('role:admin')->group(function () {
+        Route::get('gestion-pagos', GestionPagosIndex::class)->name('gestion-pagos');
     });
 
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');

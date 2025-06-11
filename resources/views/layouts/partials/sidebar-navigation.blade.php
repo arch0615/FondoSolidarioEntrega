@@ -27,13 +27,13 @@
                 <a href="{{ route('accidentes.create') }}" class="block px-3 py-2 text-sm text-gray-600 hover:text-primary-600 hover:bg-primary-50 rounded transition-colors">Registrar Accidente</a>
                 <a href="{{ route('accidentes.index') }}" class="block px-3 py-2 text-sm text-gray-600 hover:text-primary-600 hover:bg-primary-50 rounded transition-colors">Ver Accidentes</a>
                 <a href="{{ route('derivaciones.index') }}" class="block px-3 py-2 text-sm text-gray-600 hover:text-primary-600 hover:bg-primary-50 rounded transition-colors">Derivaciones</a>
-                <a href="#" class="block px-3 py-2 text-sm text-gray-600 hover:text-primary-600 hover:bg-primary-50 rounded transition-colors">Solicitar Reintegros</a>
+                <a href="{{ route('reintegros.index') }}" class="flex items-center justify-between px-3 py-2 text-sm text-gray-600 hover:text-primary-600 hover:bg-primary-50 rounded transition-colors">
+                    <span>Reintegros</span>
+                    <span class="ml-auto inline-block bg-warning-500 text-white text-xs font-semibold px-2 py-1 rounded-full">2</span>
+                </a>
             </div>
         </div>
-    @endif
 
-
-    @if($userRole === 'usuario_general')
         <!-- Alumnos - Solo Usuario General -->
         <div class="menu-item">
             <a href="{{ route('alumnos.index') }}" class="w-full flex items-center gap-3 p-3 text-left font-medium text-gray-700 hover:bg-primary-50 hover:text-primary-700 rounded-lg transition-colors {{ request()->routeIs('alumnos.*') ? 'bg-primary-50 text-primary-700 font-semibold' : '' }}">
@@ -80,6 +80,7 @@
                 <span class="text-sm">Documentos</span>
             </a>
         </div>
+
     @endif
 
     @if($userRole === 'admin')
@@ -104,6 +105,7 @@
                 <a href="{{ route('escuelas.index') }}" class="block px-3 py-2 text-sm text-gray-600 hover:text-primary-600 hover:bg-primary-50 rounded transition-colors">Escuelas</a>
                 <a href="{{ route('alumnos.index') }}" class="block px-3 py-2 text-sm text-gray-600 hover:text-primary-600 hover:bg-primary-50 rounded transition-colors">Alumnos</a>
                 <a href="{{ route('empleados.index') }}" class="block px-3 py-2 text-sm text-gray-600 hover:text-primary-600 hover:bg-primary-50 rounded transition-colors">Empleados</a>
+                <a href="{{ route('prestadores.index') }}" class="block px-3 py-2 text-sm text-gray-600 hover:text-primary-600 hover:bg-primary-50 rounded transition-colors {{ request()->routeIs('prestadores.*') ? 'bg-primary-50 text-primary-700 font-semibold' : '' }}">Prestadores</a>
                 <a href="{{ route('salidas_educativas.index') }}" class="block px-3 py-2 text-sm text-gray-600 hover:text-primary-600 hover:bg-primary-50 rounded transition-colors">Salidas Educativas</a>
                 <a href="{{ route('pasantias.index') }}" class="block px-3 py-2 text-sm text-gray-600 hover:text-primary-600 hover:bg-primary-50 rounded transition-colors">Pasantías</a>
                 <a href="{{ route('beneficiarios_svo.index') }}" class="block px-3 py-2 text-sm text-gray-600 hover:text-primary-600 hover:bg-primary-50 rounded transition-colors">Beneficiarios SVO</a>
@@ -123,8 +125,9 @@
             </button>
             <div id="gestion-menu" class="ml-6 mt-1 space-y-1 hidden">
                 <a href="#" class="block px-3 py-2 text-sm text-gray-600 hover:text-primary-600 hover:bg-primary-50 rounded transition-colors">Accidentes</a>
-                <a href="#" class="block px-3 py-2 text-sm text-gray-600 hover:text-primary-600 hover:bg-primary-50 rounded transition-colors">Reintegros</a>
-                <a href="#" class="block px-3 py-2 text-sm text-gray-600 hover:text-primary-600 hover:bg-primary-50 rounded transition-colors">Gestión de Pagos</a>
+                <a href="{{ route('reintegros.index') }}" class="block px-3 py-2 text-sm text-gray-600 hover:text-primary-600 hover:bg-primary-50 rounded transition-colors">Listado de Reintegros</a>
+                <a href="{{ route('reintegros.pendientes') }}" class="block px-3 py-2 text-sm text-gray-600 hover:text-primary-600 hover:bg-primary-50 rounded transition-colors {{ request()->routeIs('reintegros.pendientes') ? 'bg-primary-50 text-primary-700 font-semibold' : '' }}">Reintegros por Atender</a>
+                <a href="{{ route('admin.gestion-pagos') }}" class="block px-3 py-2 text-sm text-gray-600 hover:text-primary-600 hover:bg-primary-50 rounded transition-colors {{ request()->routeIs('admin.gestion-pagos') ? 'bg-primary-50 text-primary-700 font-semibold' : '' }}">Gestión de Pagos</a>
             </div>
         </div>
 
@@ -148,35 +151,37 @@
             <div id="auditoria-menu" class="ml-6 mt-1 space-y-1 {{ request()->routeIs('auditoria.*') ? '' : 'hidden' }}">
                 <a href="{{ route('auditoria.accesos') }}" class="block px-3 py-2 text-sm text-gray-600 hover:text-primary-600 hover:bg-primary-50 rounded transition-colors {{ request()->routeIs('auditoria.accesos') ? 'bg-primary-50 text-primary-700 font-semibold' : '' }}">Accesos al Sistema</a>
                 <a href="{{ route('auditoria.operaciones') }}" class="block px-3 py-2 text-sm text-gray-600 hover:text-primary-600 hover:bg-primary-50 rounded transition-colors {{ request()->routeIs('auditoria.operaciones') ? 'bg-primary-50 text-primary-700 font-semibold' : '' }}">Operaciones del Sistema</a>
+                <a href="{{ route('auditoria.historial-auditorias') }}" class="block px-3 py-2 text-sm text-gray-600 hover:text-primary-600 hover:bg-primary-50 rounded transition-colors {{ request()->routeIs('auditoria.historial-auditorias') ? 'bg-primary-50 text-primary-700 font-semibold' : '' }}">Historial de Auditorías</a>
             </div>
         </div>
+
     @endif
 
-    @if($userRole === 'medico_auditor')
-        <!-- Reintegros Pendientes - Solo Médico Auditor -->
+    @if($userRole === 'medico_auditor' || $userRole === 'escuela')
+        <!-- Dashboard - Médico / Escuela -->
         <div class="menu-item">
-            <a href="#" class="w-full flex items-center gap-3 p-3 text-left font-medium text-gray-700 hover:bg-primary-50 hover:text-primary-700 rounded-lg transition-colors">
-                <i class="fas fa-stethoscope text-blue-600"></i>
-                <span class="text-sm">Reintegros Pendientes</span>
-                <span class="ml-auto bg-red-500 text-white text-xs px-2 py-1 rounded-full">3</span>
+            <a href="{{ route('dashboard') }}" class="w-full flex items-center gap-3 p-3 text-left font-medium text-gray-700 hover:bg-primary-50 hover:text-primary-700 rounded-lg transition-colors {{ request()->routeIs('dashboard') ? 'bg-primary-50 text-primary-700 font-semibold' : '' }}">
+                <i class="fas fa-tachometer-alt text-primary-600"></i>
+                <span class="text-sm">Dashboard</span>
             </a>
         </div>
 
-        <!-- Historial de Auditorías - Solo Médico Auditor -->
-        <div class="menu-item">
-            <button onclick="toggleMenu('auditorias')" class="w-full flex items-center justify-between p-3 text-left font-medium text-gray-700 hover:bg-primary-50 hover:text-primary-700 rounded-lg transition-colors">
-                <div class="flex items-center gap-3">
-                    <i class="fas fa-history text-green-600"></i>
-                    <span class="text-sm">Historial de Auditorías</span>
-                </div>
-                <i id="auditorias-icon" class="fas fa-chevron-right text-xs"></i>
-            </button>
-            <div id="auditorias-menu" class="ml-6 mt-1 space-y-1 hidden">
-                <a href="#" class="block px-3 py-2 text-sm text-gray-600 hover:text-primary-600 hover:bg-primary-50 rounded transition-colors">Casos Aprobados</a>
-                <a href="#" class="block px-3 py-2 text-sm text-gray-600 hover:text-primary-600 hover:bg-primary-50 rounded transition-colors">Casos Rechazados</a>
-                <a href="#" class="block px-3 py-2 text-sm text-gray-600 hover:text-primary-600 hover:bg-primary-50 rounded transition-colors">Solicitudes de Información</a>
+        @if($userRole === 'medico_auditor')
+            <!-- Reintegros Pendientes - Solo Médico -->
+            <div class="menu-item">
+                <a href="{{ route('reintegros.pendientes') }}" class="w-full flex items-center gap-3 p-3 text-left font-medium text-gray-700 hover:bg-primary-50 hover:text-primary-700 rounded-lg transition-colors {{ request()->routeIs('reintegros.pendientes') ? 'bg-primary-50 text-primary-700 font-semibold' : '' }}">
+                    <i class="fas fa-stethoscope text-blue-600"></i>
+                    <span class="text-sm">Reintegros Pendientes</span>
+                </a>
             </div>
-        </div>
+        @endif
 
+        <!-- Historial de Auditorías -->
+        <div class="menu-item">
+            <a href="{{ route('auditoria.historial-auditorias') }}" class="w-full flex items-center gap-3 p-3 text-left font-medium text-gray-700 hover:bg-primary-50 hover:text-primary-700 rounded-lg transition-colors {{ request()->routeIs('auditoria.historial-auditorias') ? 'bg-primary-50 text-primary-700 font-semibold' : '' }}">
+                <i class="fas fa-history text-green-600"></i>
+                <span class="text-sm">Historial de Auditorías</span>
+            </a>
+        </div>
     @endif
 </nav>
