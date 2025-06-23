@@ -3,8 +3,9 @@
 namespace App\Livewire\Perfil;
 
 use Livewire\Component;
-use App\Models\User;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
+use App\Models\User;
 
 class PerfilUsuario extends Component
 {
@@ -16,10 +17,9 @@ class PerfilUsuario extends Component
 
     public function mount()
     {
-        $user = Auth::user();
-        // Carga de datos dummy ya que no hay conexión a BD
-        $this->nombre = 'Usuario de Prueba';
-        $this->email = 'usuario@prueba.com';
+        $user = User::find(Auth::id());
+        $this->nombre = $user->nombre;
+        $this->email = $user->email;
     }
 
     public function render()
@@ -29,13 +29,36 @@ class PerfilUsuario extends Component
 
     public function updateProfile()
     {
-        // Lógica para actualizar el perfil del usuario (sin BD)
-        session()->flash('message', 'Perfil actualizado correctamente.');
+        $user = User::find(Auth::id());
+
+        $this->validate([
+            'nombre' => 'required|string|max:255',
+            'email' => 'required|email|max:255|unique:usuarios,email,' . $user->id_usuario . ',id_usuario',
+        ]);
+
+        $user->nombre = $this->nombre;
+        $user->email = $this->email;
+        $user->save();
+
+        session()->flash('message', 'Perfil actualizado exitosamente.');
     }
 
     public function updatePassword()
     {
-        // Lógica para cambiar la contraseña (sin BD)
-        session()->flash('message', 'Contraseña actualizada correctamente.');
+        $user = User::find(Auth::id());
+
+        $this->validate([
+            'current_password' => 'required|current_password',
+            'password' => 'required|min:8|confirmed',
+        ]);
+
+        $user->password = Hash::make($this->password);
+        $user->save();
+
+        $this->current_password = '';
+        $this->password = '';
+        $this->password_confirmation = '';
+
+        session()->flash('message', 'Contraseña actualizada exitosamente.');
     }
 }

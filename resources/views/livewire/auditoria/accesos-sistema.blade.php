@@ -1,6 +1,3 @@
-@extends('layouts.app')
-
-@section('content')
 <div class="mx-auto px-4">
     <!-- Header Section -->
     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 mb-8">
@@ -20,17 +17,11 @@
                      @click.away="open = false"
                      class="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-10"
                      style="display:none;"
-                     x-transition:enter="transition ease-out duration-100"
-                     x-transition:enter-start="transform opacity-0 scale-95"
-                     x-transition:enter-end="transform opacity-100 scale-100"
-                     x-transition:leave="transition ease-in duration-75"
-                     x-transition:leave-start="transform opacity-100 scale-100"
-                     x-transition:leave-end="transform opacity-0 scale-95">
+                     x-transition>
                     <div class="py-1" role="menu" aria-orientation="vertical" aria-labelledby="options-menu">
-                        {{-- TODO: Implementar rutas de exportación reales --}}
-                        <a href="#" class="flex items-center gap-2 px-4 py-2 text-sm text-secondary-700 hover:bg-secondary-100 hover:text-secondary-900" role="menuitem"><i class="fas fa-file-csv fa-fw text-secondary-400"></i>Exportar a CSV</a>
-                        <a href="#" class="flex items-center gap-2 px-4 py-2 text-sm text-secondary-700 hover:bg-secondary-100 hover:text-secondary-900" role="menuitem"><i class="fas fa-file-excel fa-fw text-secondary-400"></i>Exportar a Excel</a>
-                        <a href="#" class="flex items-center gap-2 px-4 py-2 text-sm text-secondary-700 hover:bg-secondary-100 hover:text-secondary-900" role="menuitem"><i class="fas fa-file-pdf fa-fw text-secondary-400"></i>Exportar a PDF</a>
+                        <button onclick="exportarAccesos('csv')" class="flex items-center gap-2 px-4 py-2 text-sm text-secondary-700 hover:bg-secondary-100 hover:text-secondary-900 w-full text-left" role="menuitem"><i class="fas fa-file-csv fa-fw text-secondary-400"></i>Exportar a CSV</button>
+                        <button onclick="exportarAccesos('excel')" class="flex items-center gap-2 px-4 py-2 text-sm text-secondary-700 hover:bg-secondary-100 hover:text-secondary-900 w-full text-left" role="menuitem"><i class="fas fa-file-excel fa-fw text-secondary-400"></i>Exportar a Excel</button>
+                        <button onclick="exportarAccesos('pdf')" class="flex items-center gap-2 px-4 py-2 text-sm text-secondary-700 hover:bg-secondary-100 hover:text-secondary-900 w-full text-left" role="menuitem"><i class="fas fa-file-pdf fa-fw text-secondary-400"></i>Exportar a PDF</button>
                     </div>
                 </div>
             </div>
@@ -39,41 +30,33 @@
 
     <!-- Filtros -->
     <div class="bg-white rounded-xl border border-secondary-200 mb-6">
-        <details class="group">
+        <details class="group" open>
             <summary class="flex items-center justify-between p-6 cursor-pointer list-none">
                 <div class="flex items-center text-secondary-900">
-                    <svg class="w-5 h-5 mr-3 text-secondary-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.207A1 1 0 013 6.5V4z"></path>
-                    </svg>
+                    <svg class="w-5 h-5 mr-3 text-secondary-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.207A1 1 0 013 6.5V4z"></path></svg>
                     <span class="font-medium">Filtros</span>
                 </div>
-                <svg class="w-5 h-5 text-secondary-400 transition-transform group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-                </svg>
+                <svg class="w-5 h-5 text-secondary-400 transition-transform group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
             </summary>
             <div class="px-6 pb-6">
-                <form class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                     <div class="space-y-1">
                         <label for="filtro_usuario" class="block text-sm font-medium text-secondary-700">Usuario</label>
-                        <input type="text" name="filtro_usuario" id="filtro_usuario" class="block w-full px-3 py-2 border border-secondary-300 rounded-lg text-sm placeholder-secondary-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500" placeholder="Buscar por usuario">
+                        <input wire:model.live.debounce.300ms="filtro_usuario" type="text" id="filtro_usuario" class="block w-full px-3 py-2 border border-secondary-300 rounded-lg text-sm placeholder-secondary-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500" placeholder="Buscar por nombre, apellido o email">
                     </div>
                     <div class="space-y-1">
                         <label for="filtro_fecha_desde" class="block text-sm font-medium text-secondary-700">Fecha Desde</label>
-                        <input type="date" name="filtro_fecha_desde" id="filtro_fecha_desde" class="block w-full px-3 py-2 border border-secondary-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500">
+                        <input wire:model.live="filtro_fecha_desde" type="date" id="filtro_fecha_desde" class="block w-full px-3 py-2 border border-secondary-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500">
                     </div>
                     <div class="space-y-1">
                         <label for="filtro_fecha_hasta" class="block text-sm font-medium text-secondary-700">Fecha Hasta</label>
-                        <input type="date" name="filtro_fecha_hasta" id="filtro_fecha_hasta" class="block w-full px-3 py-2 border border-secondary-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500">
+                        <input wire:model.live="filtro_fecha_hasta" type="date" id="filtro_fecha_hasta" class="block w-full px-3 py-2 border border-secondary-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500">
                     </div>
-                    <div class="flex items-end">
-                        <button type="submit" class="w-full inline-flex justify-center items-center px-4 py-2 bg-secondary-900 border border-transparent rounded-lg font-medium text-sm text-white hover:bg-secondary-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-secondary-500 transition-colors duration-200">
-                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-                            </svg>
-                            Buscar
-                        </button>
+                    <div class="space-y-1">
+                        <label for="filtro_ip" class="block text-sm font-medium text-secondary-700">Dirección IP</label>
+                        <input wire:model.live.debounce.300ms="filtro_ip" type="text" id="filtro_ip" class="block w-full px-3 py-2 border border-secondary-300 rounded-lg text-sm placeholder-secondary-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500" placeholder="Buscar por IP">
                     </div>
-                </form>
+                </div>
             </div>
         </details>
     </div>
@@ -85,121 +68,141 @@
                 <thead class="bg-secondary-50">
                     <tr>
                         <th scope="col" class="px-6 py-4 text-left text-xs font-medium text-secondary-500 uppercase tracking-wider">
-                            <button class="group inline-flex items-center hover:text-secondary-700">
+                            <button wire:click="sortBy('usuarios.email')" class="group inline-flex items-center hover:text-secondary-700">
                                 Usuario
-                                <svg class="ml-2 w-4 h-4 text-secondary-400 group-hover:text-secondary-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"></path>
-                                </svg>
+                                @if($sortField === 'usuarios.email')
+                                    @if($sortDirection === 'asc') <svg class="ml-2 w-4 h-4 text-primary-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"></path></svg>
+                                    @else <svg class="ml-2 w-4 h-4 text-primary-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                                    @endif
+                                @else <svg class="ml-2 w-4 h-4 text-secondary-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"></path></svg>
+                                @endif
                             </button>
                         </th>
                         <th scope="col" class="px-6 py-4 text-left text-xs font-medium text-secondary-500 uppercase tracking-wider">
-                            <button class="group inline-flex items-center hover:text-secondary-700">
+                            <button wire:click="sortBy('accion')" class="group inline-flex items-center hover:text-secondary-700">
                                 Acción
-                                <svg class="ml-2 w-4 h-4 text-secondary-400 group-hover:text-secondary-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"></path>
-                                </svg>
+                                @if($sortField === 'accion')
+                                    @if($sortDirection === 'asc') <svg class="ml-2 w-4 h-4 text-primary-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"></path></svg>
+                                    @else <svg class="ml-2 w-4 h-4 text-primary-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                                    @endif
+                                @else <svg class="ml-2 w-4 h-4 text-secondary-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"></path></svg>
+                                @endif
                             </button>
                         </th>
                         <th scope="col" class="px-6 py-4 text-left text-xs font-medium text-secondary-500 uppercase tracking-wider">
-                            <button class="group inline-flex items-center hover:text-secondary-700">
+                            <button wire:click="sortBy('fecha_hora')" class="group inline-flex items-center hover:text-secondary-700">
                                 Fecha y Hora
-                                <svg class="ml-2 w-4 h-4 text-secondary-400 group-hover:text-secondary-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"></path>
-                                </svg>
+                                @if($sortField === 'fecha_hora')
+                                    @if($sortDirection === 'asc') <svg class="ml-2 w-4 h-4 text-primary-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"></path></svg>
+                                    @else <svg class="ml-2 w-4 h-4 text-primary-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                                    @endif
+                                @else <svg class="ml-2 w-4 h-4 text-secondary-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"></path></svg>
+                                @endif
                             </button>
                         </th>
                         <th scope="col" class="px-6 py-4 text-left text-xs font-medium text-secondary-500 uppercase tracking-wider">
-                            <button class="group inline-flex items-center hover:text-secondary-700">
+                            <button wire:click="sortBy('ip_usuario')" class="group inline-flex items-center hover:text-secondary-700">
                                 Dirección IP
-                                <svg class="ml-2 w-4 h-4 text-secondary-400 group-hover:text-secondary-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"></path>
-                                </svg>
+                                @if($sortField === 'ip_usuario')
+                                    @if($sortDirection === 'asc') <svg class="ml-2 w-4 h-4 text-primary-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"></path></svg>
+                                    @else <svg class="ml-2 w-4 h-4 text-primary-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                                    @endif
+                                @else <svg class="ml-2 w-4 h-4 text-secondary-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"></path></svg>
+                                @endif
                             </button>
                         </th>
                     </tr>
                 </thead>
                 <tbody class="bg-white divide-y divide-secondary-200">
-                    {{-- Filas de ejemplo (reemplazar con datos reales) --}}
+                    @forelse($accesos as $acceso)
                     <tr class="hover:bg-secondary-50 transition-colors duration-150">
                         <td class="px-6 py-4 whitespace-nowrap">
-                            <div class="text-sm font-medium text-secondary-900">admin@jaec.edu.ar</div>
-                            <div class="text-sm text-secondary-500">Juan Pérez</div>
+                            <div class="text-sm font-medium text-secondary-900">{{ $acceso->usuario->email ?? 'Usuario no encontrado' }}</div>
+                            <div class="text-sm text-secondary-500">{{ $acceso->usuario->nombre ?? '' }} {{ $acceso->usuario->apellido ?? '' }}</div>
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap">
+                            @if($acceso->accion == 'LOGIN')
                             <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-success-100 text-success-800">
-                                <svg class="w-1.5 h-1.5 mr-1.5" fill="currentColor" viewBox="0 0 8 8">
-                                    <circle cx="4" cy="4" r="3"/>
-                                </svg>
+                                <svg class="w-1.5 h-1.5 mr-1.5" fill="currentColor" viewBox="0 0 8 8"><circle cx="4" cy="4" r="3"/></svg>
                                 LOGIN
                             </span>
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap">
-                            <div class="text-sm text-secondary-900">01/06/2025 10:30:45</div>
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap">
-                            <div class="text-sm text-secondary-900">192.168.1.100</div>
-                        </td>
-                    </tr>
-                    <tr class="hover:bg-secondary-50 transition-colors duration-150">
-                        <td class="px-6 py-4 whitespace-nowrap">
-                            <div class="text-sm font-medium text-secondary-900">medico@jaec.edu.ar</div>
-                            <div class="text-sm text-secondary-500">María García</div>
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap">
+                            @else
                             <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-secondary-100 text-secondary-700">
-                                <svg class="w-1.5 h-1.5 mr-1.5" fill="currentColor" viewBox="0 0 8 8">
-                                    <circle cx="4" cy="4" r="3"/>
-                                </svg>
+                                <svg class="w-1.5 h-1.5 mr-1.5" fill="currentColor" viewBox="0 0 8 8"><circle cx="4" cy="4" r="3"/></svg>
                                 LOGOUT
                             </span>
+                            @endif
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap">
-                            <div class="text-sm text-secondary-900">01/06/2025 09:15:30</div>
+                            <div class="text-sm text-secondary-900">{{ $acceso->fecha_hora->format('d/m/Y H:i:s') }}</div>
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap">
-                            <div class="text-sm text-secondary-900">192.168.1.101</div>
+                            <div class="text-sm text-secondary-900">{{ $acceso->ip_usuario }}</div>
                         </td>
                     </tr>
-                    {{-- Fin Filas de ejemplo --}}
+                    @empty
+                    <tr>
+                        <td colspan="4" class="px-6 py-12 text-center">
+                            <div class="text-secondary-500">No hay registros de acceso que coincidan con los filtros.</div>
+                        </td>
+                    </tr>
+                    @endforelse
                 </tbody>
             </table>
         </div>
 
-        <!-- Paginación -->
-        <div class="px-6 py-4 bg-secondary-50 border-t border-secondary-200 flex flex-col sm:flex-row items-center justify-between">
-            <div class="text-sm text-secondary-700 mb-4 sm:mb-0">
-                Mostrando <span class="font-medium text-secondary-900">1</span> a <span class="font-medium text-secondary-900">10</span> de <span class="font-medium text-secondary-900">150</span> resultados
+        <!-- Información de paginación y controles -->
+        <div class="px-6 py-4 bg-secondary-50 border-t border-secondary-200">
+            <div class="flex flex-col sm:flex-row items-center justify-between space-y-3 sm:space-y-0">
+                <div class="text-sm text-secondary-700">
+                    @if($accesos->total() > 0)
+                        Mostrando {{ $accesos->firstItem() }} a {{ $accesos->lastItem() }} de {{ $accesos->total() }} resultados
+                    @else
+                        No hay resultados para mostrar
+                    @endif
+                </div>
+                @if($accesos->hasPages())
+                    <div class="flex-shrink-0">
+                        {{ $accesos->links('vendor.pagination.custom-tailwind') }}
+                    </div>
+                @endif
             </div>
-            <nav class="inline-flex rounded-lg shadow-sm" aria-label="Paginación">
-                <button type="button" class="relative inline-flex items-center px-2 py-2 rounded-l-lg border border-secondary-300 bg-white text-sm font-medium text-secondary-500 hover:bg-secondary-50 focus:z-10 focus:outline-none focus:ring-1 focus:ring-primary-500 focus:border-primary-500 disabled:opacity-50 disabled:cursor-not-allowed">
-                    <span class="sr-only">Anterior</span>
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
-                    </svg>
-                </button>
-                <button type="button" class="relative inline-flex items-center px-4 py-2 border border-secondary-300 bg-white text-sm font-medium text-secondary-700 hover:bg-secondary-50 focus:z-10 focus:outline-none focus:ring-1 focus:ring-primary-500 focus:border-primary-500">
-                    1
-                </button>
-                <button type="button" class="relative inline-flex items-center px-4 py-2 border border-secondary-300 bg-primary-600 text-sm font-medium text-white hover:bg-primary-700 focus:z-10 focus:outline-none focus:ring-1 focus:ring-primary-500 focus:border-primary-500" aria-current="page">
-                    2
-                </button>
-                <button type="button" class="relative inline-flex items-center px-4 py-2 border border-secondary-300 bg-white text-sm font-medium text-secondary-700 hover:bg-secondary-50 focus:z-10 focus:outline-none focus:ring-1 focus:ring-primary-500 focus:border-primary-500">
-                    3
-                </button>
-                <span class="relative inline-flex items-center px-4 py-2 border border-secondary-300 bg-white text-sm font-medium text-secondary-700">
-                    ...
-                </span>
-                <button type="button" class="relative inline-flex items-center px-4 py-2 border border-secondary-300 bg-white text-sm font-medium text-secondary-700 hover:bg-secondary-50 focus:z-10 focus:outline-none focus:ring-1 focus:ring-primary-500 focus:border-primary-500">
-                    15
-                </button>
-                <button type="button" class="relative inline-flex items-center px-2 py-2 rounded-r-lg border border-secondary-300 bg-white text-sm font-medium text-secondary-500 hover:bg-secondary-50 focus:z-10 focus:outline-none focus:ring-1 focus:ring-primary-500 focus:border-primary-500">
-                    <span class="sr-only">Siguiente</span>
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-                    </svg>
-                </button>
-            </nav>
         </div>
     </div>
 </div>
-@endsection
+
+@push('scripts')
+<script>
+    function exportarAccesos(formato) {
+        const filtroUsuario = document.getElementById('filtro_usuario')?.value || '';
+        const filtroFechaDesde = document.getElementById('filtro_fecha_desde')?.value || '';
+        const filtroFechaHasta = document.getElementById('filtro_fecha_hasta')?.value || '';
+        const filtroIp = document.getElementById('filtro_ip')?.value || '';
+        
+        const params = new URLSearchParams();
+        if (filtroUsuario) params.append('filtro_usuario', filtroUsuario);
+        if (filtroFechaDesde) params.append('filtro_fecha_desde', filtroFechaDesde);
+        if (filtroFechaHasta) params.append('filtro_fecha_hasta', filtroFechaHasta);
+        if (filtroIp) params.append('filtro_ip', filtroIp);
+        
+        let url = '';
+        switch(formato) {
+            case 'csv':
+                url = '{{ route("auditoria.export.accesos.csv") }}';
+                break;
+            case 'excel':
+                url = '{{ route("auditoria.export.accesos.excel") }}';
+                break;
+            case 'pdf':
+                url = '{{ route("auditoria.export.accesos.pdf") }}';
+                break;
+        }
+        
+        if (params.toString()) {
+            url += '?' + params.toString();
+        }
+        
+        window.open(url, '_blank');
+    }
+</script>
+@endpush

@@ -129,10 +129,7 @@
                     </div>
 
                     <div class="flex items-center justify-between">
-                        <div class="flex items-center">
-                            <input type="checkbox" id="remember" name="remember" class="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded" {{ old('remember') ? 'checked' : '' }}>
-                            <label for="remember" class="ml-2 text-sm text-gray-600">Recordarme</label>
-                        </div>
+                        <div></div>
                         <button type="button" onclick="openResetModal()" class="text-sm text-primary-600 hover:text-primary-700 font-medium">
                             ¿Olvidó su contraseña?
                         </button>

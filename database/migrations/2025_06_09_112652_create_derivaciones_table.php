@@ -14,12 +14,13 @@ return new class extends Migration
         Schema::create('derivaciones', function (Blueprint $table) {
             $table->integer('id_derivacion', true);
             $table->integer('id_accidente')->index('idx_accidente');
+            $table->integer('id_alumno')->index('idx_alumno');
             $table->integer('id_prestador')->index('idx_prestador');
             $table->date('fecha_derivacion')->index('idx_fecha');
             $table->time('hora_derivacion')->nullable();
             $table->string('medico_deriva', 200)->nullable();
             $table->string('diagnostico_inicial', 500)->nullable();
-            $table->string('acompa??ante', 200)->nullable();
+            $table->string('acompanante', 200)->nullable();
             $table->text('observaciones')->nullable();
             $table->string('sello_escuela')->nullable();
             $table->string('firma_autorizada', 200)->nullable();

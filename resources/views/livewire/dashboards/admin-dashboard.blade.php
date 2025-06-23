@@ -43,9 +43,9 @@
             </div>
 
             <div class="mt-4 pt-4 border-t border-gray-200">
-                <button class="w-full text-center text-sm text-blue-600 hover:text-blue-800 font-medium">
+                <a href="{{ route('auditoria.operaciones') }}" class="w-full text-center text-sm text-blue-600 hover:text-blue-800 font-medium">
                     Ver todas las actividades →
-                </button>
+                </a>
             </div>
         </div>
 
@@ -54,10 +54,10 @@
             <h3 class="text-lg font-semibold text-blue-800 mb-4">Accesos Rápidos</h3>
             
             <div class="space-y-3">
-                <button class="w-full flex items-center gap-3 p-3 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-all duration-200 hover:shadow-md">
+                <a href="{{ route('accidentes.index') }}" class="w-full flex items-center gap-3 p-3 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-all duration-200 hover:shadow-md">
                     <i class="fas fa-medkit"></i>
                     <span>Accidentes</span>
-                </button>
+                </a>
                 
                 <a href="{{ route('escuelas.index') }}" class="w-full flex items-center gap-3 p-3 bg-yellow-500 hover:bg-yellow-600 text-white rounded-lg transition-all duration-200 hover:shadow-md">
                     <i class="fas fa-school"></i>

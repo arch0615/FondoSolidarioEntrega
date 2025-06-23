@@ -102,10 +102,10 @@
                     <span>Generar Derivación</span>
                 </a>
 
-                <button class="w-full flex items-center gap-3 p-3 border-2 border-primary-200 text-primary-600 hover:bg-primary-25 hover:border-primary-300 rounded-lg transition-all duration-200">
+                <a href="{{ route('documentos.create') }}" class="w-full flex items-center gap-3 p-3 border-2 border-primary-200 text-primary-600 hover:bg-primary-25 hover:border-primary-300 rounded-lg transition-all duration-200">
                     <i class="fas fa-folder-open"></i>
                     <span>Subir Documentos</span>
-                </button>
+                </a>
             </div>
         </div>
     </div>

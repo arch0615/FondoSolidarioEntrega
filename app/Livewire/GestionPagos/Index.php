@@ -2,17 +2,18 @@
 
 namespace App\Livewire\GestionPagos;
 
+use App\Models\Escuela;
+use App\Models\Notificacion;
+use App\Models\Reintegro;
+use App\Models\User;
+use App\Services\AuditoriaService;
 use Livewire\Component;
 use Livewire\WithPagination;
-use Illuminate\Support\Collection;
-use Illuminate\Pagination\LengthAwarePaginator;
 
 class Index extends Component
 {
     use WithPagination;
 
-    public $pendientes = [];
-    public $historial = [];
     public $escuelas = [];
 
     // Modal state
@@ -28,108 +29,12 @@ class Index extends Component
 
     public function mount()
     {
-        // Datos de ejemplo para reintegros pendientes
-        $this->pendientes = [
-            [
-                'id_reintegro' => 101,
-                'id_accidente' => 202,
-                'nombre_alumno' => 'Ana García',
-                'escuela' => 'Escuela Primaria N°1',
-                'fecha_autorizacion' => '2025-06-10',
-                'monto' => 1500.50,
-            ],
-            [
-                'id_reintegro' => 102,
-                'id_accidente' => 205,
-                'nombre_alumno' => 'Luis Fernández',
-                'escuela' => 'Colegio San Martín',
-                'fecha_autorizacion' => '2025-06-09',
-                'monto' => 850.00,
-            ],
-            [
-                'id_reintegro' => 103,
-                'id_accidente' => 210,
-                'nombre_alumno' => 'Sofía Martínez',
-                'escuela' => 'Instituto Belgrano',
-                'fecha_autorizacion' => '2025-06-11',
-                'monto' => 2300.75,
-            ],
-        ];
-
-        // Datos de ejemplo para el historial de pagos
-        $this->historial = [
-            [
-                'id_reintegro' => 98,
-                'id_accidente' => 190,
-                'nombre_alumno' => 'Carlos Rodríguez',
-                'escuela' => 'Escuela Primaria N°1',
-                'fecha_pago' => '2025-05-20',
-                'monto' => 1200.00,
-                'numero_transferencia' => 'TR-987654',
-            ],
-            [
-                'id_reintegro' => 99,
-                'id_accidente' => 195,
-                'nombre_alumno' => 'Laura Pérez',
-                'escuela' => 'Colegio San Martín',
-                'fecha_pago' => '2025-05-22',
-                'monto' => 750.25,
-                'numero_transferencia' => 'TR-987655',
-            ],
-            [
-                'id_reintegro' => 97,
-                'id_accidente' => 180,
-                'nombre_alumno' => 'Mariana Diaz',
-                'escuela' => 'Instituto Belgrano',
-                'fecha_pago' => '2025-05-18',
-                'monto' => 300.00,
-                'numero_transferencia' => 'TR-987653',
-            ],
-            [
-                'id_reintegro' => 96,
-                'id_accidente' => 170,
-                'nombre_alumno' => 'Jorge Gomez',
-                'escuela' => 'Escuela Primaria N°1',
-                'fecha_pago' => '2025-05-15',
-                'monto' => 500.00,
-                'numero_transferencia' => 'TR-987652',
-            ],
-            [
-                'id_reintegro' => 95,
-                'id_accidente' => 160,
-                'nombre_alumno' => 'Lucia Fernandez',
-                'escuela' => 'Colegio San Martín',
-                'fecha_pago' => '2025-05-12',
-                'monto' => 950.00,
-                'numero_transferencia' => 'TR-987651',
-            ],
-            [
-                'id_reintegro' => 94,
-                'id_accidente' => 150,
-                'nombre_alumno' => 'Pedro Martinez',
-                'escuela' => 'Instituto Belgrano',
-                'fecha_pago' => '2025-05-10',
-                'monto' => 1100.00,
-                'numero_transferencia' => 'TR-987650',
-            ],
-        ];
-
-        // Obtener lista única de escuelas para el filtro
-        $this->escuelas = array_unique(array_merge(
-            array_column($this->pendientes, 'escuela'),
-            array_column($this->historial, 'escuela')
-        ));
+        $this->escuelas = Escuela::orderBy('nombre')->get();
     }
 
     public function iniciarPago($id)
     {
-        $this->reintegroSeleccionado = null;
-        foreach ($this->pendientes as $reintegro) {
-            if ($reintegro['id_reintegro'] == $id) {
-                $this->reintegroSeleccionado = $reintegro;
-                break;
-            }
-        }
+        $this->reintegroSeleccionado = Reintegro::with('alumno', 'accidente.escuela')->find($id);
 
         if ($this->reintegroSeleccionado) {
             $this->fecha_pago = now()->format('Y-m-d');
@@ -145,54 +50,77 @@ class Index extends Component
             'numero_transferencia' => 'required|string|max:50',
         ]);
 
-        $reintegroPagado = $this->reintegroSeleccionado;
-        $pendientesActualizado = [];
+        $reintegro = Reintegro::find($this->reintegroSeleccionado['id_reintegro']);
 
-        foreach ($this->pendientes as $reintegro) {
-            if ($reintegro['id_reintegro'] != $reintegroPagado['id_reintegro']) {
-                $pendientesActualizado[] = $reintegro;
-            }
-        }
+        if ($reintegro) {
+            $reintegro->fecha_pago = $this->fecha_pago;
+            $reintegro->numero_transferencia = $this->numero_transferencia;
+            $reintegro->id_estado_reintegro = 5; // 5 = Pagado
+            $reintegro->save();
 
-        if ($reintegroPagado) {
-            $reintegroPagado['fecha_pago'] = $this->fecha_pago;
-            $reintegroPagado['numero_transferencia'] = $this->numero_transferencia;
-            array_unshift($this->historial, $reintegroPagado);
-            $this->pendientes = $pendientesActualizado;
+            // Registrar auditoría
+            AuditoriaService::registrarAccionPersonalizada('PAGO_REINTEGRO', 'reintegros', $reintegro->id_reintegro, [
+                'fecha_pago' => $this->fecha_pago,
+                'numero_transferencia' => $this->numero_transferencia,
+                'estado' => 'Pagado'
+            ]);
+
+            // Enviar notificación a la escuela
+            $this->enviarNotificacionEscuela($reintegro);
+
             $this->showPagoModal = false;
             $this->reset(['reintegroSeleccionado', 'fecha_pago', 'numero_transferencia']);
+            session()->flash('message', 'Reintegro marcado como pagado exitosamente.');
+        }
+    }
+
+    protected function enviarNotificacionEscuela(Reintegro $reintegro)
+    {
+        $escuela = $reintegro->accidente->escuela;
+        $usuarioEscuela = User::where('id_escuela', $escuela->id_escuela)->first();
+
+        if ($usuarioEscuela) {
+            Notificacion::create([
+                'id_usuario_destino' => $usuarioEscuela->id_usuario,
+                'tipo_notificacion' => 'Reintegro Pagado',
+                'titulo' => 'Reintegro Pagado',
+                'mensaje' => "Se ha registrado el pago del reintegro #{$reintegro->id_reintegro} para el alumno {$reintegro->alumno->nombre_completo}. Monto: {$reintegro->monto_autorizado}",
+                'id_entidad_referencia' => $reintegro->id_reintegro,
+                'tipo_entidad' => 'reintegro',
+                'fecha_creacion' => now(),
+                'leida' => false,
+            ]);
         }
     }
 
     public function render()
     {
-        $historialFiltrado = collect($this->historial)->filter(function ($pago) {
-            $pasaFiltro = true;
+        // Reintegros pendientes de pago (Estado Autorizado = 3)
+        $pendientes = Reintegro::with('alumno', 'accidente.escuela')
+            ->where('id_estado_reintegro', 3) // 3 = Autorizado
+            ->orderBy('fecha_autorizacion', 'asc')
+            ->get();
 
-            if ($this->filtroEscuela && $pago['escuela'] !== $this->filtroEscuela) {
-                $pasaFiltro = false;
-            }
+        // Historial de pagos (Estado Pagado = 5)
+        $historialQuery = Reintegro::with('alumno', 'accidente.escuela')
+            ->where('id_estado_reintegro', 5) // 5 = Pagado
+            ->when($this->filtroEscuela, function ($query) {
+                $query->whereHas('accidente.escuela', function ($q) {
+                    $q->where('id_escuela', $this->filtroEscuela);
+                });
+            })
+            ->when($this->filtroFechaDesde, function ($query) {
+                $query->where('fecha_pago', '>=', $this->filtroFechaDesde);
+            })
+            ->when($this->filtroFechaHasta, function ($query) {
+                $query->where('fecha_pago', '<=', $this->filtroFechaHasta);
+            })
+            ->orderBy('fecha_pago', 'desc');
 
-            if ($this->filtroFechaDesde && $pago['fecha_pago'] < $this->filtroFechaDesde) {
-                $pasaFiltro = false;
-            }
-
-            if ($this->filtroFechaHasta && $pago['fecha_pago'] > $this->filtroFechaHasta) {
-                $pasaFiltro = false;
-            }
-
-            return $pasaFiltro;
-        });
-
-        // Paginación manual de la colección
-        $perPage = 5;
-        $currentPage = LengthAwarePaginator::resolveCurrentPage();
-        $currentPageItems = $historialFiltrado->slice(($currentPage - 1) * $perPage, $perPage)->all();
-        $historialPaginado = new LengthAwarePaginator($currentPageItems, $historialFiltrado->count(), $perPage, $currentPage, [
-            'path' => LengthAwarePaginator::resolveCurrentPath(),
-        ]);
+        $historialPaginado = $historialQuery->paginate(5);
 
         return view('livewire.gestion-pagos.index', [
+            'pendientes' => $pendientes,
             'historialPaginado' => $historialPaginado
         ]);
     }

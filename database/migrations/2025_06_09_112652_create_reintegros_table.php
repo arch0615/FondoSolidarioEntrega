@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('reintegros', function (Blueprint $table) {
             $table->integer('id_reintegro', true);
             $table->integer('id_accidente')->index('idx_accidente');
+            $table->integer('id_alumno')->index('idx_alumno');
             $table->integer('id_usuario_solicita')->index('id_usuario_solicita');
             $table->dateTime('fecha_solicitud')->nullable()->index('idx_fecha_solicitud');
             $table->integer('id_tipo_gasto')->nullable()->index('idx_tipo_gasto');

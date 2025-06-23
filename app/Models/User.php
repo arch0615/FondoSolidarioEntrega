@@ -23,6 +23,11 @@ class User extends Authenticatable
     protected $primaryKey = 'id_usuario';
 
     /**
+     * Indicates if the model should be timestamped.
+     */
+    public $timestamps = false;
+
+    /**
      * The attributes that are mass assignable.
      */
     protected $fillable = [
@@ -108,10 +113,26 @@ class User extends Authenticatable
     }
 
     /**
+     * Get the school for this user from the escuelas table.
+     */
+    public function escuela()
+    {
+        return $this->belongsTo(Escuela::class, 'id_escuela', 'id_escuela');
+    }
+
+    /**
      * Get the role name in Spanish for display.
      */
     public function getRolNombreAttribute()
     {
-        return $this->role ? $this->role->nombre : 'Usuario General';
+        return $this->role ? $this->role->nombre_rol : 'Usuario General';
+    }
+
+    /**
+     * Get the school name for display.
+     */
+    public function getEscuelaNombreAttribute()
+    {
+        return $this->escuela ? $this->escuela->nombre : 'Sin escuela asignada';
     }
 }

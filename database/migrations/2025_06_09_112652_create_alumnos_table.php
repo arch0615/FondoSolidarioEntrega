@@ -23,7 +23,6 @@ return new class extends Migration
             $table->string('telefono_contacto', 50)->nullable();
             $table->date('fecha_nacimiento')->nullable();
             $table->boolean('activo')->nullable()->default(true)->index('idx_activo');
-            $table->integer('id_seccion')->nullable()->index('fk_alumnos_seccion');
 
             $table->index(['nombre', 'apellido'], 'idx_nombre_apellido');
         });

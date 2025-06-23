@@ -6,9 +6,7 @@ use Livewire\Component;
 use App\Models\AuditoriaSistema;
 use App\Models\User;
 use Livewire\WithPagination;
-use Livewire\Attributes\Layout;
 
-#[Layout('layouts.app')]
 class AccesosSistema extends Component
 {
     use WithPagination;

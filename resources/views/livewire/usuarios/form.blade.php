@@ -1,7 +1,76 @@
-@extends('layouts.app')
-
-@section('content')
 <div class="mx-auto px-4">
+    <!-- Modal de Confirmación -->
+    @if($mensaje)
+        <div class="fixed inset-0 z-50 overflow-y-auto" x-data="{ show: true }" x-show="show" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="ease-in duration-200" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0">
+            <div class="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+                <!-- Overlay -->
+                <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" @click="show = false"></div>
+
+                <!-- Modal -->
+                <div class="inline-block align-bottom bg-white rounded-lg px-4 pt-5 pb-4 text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-sm sm:w-full sm:p-6" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100" x-transition:leave="ease-in duration-200" x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100" x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95">
+                    <div>
+                        <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full {{ $tipoMensaje === 'success' ? 'bg-green-100' : 'bg-red-100' }}">
+                            @if($tipoMensaje === 'success')
+                                <svg class="h-6 w-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                                </svg>
+                            @else
+                                <svg class="h-6 w-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+                                </svg>
+                            @endif
+                        </div>
+                        <div class="mt-3 text-center sm:mt-5">
+                            <h3 class="text-lg leading-6 font-medium text-gray-900">
+                                {{ $tipoMensaje === 'success' ? '¡Éxito!' : 'Error' }}
+                            </h3>
+                            <div class="mt-2">
+                                <p class="text-sm text-gray-500">{{ $mensaje }}</p>
+                                @if($modo == 'create' && $tipoMensaje === 'success')
+                                    <p class="text-xs text-gray-400 mt-2">Redirigiendo al listado en 3 segundos...</p>
+                                @endif
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mt-5 sm:mt-6">
+                        @if($modo == 'create')
+                            <button @click="show = false" wire:click="redirigirAlListado" type="button" class="inline-flex justify-center w-full rounded-md border border-transparent shadow-sm px-4 py-2 {{ $tipoMensaje === 'success' ? 'bg-green-600 hover:bg-green-700 focus:ring-green-500' : 'bg-red-600 hover:bg-red-700 focus:ring-red-500' }} text-base font-medium text-white focus:outline-none focus:ring-2 focus:ring-offset-2 sm:text-sm">
+                                Ir al Listado
+                            </button>
+                        @else
+                            <button @click="show = false" wire:click="limpiarMensaje" type="button" class="inline-flex justify-center w-full rounded-md border border-transparent shadow-sm px-4 py-2 {{ $tipoMensaje === 'success' ? 'bg-green-600 hover:bg-green-700 focus:ring-green-500' : 'bg-red-600 hover:bg-red-700 focus:ring-red-500' }} text-base font-medium text-white focus:outline-none focus:ring-2 focus:ring-offset-2 sm:text-sm">
+                                Aceptar
+                            </button>
+                        @endif
+                    </div>
+                </div>
+            </div>
+        </div>
+    @endif
+
+    <!-- Mensajes Flash (para compatibilidad) -->
+    @if (session()->has('message'))
+        <div class="mb-6 bg-success-50 border border-success-200 text-success-700 px-4 py-3 rounded-lg relative" role="alert">
+            <div class="flex items-center">
+                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                </svg>
+                <span class="font-medium">{{ session('message') }}</span>
+            </div>
+        </div>
+    @endif
+
+    @if (session()->has('error'))
+        <div class="mb-6 bg-danger-50 border border-danger-200 text-danger-700 px-4 py-3 rounded-lg relative" role="alert">
+            <div class="flex items-center">
+                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+                </svg>
+                <span class="font-medium">{{ session('error') }}</span>
+            </div>
+        </div>
+    @endif
+
     <!-- Header -->
     <div class="mb-8">
         <nav class="flex items-center text-sm text-secondary-500 mb-4">
@@ -37,12 +106,7 @@
 
     <!-- Formulario -->
     <div class="bg-white rounded-xl border border-secondary-200">
-        {{-- TODO: Definir la acción y método correctos del formulario --}}
-        <form action="{{ $modo == 'create' ? route('usuarios.index') : route('usuarios.index') }}" method="POST" class="space-y-6 p-6">
-            @csrf
-            @if($modo == 'edit')
-                @method('PUT')
-            @endif
+        <form wire:submit.prevent="guardar" class="space-y-6 p-6">
 
             <!-- Información Personal -->
             <div class="border-b border-secondary-200 pb-6">
@@ -54,15 +118,15 @@
                             Nombre <span class="text-danger-500">*</span>
                         </label>
                         <input
+                            wire:model="nombre"
                             type="text"
-                            name="nombre"
                             id="nombre"
                             class="block w-full px-3 py-2 border border-secondary-300 rounded-lg text-sm placeholder-secondary-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 {{ $modo == 'show' ? 'bg-secondary-50' : 'bg-white' }}"
                             placeholder="Ej: Ana"
-                            value="{{ $usuario_id ?? '' == 1 ? 'Ana' : ($usuario_id ?? '' == 2 ? 'Carlos' : ($usuario_id ?? '' == 3 ? 'Luis' : '')) }}"
                             {{ $modo == 'show' ? 'readonly' : '' }}
                             required
                         >
+                        @error('nombre') <span class="text-danger-500 text-sm">{{ $message }}</span> @enderror
                     </div>
 
                     <!-- Apellido -->
@@ -71,15 +135,15 @@
                             Apellido <span class="text-danger-500">*</span>
                         </label>
                         <input
+                            wire:model="apellido"
                             type="text"
-                            name="apellido"
                             id="apellido"
                             class="block w-full px-3 py-2 border border-secondary-300 rounded-lg text-sm placeholder-secondary-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 {{ $modo == 'show' ? 'bg-secondary-50' : 'bg-white' }}"
                             placeholder="Ej: López"
-                            value="{{ $usuario_id ?? '' == 1 ? 'López' : ($usuario_id ?? '' == 2 ? 'Ruiz' : ($usuario_id ?? '' == 3 ? 'Martínez' : '')) }}"
                             {{ $modo == 'show' ? 'readonly' : '' }}
                             required
                         >
+                        @error('apellido') <span class="text-danger-500 text-sm">{{ $message }}</span> @enderror
                     </div>
 
                     <!-- Email -->
@@ -88,15 +152,15 @@
                             Correo Electrónico <span class="text-danger-500">*</span>
                         </label>
                         <input
+                            wire:model="email"
                             type="email"
-                            name="email"
                             id="email"
                             class="block w-full px-3 py-2 border border-secondary-300 rounded-lg text-sm placeholder-secondary-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 {{ $modo == 'show' ? 'bg-secondary-50' : 'bg-white' }}"
                             placeholder="Ej: usuario@escuela.edu.ar"
-                            value="{{ $usuario_id ?? '' == 1 ? 'ana.lopez@sanmartin.edu.ar' : ($usuario_id ?? '' == 2 ? 'carlos.ruiz@admin.jaec.org' : ($usuario_id ?? '' == 3 ? 'dr.martinez@medico.jaec.org' : '')) }}"
                             {{ $modo == 'show' ? 'readonly' : '' }}
                             required
                         >
+                        @error('email') <span class="text-danger-500 text-sm">{{ $message }}</span> @enderror
                     </div>
 
                     <!-- Contraseña (solo para create y edit) -->
@@ -105,33 +169,62 @@
                         <label for="password" class="block text-sm font-medium text-secondary-700">
                             Contraseña {{ $modo == 'create' ? '*' : '' }}
                         </label>
-                        <input
-                            type="password"
-                            name="password"
-                            id="password"
-                            class="block w-full px-3 py-2 border border-secondary-300 rounded-lg text-sm placeholder-secondary-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
-                            placeholder="{{ $modo == 'create' ? 'Ingrese una contraseña segura' : 'Dejar vacío para mantener la actual' }}"
-                            {{ $modo == 'create' ? 'required' : '' }}
-                        >
+                        <div class="flex gap-2">
+                            <input
+                                wire:model="password"
+                                type="password"
+                                id="password"
+                                class="flex-1 px-3 py-2 border border-secondary-300 rounded-lg text-sm placeholder-secondary-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 {{ $modo == 'edit' ? 'bg-secondary-50' : 'bg-white' }}"
+                                placeholder="{{ $modo == 'create' ? 'Ingrese una contraseña segura' : 'Haga clic en Cambiar Contraseña para modificar' }}"
+                                {{ $modo == 'create' ? 'required' : 'disabled' }}
+                            >
+                            @if($modo == 'edit')
+                                <button
+                                    type="button"
+                                    id="toggle-password-btn"
+                                    onclick="togglePasswordChange()"
+                                    class="px-4 py-2 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 whitespace-nowrap transition-colors duration-200"
+                                >
+                                    <span id="btn-text">Cambiar Contraseña</span>
+                                </button>
+                            @endif
+                        </div>
+                        @error('password') <span class="text-danger-500 text-sm">{{ $message }}</span> @enderror
                         @if($modo == 'edit')
-                        <p class="text-xs text-secondary-500">Dejar vacío para mantener la contraseña actual</p>
+                        <p class="text-xs text-secondary-500" id="password-help">Haga clic en "Cambiar Contraseña" para modificar la contraseña actual</p>
                         @endif
                     </div>
 
-                    <!-- Confirmar Contraseña (solo para create) -->
+                    <!-- Confirmar Contraseña (para create o cuando se cambia password en edit) -->
                     @if($modo == 'create')
                     <div class="space-y-1">
                         <label for="password_confirmation" class="block text-sm font-medium text-secondary-700">
                             Confirmar Contraseña <span class="text-danger-500">*</span>
                         </label>
                         <input
+                            wire:model="password_confirmation"
                             type="password"
-                            name="password_confirmation"
                             id="password_confirmation"
                             class="block w-full px-3 py-2 border border-secondary-300 rounded-lg text-sm placeholder-secondary-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
                             placeholder="Confirme la contraseña"
                             required
                         >
+                        @error('password_confirmation') <span class="text-danger-500 text-sm">{{ $message }}</span> @enderror
+                    </div>
+                    @elseif($modo == 'edit')
+                    <div class="space-y-1" id="confirm-password-container" style="display: none;">
+                        <label for="password_confirmation" class="block text-sm font-medium text-secondary-700">
+                            Confirmar Contraseña <span class="text-danger-500">*</span>
+                        </label>
+                        <input
+                            wire:model="password_confirmation"
+                            type="password"
+                            id="password_confirmation"
+                            class="block w-full px-3 py-2 border border-secondary-300 rounded-lg text-sm placeholder-secondary-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                            placeholder="Confirme la nueva contraseña"
+                            disabled
+                        >
+                        @error('password_confirmation') <span class="text-danger-500 text-sm">{{ $message }}</span> @enderror
                     </div>
                     @endif
                     @endif
@@ -149,17 +242,18 @@
                         </label>
                         {{-- TODO: Implementar selección de rol dinámica --}}
                         <select
-                            name="id_rol"
+                            wire:model="id_rol"
                             id="id_rol"
                             class="block w-full px-3 py-2 border border-secondary-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 {{ $modo == 'show' ? 'bg-secondary-50' : 'bg-white' }}"
                             {{ $modo == 'show' ? 'disabled' : '' }}
                             required
                         >
                             <option value="">Seleccione un rol</option>
-                            <option value="1" {{ ($usuario_id ?? '' == 1) ? 'selected' : '' }}>Usuario General</option>
-                            <option value="2" {{ ($usuario_id ?? '' == 2) ? 'selected' : '' }}>Administrador</option>
-                            <option value="3" {{ ($usuario_id ?? '' == 3) ? 'selected' : '' }}>Médico Auditor</option>
+                            @foreach($roles as $rol)
+                                <option value="{{ $rol->id_rol }}">{{ $rol->nombre_rol }}</option>
+                            @endforeach
                         </select>
+                        @error('id_rol') <span class="text-danger-500 text-sm">{{ $message }}</span> @enderror
                     </div>
 
                     <!-- Escuela -->
@@ -169,16 +263,17 @@
                         </label>
                         {{-- TODO: Implementar selección de escuela dinámica --}}
                         <select
-                            name="id_escuela"
+                            wire:model="id_escuela"
                             id="id_escuela"
                             class="block w-full px-3 py-2 border border-secondary-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 {{ $modo == 'show' ? 'bg-secondary-50' : 'bg-white' }}"
                             {{ $modo == 'show' ? 'disabled' : '' }}
                         >
                             <option value="">Seleccione una escuela (opcional para Admin/Médico)</option>
-                            <option value="1" {{ ($usuario_id ?? '' == 1) ? 'selected' : '' }}>Colegio San Martín</option>
-                            <option value="2">Instituto Belgrano</option>
-                            <option value="3">Escuela Santa María</option>
+                            @foreach($escuelas as $escuela)
+                                <option value="{{ $escuela->id_escuela }}">{{ $escuela->nombre }}</option>
+                            @endforeach
                         </select>
+                        @error('id_escuela') <span class="text-danger-500 text-sm">{{ $message }}</span> @enderror
                         <p class="text-xs text-secondary-500">Los usuarios Administrador y Médico Auditor no requieren escuela asignada</p>
                     </div>
 
@@ -227,11 +322,10 @@
                 <div class="flex items-center">
                     <div class="flex items-center h-5">
                         <input
+                            wire:model="activo"
                             type="checkbox"
-                            name="activo"
                             id="activo"
                             class="w-4 h-4 text-primary-600 bg-white border-secondary-300 rounded focus:ring-primary-500 focus:ring-2"
-                            {{ ($modo == 'create' || ($usuario_id ?? '' != 3 && $modo != 'create')) ? 'checked' : '' }}
                             {{ $modo == 'show' ? 'disabled' : '' }}
                         >
                     </div>
@@ -243,15 +337,15 @@
                     </div>
                 </div>
 
-                <!-- Email Verificado -->
+                <!-- Email Verificado (Oculto) -->
+                {{--
                 <div class="flex items-center">
                     <div class="flex items-center h-5">
                         <input
+                            wire:model="email_verificado"
                             type="checkbox"
-                            name="email_verificado"
                             id="email_verificado"
                             class="w-4 h-4 text-primary-600 bg-white border-secondary-300 rounded focus:ring-primary-500 focus:ring-2"
-                            {{ ($usuario_id ?? '' != 3) ? 'checked' : '' }}
                             {{ $modo == 'show' ? 'disabled' : '' }}
                         >
                     </div>
@@ -262,6 +356,7 @@
                         <p class="text-xs text-secondary-500">Indica si el usuario ha verificado su correo electrónico</p>
                     </div>
                 </div>
+                --}}
             </div>
 
             <!-- Botones de Acción -->
@@ -275,15 +370,6 @@
                 </a>
                 @if($modo != 'show')
                 <div class="flex space-x-3">
-                    @if($modo == 'edit' && ($usuario_id ?? '' == 3))
-                    <!-- Botón para reenviar verificación -->
-                    <button type="button" class="inline-flex items-center px-4 py-2 bg-secondary-600 border border-transparent rounded-lg font-medium text-sm text-white hover:bg-secondary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-secondary-500 transition-colors duration-200">
-                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
-                        </svg>
-                        Reenviar Verificación
-                    </button>
-                    @endif
                     <button type="submit" class="inline-flex items-center px-6 py-2 bg-primary-600 border border-transparent rounded-lg font-medium text-sm text-white hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-colors duration-200">
                         <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
@@ -297,10 +383,89 @@
     </div>
 </div>
 
-@endsection
-
 @push('scripts')
 <script>
+    // Variable global para controlar el estado de cambio de contraseña
+    let isChangingPassword = false;
+
+    // Manejo de modales y redirección
+    document.addEventListener('livewire:init', () => {
+        Livewire.on('mostrar-mensaje', () => {
+            // El modal aparece automáticamente cuando $mensaje tiene valor
+            console.log('Mensaje mostrado en modal - modo edición');
+        });
+
+        Livewire.on('mostrar-mensaje-y-redirigir', () => {
+            // Para modo creación: mostrar modal y redirigir automáticamente después de 3 segundos
+            console.log('Mensaje mostrado en modal - modo creación');
+            setTimeout(() => {
+                @this.call('redirigirAlListado');
+            }, 3000);
+        });
+    });
+
+    // Función para alternar el cambio de contraseña
+    function togglePasswordChange() {
+        const passwordInput = document.getElementById('password');
+        const passwordConfirmationInput = document.getElementById('password_confirmation');
+        const confirmationContainer = document.getElementById('confirm-password-container');
+        const toggleBtn = document.getElementById('toggle-password-btn');
+        const btnText = document.getElementById('btn-text');
+        const helpText = document.getElementById('password-help');
+
+        if (!isChangingPassword) {
+            // Habilitar cambio de contraseña
+            isChangingPassword = true;
+            passwordInput.disabled = false;
+            passwordInput.classList.remove('bg-secondary-50');
+            passwordInput.classList.add('bg-white');
+            passwordInput.placeholder = 'Ingrese la nueva contraseña';
+            passwordInput.focus();
+            
+            // Mostrar campo de confirmación
+            if (confirmationContainer) {
+                confirmationContainer.style.display = 'block';
+                passwordConfirmationInput.disabled = false;
+            }
+            
+            // Cambiar botón
+            btnText.textContent = 'Cancelar';
+            toggleBtn.classList.remove('bg-blue-600', 'hover:bg-blue-700');
+            toggleBtn.classList.add('bg-red-600', 'hover:bg-red-700');
+            
+            // Cambiar texto de ayuda
+            helpText.textContent = 'Ingrese una nueva contraseña segura';
+            
+        } else {
+            // Cancelar cambio de contraseña
+            isChangingPassword = false;
+            passwordInput.disabled = true;
+            passwordInput.classList.remove('bg-white');
+            passwordInput.classList.add('bg-secondary-50');
+            passwordInput.placeholder = 'Haga clic en Cambiar Contraseña para modificar';
+            passwordInput.value = '';
+            
+            // Ocultar campo de confirmación
+            if (confirmationContainer) {
+                confirmationContainer.style.display = 'none';
+                passwordConfirmationInput.disabled = true;
+                passwordConfirmationInput.value = '';
+            }
+            
+            // Restaurar botón
+            btnText.textContent = 'Cambiar Contraseña';
+            toggleBtn.classList.remove('bg-red-600', 'hover:bg-red-700');
+            toggleBtn.classList.add('bg-blue-600', 'hover:bg-blue-700');
+            
+            // Restaurar texto de ayuda
+            helpText.textContent = 'Haga clic en "Cambiar Contraseña" para modificar la contraseña actual';
+            
+            // Disparar eventos para Livewire
+            passwordInput.dispatchEvent(new Event('input'));
+            passwordConfirmationInput.dispatchEvent(new Event('input'));
+        }
+    }
+
     document.addEventListener('DOMContentLoaded', function() {
         // Validación de formulario en tiempo real
         const form = document.querySelector('form');
@@ -336,7 +501,7 @@
             }
         }
 
-        // Validación de contraseñas coincidentes
+        // Validación de contraseñas coincidentes (solo para modo edición cuando se está cambiando)
         const passwordInput = document.getElementById('password');
         const passwordConfirmationInput = document.getElementById('password_confirmation');
         
@@ -385,61 +550,50 @@
             toggleEscuelaField();
         }
 
-        // Animación de feedback visual
+        // Animación de feedback visual y validación de envío
         const submitButton = document.querySelector('button[type="submit"]');
         if (submitButton) {
             form.addEventListener('submit', function(e) {
-                // Prevent actual form submission for mockup
-                e.preventDefault();
-
-                // Basic validation check before simulating submission
-                let formIsValid = true;
-                requiredInputs.forEach(input => {
-                    if (input.value.trim() === '') {
-                        validateField(input); // Highlight empty required fields
-                        formIsValid = false;
+                    // Basic validation check before submission
+                    let formIsValid = true;
+                    requiredInputs.forEach(input => {
+                        if (input.value.trim() === '') {
+                            validateField(input); // Highlight empty required fields
+                            formIsValid = false;
+                        }
+                    });
+    
+                    // Validar coincidencia de contraseñas solo si se está cambiando la contraseña
+                    if (passwordInput && passwordConfirmationInput) {
+                        // En modo creación, siempre validar
+                        const isCreateMode = passwordInput.hasAttribute('required');
+                        // En modo edición, solo validar si se está cambiando la contraseña
+                        const isChangingPasswordInEdit = isChangingPassword && passwordInput.value.trim() !== '';
+                        
+                        if (isCreateMode || isChangingPasswordInEdit) {
+                            if (passwordInput.value !== passwordConfirmationInput.value) {
+                                formIsValid = false;
+                                alert('Las contraseñas no coinciden.');
+                                e.preventDefault();
+                                return;
+                            }
+                            
+                            if (passwordInput.value.trim() === '') {
+                                formIsValid = false;
+                                alert('La contraseña es obligatoria.');
+                                e.preventDefault();
+                                return;
+                            }
+                        }
+                    }
+    
+                    if (!formIsValid) {
+                        e.preventDefault();
+                        alert('Por favor, complete todos los campos obligatorios.');
                     }
                 });
-
-                // Validar coincidencia de contraseñas
-                if (passwordInput && passwordConfirmationInput) {
-                    if (passwordInput.value !== passwordConfirmationInput.value) {
-                        formIsValid = false;
-                        alert('Las contraseñas no coinciden.');
-                        return;
-                    }
-                }
-
-                if (formIsValid) {
-                    submitButton.classList.add('opacity-75');
-                    submitButton.disabled = true;
-
-                    // Simular procesamiento (en producción esto sería manejado por el servidor)
-                    setTimeout(() => {
-                        submitButton.classList.remove('opacity-75');
-                        submitButton.disabled = false;
-                        alert('Formulario de Usuario simulado enviado.'); // Feedback visual
-                    }, 2000);
-                } else {
-                    alert('Por favor, complete todos los campos obligatorios.');
-                }
-            });
         }
 
-        // Botón de reenvío de verificación
-        const reenviarBtn = document.querySelector('button[type="button"]');
-        if (reenviarBtn && reenviarBtn.textContent.includes('Reenviar')) {
-            reenviarBtn.addEventListener('click', function() {
-                this.classList.add('opacity-75');
-                this.disabled = true;
-                
-                setTimeout(() => {
-                    this.classList.remove('opacity-75');
-                    this.disabled = false;
-                    alert('Email de verificación reenviado exitosamente.');
-                }, 1500);
-            });
-        }
     });
 </script>
 @endpush

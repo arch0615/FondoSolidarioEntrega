@@ -36,10 +36,17 @@ class AuthController extends Controller
         // Buscar usuario por email
         $user = User::where('email', $request->email)->first();
 
-        // Verificar que el usuario existe, está activo y la contraseña es correcta
-        if (!$user || !$user->isActive() || !Hash::check($request->password, $user->password)) {
+        // Verificar que el usuario existe y la contraseña es correcta
+        if (!$user || !Hash::check($request->password, $user->password)) {
             throw ValidationException::withMessages([
-                'email' => ['Las credenciales proporcionadas no coinciden con nuestros registros o su cuenta está inactiva.'],
+                'email' => ['Las credenciales proporcionadas no coinciden con nuestros registros.'],
+            ]);
+        }
+
+        // Verificar si el usuario está activo
+        if (!$user->isActive()) {
+            throw ValidationException::withMessages([
+                'email' => ['Tu cuenta está inactiva. Contacta al administrador.'],
             ]);
         }
 

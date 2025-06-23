@@ -1,6 +1,3 @@
-@extends('layouts.app')
-
-@section('content')
 <div class="mx-auto px-4">
     <!-- Header Section -->
     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 mb-8">
@@ -27,10 +24,14 @@
                      x-transition:leave-start="transform opacity-100 scale-100"
                      x-transition:leave-end="transform opacity-0 scale-95">
                     <div class="py-1" role="menu" aria-orientation="vertical" aria-labelledby="options-menu">
-                        {{-- TODO: Implementar rutas de exportación reales --}}
-                        <a href="#" class="flex items-center gap-2 px-4 py-2 text-sm text-secondary-700 hover:bg-secondary-100 hover:text-secondary-900" role="menuitem"><i class="fas fa-file-csv fa-fw text-secondary-400"></i>Exportar a CSV</a>
-                        <a href="#" class="flex items-center gap-2 px-4 py-2 text-sm text-secondary-700 hover:bg-secondary-100 hover:text-secondary-900" role="menuitem"><i class="fas fa-file-excel fa-fw text-secondary-400"></i>Exportar a Excel</a>
-                        <a href="#" class="flex items-center gap-2 px-4 py-2 text-sm text-secondary-700 hover:bg-secondary-100 hover:text-secondary-900" role="menuitem"><i class="fas fa-file-pdf fa-fw text-secondary-400"></i>Exportar a PDF</a>
+                        <button onclick="exportarUsuarios('csv')" class="flex items-center gap-2 px-4 py-2 text-sm text-secondary-700 hover:bg-secondary-100 hover:text-secondary-900 w-full text-left" role="menuitem">
+                            <i class="fas fa-file-csv fa-fw text-secondary-400"></i>
+                            Exportar a CSV
+                        </button>
+                        <button onclick="exportarUsuarios('excel')" class="flex items-center gap-2 px-4 py-2 text-sm text-secondary-700 hover:bg-secondary-100 hover:text-secondary-900 w-full text-left" role="menuitem">
+                            <i class="fas fa-file-excel fa-fw text-secondary-400"></i>
+                            Exportar a Excel
+                        </button>
                     </div>
                 </div>
             </div>
@@ -59,62 +60,54 @@
                 </svg>
             </summary>
             <div class="px-6 pb-6">
-                <form class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                     <div class="space-y-1">
                         <label for="filtro_nombre" class="block text-sm font-medium text-secondary-700">Nombre</label>
-                        <input type="text" name="filtro_nombre" id="filtro_nombre" class="block w-full px-3 py-2 border border-secondary-300 rounded-lg text-sm placeholder-secondary-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500" placeholder="Buscar por nombre">
+                        <input wire:model.live="filtro_nombre" type="text" id="filtro_nombre" class="block w-full px-3 py-2 border border-secondary-300 rounded-lg text-sm placeholder-secondary-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500" placeholder="Buscar por nombre">
                     </div>
                      <div class="space-y-1">
                         <label for="filtro_apellido" class="block text-sm font-medium text-secondary-700">Apellido</label>
-                        <input type="text" name="filtro_apellido" id="filtro_apellido" class="block w-full px-3 py-2 border border-secondary-300 rounded-lg text-sm placeholder-secondary-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500" placeholder="Buscar por apellido">
+                        <input wire:model.live="filtro_apellido" type="text" id="filtro_apellido" class="block w-full px-3 py-2 border border-secondary-300 rounded-lg text-sm placeholder-secondary-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500" placeholder="Buscar por apellido">
                     </div>
                     <div class="space-y-1">
                         <label for="filtro_email" class="block text-sm font-medium text-secondary-700">Email</label>
-                        <input type="email" name="filtro_email" id="filtro_email" class="block w-full px-3 py-2 border border-secondary-300 rounded-lg text-sm placeholder-secondary-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500" placeholder="Buscar por email">
+                        <input wire:model.live="filtro_email" type="email" id="filtro_email" class="block w-full px-3 py-2 border border-secondary-300 rounded-lg text-sm placeholder-secondary-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500" placeholder="Buscar por email">
                     </div>
                      <div class="space-y-1">
                         <label for="filtro_rol" class="block text-sm font-medium text-secondary-700">Rol</label>
-                        {{-- TODO: Implementar selección de rol dinámica --}}
-                        <select name="filtro_rol" id="filtro_rol" class="block w-full px-3 py-2 border border-secondary-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500">
+                        <select wire:model.live="filtro_rol" id="filtro_rol" class="block w-full px-3 py-2 border border-secondary-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500">
                             <option value="">Todos</option>
-                            <option value="1">Usuario General</option>
-                            <option value="2">Administrador</option>
-                            <option value="3">Médico Auditor</option>
+                            @foreach($roles as $rol)
+                                <option value="{{ $rol->id_rol }}">{{ $rol->nombre_rol }}</option>
+                            @endforeach
                         </select>
                     </div>
                      <div class="space-y-1">
                         <label for="filtro_escuela" class="block text-sm font-medium text-secondary-700">Escuela</label>
-                        {{-- TODO: Implementar selección de escuela dinámica --}}
-                        <select name="filtro_escuela" id="filtro_escuela" class="block w-full px-3 py-2 border border-secondary-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500">
+                        <select wire:model.live="filtro_escuela" id="filtro_escuela" class="block w-full px-3 py-2 border border-secondary-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500">
                             <option value="">Todas</option>
-                            {{-- Opciones de escuelas --}}
+                            @foreach($escuelas as $escuela)
+                                <option value="{{ $escuela->id_escuela }}">{{ $escuela->nombre }}</option>
+                            @endforeach
                         </select>
                     </div>
                     <div class="space-y-1">
                         <label for="filtro_estado" class="block text-sm font-medium text-secondary-700">Estado</label>
-                        <select name="filtro_estado" id="filtro_estado" class="block w-full px-3 py-2 border border-secondary-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500">
+                        <select wire:model.live="filtro_estado" id="filtro_estado" class="block w-full px-3 py-2 border border-secondary-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500">
                             <option value="">Todos</option>
                             <option value="activo">Activo</option>
                             <option value="inactivo">Inactivo</option>
                         </select>
                     </div>
-                    <div class="space-y-1">
-                        <label for="filtro_verificado" class="block text-sm font-medium text-secondary-700">Email Verificado</label>
-                        <select name="filtro_verificado" id="filtro_verificado" class="block w-full px-3 py-2 border border-secondary-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500">
-                            <option value="">Todos</option>
-                            <option value="1">Verificado</option>
-                            <option value="0">Sin Verificar</option>
-                        </select>
-                    </div>
                     <div class="flex items-end">
-                        <button type="submit" class="w-full inline-flex justify-center items-center px-4 py-2 bg-secondary-900 border border-transparent rounded-lg font-medium text-sm text-white hover:bg-secondary-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-secondary-500 transition-colors duration-200">
+                        <button wire:click="limpiarFiltros" type="button" class="w-full inline-flex justify-center items-center px-4 py-2 bg-secondary-600 border border-transparent rounded-lg font-medium text-sm text-white hover:bg-secondary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-secondary-500 transition-colors duration-200">
                             <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
                             </svg>
-                            Buscar
+                            Limpiar
                         </button>
                     </div>
-                </form>
+                </div>
             </div>
         </details>
     </div>
@@ -126,47 +119,104 @@
                 <thead class="bg-secondary-50">
                     <tr>
                         <th scope="col" class="px-6 py-4 text-left text-xs font-medium text-secondary-500 uppercase tracking-wider">
-                            <button class="group inline-flex items-center hover:text-secondary-700">
+                            <button wire:click="sortBy('nombre')" class="group inline-flex items-center hover:text-secondary-700">
                                 Nombre Completo
-                                <svg class="ml-2 w-4 h-4 text-secondary-400 group-hover:text-secondary-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"></path>
-                                </svg>
+                                @if($sortField === 'nombre')
+                                    @if($sortDirection === 'asc')
+                                        <svg class="ml-2 w-4 h-4 text-primary-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"></path>
+                                        </svg>
+                                    @else
+                                        <svg class="ml-2 w-4 h-4 text-primary-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                                        </svg>
+                                    @endif
+                                @else
+                                    <svg class="ml-2 w-4 h-4 text-secondary-400 group-hover:text-secondary-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"></path>
+                                    </svg>
+                                @endif
                             </button>
                         </th>
                         <th scope="col" class="px-6 py-4 text-left text-xs font-medium text-secondary-500 uppercase tracking-wider">
-                             <button class="group inline-flex items-center hover:text-secondary-700">
+                            <button wire:click="sortBy('email')" class="group inline-flex items-center hover:text-secondary-700">
                                 Email
-                                <svg class="ml-2 w-4 h-4 text-secondary-400 group-hover:text-secondary-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"></path>
-                                </svg>
-                            </button>
-                        </th>
-                         <th scope="col" class="px-6 py-4 text-left text-xs font-medium text-secondary-500 uppercase tracking-wider">
-                             <button class="group inline-flex items-center hover:text-secondary-700">
-                                Rol
-                                <svg class="ml-2 w-4 h-4 text-secondary-400 group-hover:text-secondary-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"></path>
-                                </svg>
+                                @if($sortField === 'email')
+                                    @if($sortDirection === 'asc')
+                                        <svg class="ml-2 w-4 h-4 text-primary-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"></path>
+                                        </svg>
+                                    @else
+                                        <svg class="ml-2 w-4 h-4 text-primary-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                                        </svg>
+                                    @endif
+                                @else
+                                    <svg class="ml-2 w-4 h-4 text-secondary-400 group-hover:text-secondary-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"></path>
+                                    </svg>
+                                @endif
                             </button>
                         </th>
                         <th scope="col" class="px-6 py-4 text-left text-xs font-medium text-secondary-500 uppercase tracking-wider">
-                            <button class="group inline-flex items-center hover:text-secondary-700">
+                            <button wire:click="sortBy('id_rol')" class="group inline-flex items-center hover:text-secondary-700">
+                                Rol
+                                @if($sortField === 'id_rol')
+                                    @if($sortDirection === 'asc')
+                                        <svg class="ml-2 w-4 h-4 text-primary-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"></path>
+                                        </svg>
+                                    @else
+                                        <svg class="ml-2 w-4 h-4 text-primary-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                                        </svg>
+                                    @endif
+                                @else
+                                    <svg class="ml-2 w-4 h-4 text-secondary-400 group-hover:text-secondary-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"></path>
+                                    </svg>
+                                @endif
+                            </button>
+                        </th>
+                        <th scope="col" class="px-6 py-4 text-left text-xs font-medium text-secondary-500 uppercase tracking-wider">
+                            <button wire:click="sortBy('id_escuela')" class="group inline-flex items-center hover:text-secondary-700">
                                 Escuela
-                                <svg class="ml-2 w-4 h-4 text-secondary-400 group-hover:text-secondary-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"></path>
-                                </svg>
+                                @if($sortField === 'id_escuela')
+                                    @if($sortDirection === 'asc')
+                                        <svg class="ml-2 w-4 h-4 text-primary-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"></path>
+                                        </svg>
+                                    @else
+                                        <svg class="ml-2 w-4 h-4 text-primary-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                                        </svg>
+                                    @endif
+                                @else
+                                    <svg class="ml-2 w-4 h-4 text-secondary-400 group-hover:text-secondary-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"></path>
+                                    </svg>
+                                @endif
                             </button>
                         </th>
                         <th scope="col" class="px-6 py-4 text-center text-xs font-medium text-secondary-500 uppercase tracking-wider">
-                            <button class="group inline-flex items-center hover:text-secondary-700">
+                            <button wire:click="sortBy('activo')" class="group inline-flex items-center hover:text-secondary-700">
                                 Estado
-                                <svg class="ml-2 w-4 h-4 text-secondary-400 group-hover:text-secondary-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"></path>
-                                </svg>
+                                @if($sortField === 'activo')
+                                    @if($sortDirection === 'asc')
+                                        <svg class="ml-2 w-4 h-4 text-primary-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"></path>
+                                        </svg>
+                                    @else
+                                        <svg class="ml-2 w-4 h-4 text-primary-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                                        </svg>
+                                    @endif
+                                @else
+                                    <svg class="ml-2 w-4 h-4 text-secondary-400 group-hover:text-secondary-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"></path>
+                                    </svg>
+                                @endif
                             </button>
-                        </th>
-                        <th scope="col" class="px-6 py-4 text-center text-xs font-medium text-secondary-500 uppercase tracking-wider">
-                            Email Verificado
                         </th>
                         <th scope="col" class="px-6 py-4 text-center text-xs font-medium text-secondary-500 uppercase tracking-wider">
                             Acciones
@@ -174,155 +224,94 @@
                     </tr>
                 </thead>
                 <tbody class="bg-white divide-y divide-secondary-200">
-                    {{-- Filas de ejemplo (reemplazar con datos reales) --}}
+                    @forelse($usuarios as $usuario)
                     <tr class="hover:bg-secondary-50 transition-colors duration-150">
                         <td class="px-6 py-4 whitespace-nowrap">
-                            <div class="text-sm font-medium text-secondary-900">Ana López</div>
+                            <div class="text-sm font-medium text-secondary-900">{{ $usuario->nombre_completo }}</div>
                         </td>
-                         <td class="px-6 py-4 whitespace-nowrap">
-                            <div class="text-sm text-secondary-900">ana.lopez@sanmartin.edu.ar</div>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="text-sm text-secondary-900">{{ $usuario->email }}</div>
                         </td>
-                         <td class="px-6 py-4 whitespace-nowrap">
-                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                                Usuario General
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            @php
+                                $rolColors = [
+                                    'Usuario General' => 'bg-blue-100 text-blue-800',
+                                    'Administrador' => 'bg-purple-100 text-purple-800',
+                                    'Médico Auditor' => 'bg-green-100 text-green-800'
+                                ];
+                                $colorClass = $rolColors[$usuario->role->nombre_rol] ?? 'bg-gray-100 text-gray-800';
+                            @endphp
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {{ $colorClass }}">
+                                {{ $usuario->role->nombre_rol }}
                             </span>
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap">
-                            <div class="text-sm font-medium text-secondary-900">Colegio San Martín</div>
+                            <div class="text-sm font-medium {{ $usuario->escuela ? 'text-secondary-900' : 'text-secondary-500' }}">
+                                {{ $usuario->escuela ? $usuario->escuela->nombre : 'N/A' }}
+                            </div>
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-center">
-                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-success-100 text-success-800">
-                                <svg class="w-1.5 h-1.5 mr-1.5" fill="currentColor" viewBox="0 0 8 8">
-                                    <circle cx="4" cy="4" r="3"/>
-                                </svg>
-                                Activo
-                            </span>
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-center">
-                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-success-100 text-success-800">
-                                <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-                                </svg>
-                                Verificado
-                            </span>
+                            @if($usuario->activo)
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-success-100 text-success-800">
+                                    <svg class="w-1.5 h-1.5 mr-1.5" fill="currentColor" viewBox="0 0 8 8">
+                                        <circle cx="4" cy="4" r="3"/>
+                                    </svg>
+                                    Activo
+                                </span>
+                            @else
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-secondary-100 text-secondary-700">
+                                    <svg class="w-1.5 h-1.5 mr-1.5" fill="currentColor" viewBox="0 0 8 8">
+                                        <circle cx="4" cy="4" r="3"/>
+                                    </svg>
+                                    Inactivo
+                                </span>
+                            @endif
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-center">
                             <div class="flex items-center justify-center space-x-2">
-                                {{-- TODO: Definir la ruta correcta para ver detalles del usuario --}}
-                                <a href="{{ route('usuarios.show', 1) }}" class="p-2 text-secondary-400 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition-colors duration-200" title="Ver detalles">
+                                <a href="{{ route('usuarios.show', $usuario->id_usuario) }}" class="p-2 text-secondary-400 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition-colors duration-200" title="Ver detalles">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
                                     </svg>
                                 </a>
-                                {{-- TODO: Definir la ruta correcta para editar usuario --}}
-                                <a href="{{ route('usuarios.edit', 1) }}" class="p-2 text-secondary-400 hover:text-warning-600 hover:bg-warning-50 rounded-lg transition-colors duration-200" title="Editar">
+                                <a href="{{ route('usuarios.edit', $usuario->id_usuario) }}" class="p-2 text-secondary-400 hover:text-warning-600 hover:bg-warning-50 rounded-lg transition-colors duration-200" title="Editar">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
                                     </svg>
                                 </a>
+                                <button wire:click="cambiarEstado({{ $usuario->id_usuario }})" class="p-2 text-secondary-400 hover:text-{{ $usuario->activo ? 'danger' : 'success' }}-600 hover:bg-{{ $usuario->activo ? 'danger' : 'success' }}-50 rounded-lg transition-colors duration-200" title="{{ $usuario->activo ? 'Desactivar' : 'Activar' }}">
+                                    @if($usuario->activo)
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728L5.636 5.636m12.728 12.728L18.364 5.636M5.636 18.364l12.728-12.728"></path>
+                                        </svg>
+                                    @else
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                                        </svg>
+                                    @endif
+                                </button>
+                                <button wire:click="eliminar({{ $usuario->id_usuario }})" wire:confirm="¿Estás seguro de que deseas eliminar este usuario?" class="p-2 text-secondary-400 hover:text-danger-600 hover:bg-danger-50 rounded-lg transition-colors duration-200" title="Eliminar">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                                    </svg>
+                                </button>
                             </div>
                         </td>
                     </tr>
-                     <tr class="hover:bg-secondary-50 transition-colors duration-150">
-                        <td class="px-6 py-4 whitespace-nowrap">
-                            <div class="text-sm font-medium text-secondary-900">Carlos Ruiz</div>
-                        </td>
-                         <td class="px-6 py-4 whitespace-nowrap">
-                            <div class="text-sm text-secondary-900">carlos.ruiz@admin.jaec.org</div>
-                        </td>
-                         <td class="px-6 py-4 whitespace-nowrap">
-                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
-                                Administrador
-                            </span>
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap">
-                            <div class="text-sm font-medium text-secondary-500">N/A</div>
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-center">
-                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-success-100 text-success-800">
-                                <svg class="w-1.5 h-1.5 mr-1.5" fill="currentColor" viewBox="0 0 8 8">
-                                    <circle cx="4" cy="4" r="3"/>
+                    @empty
+                    <tr>
+                        <td colspan="6" class="px-6 py-12 text-center">
+                            <div class="text-secondary-500">
+                                <svg class="mx-auto h-12 w-12 text-secondary-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"></path>
                                 </svg>
-                                Activo
-                            </span>
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-center">
-                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-success-100 text-success-800">
-                                <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-                                </svg>
-                                Verificado
-                            </span>
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-center">
-                            <div class="flex items-center justify-center space-x-2">
-                                {{-- TODO: Definir la ruta correcta para ver detalles del usuario --}}
-                                <a href="{{ route('usuarios.show', 2) }}" class="p-2 text-secondary-400 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition-colors duration-200" title="Ver detalles">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
-                                    </svg>
-                                </a>
-                                {{-- TODO: Definir la ruta correcta para editar usuario --}}
-                                <a href="{{ route('usuarios.edit', 2) }}" class="p-2 text-secondary-400 hover:text-warning-600 hover:bg-warning-50 rounded-lg transition-colors duration-200" title="Editar">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
-                                    </svg>
-                                </a>
+                                <h3 class="mt-2 text-sm font-medium text-secondary-900">No hay usuarios</h3>
+                                <p class="mt-1 text-sm text-secondary-500">No se encontraron usuarios que coincidan con los filtros aplicados.</p>
                             </div>
                         </td>
                     </tr>
-                     <tr class="hover:bg-secondary-50 transition-colors duration-150">
-                        <td class="px-6 py-4 whitespace-nowrap">
-                            <div class="text-sm font-medium text-secondary-900">Dr. Luis Martínez</div>
-                        </td>
-                         <td class="px-6 py-4 whitespace-nowrap">
-                            <div class="text-sm text-secondary-900">dr.martinez@medico.jaec.org</div>
-                        </td>
-                         <td class="px-6 py-4 whitespace-nowrap">
-                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                                Médico Auditor
-                            </span>
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap">
-                            <div class="text-sm font-medium text-secondary-500">N/A</div>
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-center">
-                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-secondary-100 text-secondary-700">
-                                <svg class="w-1.5 h-1.5 mr-1.5" fill="currentColor" viewBox="0 0 8 8">
-                                    <circle cx="4" cy="4" r="3"/>
-                                </svg>
-                                Inactivo
-                            </span>
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-center">
-                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-warning-100 text-warning-800">
-                                <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
-                                </svg>
-                                Pendiente
-                            </span>
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-center">
-                            <div class="flex items-center justify-center space-x-2">
-                                {{-- TODO: Definir la ruta correcta para ver detalles del usuario --}}
-                                <a href="{{ route('usuarios.show', 3) }}" class="p-2 text-secondary-400 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition-colors duration-200" title="Ver detalles">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
-                                    </svg>
-                                </a>
-                                {{-- TODO: Definir la ruta correcta para editar usuario --}}
-                                <a href="{{ route('usuarios.edit', 3) }}" class="p-2 text-secondary-400 hover:text-warning-600 hover:bg-warning-50 rounded-lg transition-colors duration-200" title="Editar">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
-                                    </svg>
-                                </a>
-                            </div>
-                        </td>
-                    </tr>
-                    {{-- Fin Filas de ejemplo --}}
+                    @endforelse
                 </tbody>
             </table>
         </div>
@@ -330,38 +319,52 @@
         <!-- Paginación -->
         <div class="px-6 py-4 bg-secondary-50 border-t border-secondary-200 flex flex-col sm:flex-row items-center justify-between">
             <div class="text-sm text-secondary-700 mb-4 sm:mb-0">
-                Mostrando <span class="font-medium text-secondary-900">1</span> a <span class="font-medium text-secondary-900">3</span> de <span class="font-medium text-secondary-900">25</span> resultados
+                @if($usuarios->total() > 0)
+                    Mostrando <span class="font-medium text-secondary-900">{{ $usuarios->firstItem() }}</span> a <span class="font-medium text-secondary-900">{{ $usuarios->lastItem() }}</span> de <span class="font-medium text-secondary-900">{{ $usuarios->total() }}</span> resultados
+                @else
+                    No hay resultados para mostrar
+                @endif
             </div>
-            <nav class="inline-flex rounded-lg shadow-sm" aria-label="Paginación">
-                <button type="button" class="relative inline-flex items-center px-2 py-2 rounded-l-lg border border-secondary-300 bg-white text-sm font-medium text-secondary-500 hover:bg-secondary-50 focus:z-10 focus:outline-none focus:ring-1 focus:ring-primary-500 focus:border-primary-500 disabled:opacity-50 disabled:cursor-not-allowed">
-                    <span class="sr-only">Anterior</span>
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
-                    </svg>
-                </button>
-                <button type="button" class="relative inline-flex items-center px-4 py-2 border border-secondary-300 bg-white text-sm font-medium text-secondary-700 hover:bg-secondary-50 focus:z-10 focus:outline-none focus:ring-1 focus:ring-primary-500 focus:border-primary-500">
-                    1
-                </button>
-                <button type="button" class="relative inline-flex items-center px-4 py-2 border border-secondary-300 bg-primary-600 text-sm font-medium text-white hover:bg-primary-700 focus:z-10 focus:outline-none focus:ring-1 focus:ring-primary-500 focus:border-primary-500" aria-current="page">
-                    2
-                </button>
-                <button type="button" class="relative inline-flex items-center px-4 py-2 border border-secondary-300 bg-white text-sm font-medium text-secondary-700 hover:bg-secondary-50 focus:z-10 focus:outline-none focus:ring-1 focus:ring-primary-500 focus:border-primary-500">
-                    3
-                </button>
-                <span class="relative inline-flex items-center px-4 py-2 border border-secondary-300 bg-white text-sm font-medium text-secondary-700">
-                    ...
-                </span>
-                <button type="button" class="relative inline-flex items-center px-4 py-2 border border-secondary-300 bg-white text-sm font-medium text-secondary-700 hover:bg-secondary-50 focus:z-10 focus:outline-none focus:ring-1 focus:ring-primary-500 focus:border-primary-500">
-                    8
-                </button>
-                <button type="button" class="relative inline-flex items-center px-2 py-2 rounded-r-lg border border-secondary-300 bg-white text-sm font-medium text-secondary-500 hover:bg-secondary-50 focus:z-10 focus:outline-none focus:ring-1 focus:ring-primary-500 focus:border-primary-500">
-                    <span class="sr-only">Siguiente</span>
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-                    </svg>
-                </button>
-            </nav>
+            @if($usuarios->hasPages())
+                {{ $usuarios->links('pagination.custom-tailwind') }}
+            @endif
         </div>
     </div>
 </div>
-@endsection
+
+@push('scripts')
+<script>
+    function exportarUsuarios(formato) {
+        const filtroNombre = @this.get('filtro_nombre');
+        const filtroApellido = @this.get('filtro_apellido');
+        const filtroEmail = @this.get('filtro_email');
+        const filtroRol = @this.get('filtro_rol');
+        const filtroEscuela = @this.get('filtro_escuela');
+        const filtroEstado = @this.get('filtro_estado');
+        
+        const params = new URLSearchParams();
+        if (filtroNombre) params.append('filtro_nombre', filtroNombre);
+        if (filtroApellido) params.append('filtro_apellido', filtroApellido);
+        if (filtroEmail) params.append('filtro_email', filtroEmail);
+        if (filtroRol) params.append('filtro_rol', filtroRol);
+        if (filtroEscuela) params.append('filtro_escuela', filtroEscuela);
+        if (filtroEstado !== '') params.append('filtro_estado', filtroEstado);
+        
+        let url = '';
+        switch(formato) {
+            case 'csv':
+                url = '{{ route("usuarios.export.csv") }}';
+                break;
+            case 'excel':
+                url = '{{ route("usuarios.export.excel") }}';
+                break;
+        }
+        
+        if (params.toString()) {
+            url += '?' + params.toString();
+        }
+        
+        window.open(url, '_blank');
+    }
+</script>
+@endpush

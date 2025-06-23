@@ -27,21 +27,21 @@
                             @forelse ($pendientes as $reintegro)
                             <tr class="hover:bg-secondary-50 transition-colors duration-150">
                                 <td class="px-6 py-4 whitespace-nowrap">
-                                    <div class="text-sm font-medium text-secondary-900">{{ $reintegro['id_reintegro'] }}</div>
-                                    <div class="text-xs text-secondary-500">Accidente #{{ $reintegro['id_accidente'] }}</div>
+                                    <div class="text-sm font-medium text-secondary-900">{{ $reintegro->id_reintegro }}</div>
+                                    <div class="text-xs text-secondary-500">Accidente #{{ $reintegro->id_accidente }}</div>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
-                                    <div class="text-sm font-medium text-secondary-900">{{ $reintegro['nombre_alumno'] }}</div>
-                                    <div class="text-sm text-secondary-500">{{ $reintegro['escuela'] }}</div>
+                                    <div class="text-sm font-medium text-secondary-900">{{ $reintegro->alumno->nombre_completo }}</div>
+                                    <div class="text-sm text-secondary-500">{{ $reintegro->accidente->escuela->nombre }}</div>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
-                                    <div class="text-sm text-secondary-900">{{ \Carbon\Carbon::parse($reintegro['fecha_autorizacion'])->format('d/m/Y') }}</div>
+                                    <div class="text-sm text-secondary-900">{{ $reintegro->fecha_autorizacion->format('d/m/Y') }}</div>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-right">
-                                    <div class="text-sm font-bold text-secondary-900">$ {{ number_format($reintegro['monto'], 2) }}</div>
+                                    <div class="text-sm font-bold text-secondary-900">$ {{ number_format($reintegro->monto_autorizado, 2) }}</div>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-center">
-                                    <button wire:click="iniciarPago({{ $reintegro['id_reintegro'] }})" class="inline-flex items-center px-4 py-2 bg-success-600 border border-transparent rounded-lg font-medium text-sm text-white hover:bg-success-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-success-500 transition-colors duration-200">
+                                    <button wire:click="iniciarPago({{ $reintegro->id_reintegro }})" class="inline-flex items-center px-4 py-2 bg-success-600 border border-transparent rounded-lg font-medium text-sm text-white hover:bg-success-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-success-500 transition-colors duration-200">
                                         <i class="fas fa-check-circle mr-2"></i>
                                         Marcar como Pagado
                                     </button>
@@ -72,13 +72,19 @@
             
             <!-- Filtros -->
             <div class="bg-white rounded-xl border border-secondary-200 p-4 mb-6">
+                @if (session()->has('message'))
+                    <div class="bg-success-100 border-l-4 border-success-500 text-success-700 p-4 mb-4" role="alert">
+                        <p class="font-bold">Éxito</p>
+                        <p>{{ session('message') }}</p>
+                    </div>
+                @endif
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div>
                         <label for="filtroEscuela" class="block text-sm font-medium text-secondary-700">Filtrar por Escuela</label>
                         <select id="filtroEscuela" wire:model.live="filtroEscuela" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-secondary-300 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm rounded-md">
                             <option value="">Todas las escuelas</option>
                             @foreach($escuelas as $escuela)
-                                <option value="{{ $escuela }}">{{ $escuela }}</option>
+                                <option value="{{ $escuela->id_escuela }}">{{ $escuela->nombre }}</option>
                             @endforeach
                         </select>
                     </div>
@@ -109,21 +115,21 @@
                             @forelse ($historialPaginado as $reintegro)
                             <tr class="hover:bg-secondary-50 transition-colors duration-150">
                                 <td class="px-6 py-4 whitespace-nowrap">
-                                    <div class="text-sm font-medium text-secondary-900">{{ $reintegro['id_reintegro'] }}</div>
-                                     <div class="text-xs text-secondary-500">Accidente #{{ $reintegro['id_accidente'] }}</div>
+                                    <div class="text-sm font-medium text-secondary-900">{{ $reintegro->id_reintegro }}</div>
+                                     <div class="text-xs text-secondary-500">Accidente #{{ $reintegro->id_accidente }}</div>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
-                                    <div class="text-sm font-medium text-secondary-900">{{ $reintegro['nombre_alumno'] }}</div>
-                                    <div class="text-sm text-secondary-500">{{ $reintegro['escuela'] }}</div>
+                                    <div class="text-sm font-medium text-secondary-900">{{ $reintegro->alumno->nombre_completo }}</div>
+                                    <div class="text-sm text-secondary-500">{{ $reintegro->accidente->escuela->nombre }}</div>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
-                                    <div class="text-sm text-secondary-900">{{ \Carbon\Carbon::parse($reintegro['fecha_pago'])->format('d/m/Y') }}</div>
+                                    <div class="text-sm text-secondary-900">{{ $reintegro->fecha_pago->format('d/m/Y') }}</div>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-right">
-                                    <div class="text-sm font-medium text-secondary-900">$ {{ number_format($reintegro['monto'], 2) }}</div>
+                                    <div class="text-sm font-medium text-secondary-900">$ {{ number_format($reintegro->monto_autorizado, 2) }}</div>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
-                                    <div class="text-sm text-secondary-700">{{ $reintegro['numero_transferencia'] }}</div>
+                                    <div class="text-sm text-secondary-700">{{ $reintegro->numero_transferencia }}</div>
                                 </td>
                             </tr>
                             @empty
@@ -216,7 +222,7 @@
                     <h3 class="text-lg leading-6 font-medium text-secondary-900 mt-4">Confirmar Pago</h3>
                     <div class="mt-2 px-7 py-3">
                         <p class="text-sm text-secondary-500">
-                            Estás a punto de registrar el pago para el reintegro #{{ $reintegroSeleccionado['id_reintegro'] }} del alumno <strong>{{ $reintegroSeleccionado['nombre_alumno'] }}</strong> por un monto de <strong>${{ number_format($reintegroSeleccionado['monto'], 2) }}</strong>.
+                            Estás a punto de registrar el pago para el reintegro #{{ $reintegroSeleccionado->id_reintegro }} del alumno <strong>{{ $reintegroSeleccionado->alumno->nombre_completo }}</strong> por un monto de <strong>${{ number_format($reintegroSeleccionado->monto_autorizado, 2) }}</strong>.
                         </p>
                         <div class="mt-4 space-y-4 text-left">
                             <div>

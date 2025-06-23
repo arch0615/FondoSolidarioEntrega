@@ -14,18 +14,22 @@
                     <div>
                         <label for="nombre" class="block text-sm font-medium text-gray-700">Nombre de la Escuela</label>
                         <input type="text" wire:model="nombre" id="nombre" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+                        @error('nombre') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
                     </div>
                     <div>
                         <label for="direccion" class="block text-sm font-medium text-gray-700">Dirección</label>
                         <input type="text" wire:model="direccion" id="direccion" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+                        @error('direccion') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
                     </div>
                     <div>
                         <label for="telefono" class="block text-sm font-medium text-gray-700">Teléfono</label>
                         <input type="text" wire:model="telefono" id="telefono" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+                        @error('telefono') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
                     </div>
                     <div>
                         <label for="email" class="block text-sm font-medium text-gray-700">Correo Electrónico</label>
                         <input type="email" wire:model="email" id="email" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+                        @error('email') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
                     </div>
                 </div>
 
@@ -47,14 +51,17 @@
                     <div>
                         <label for="current_password" class="block text-sm font-medium text-gray-700">Contraseña Actual</label>
                         <input type="password" wire:model="current_password" id="current_password" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+                        @error('current_password') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
                     </div>
                     <div>
                         <label for="password" class="block text-sm font-medium text-gray-700">Nueva Contraseña</label>
                         <input type="password" wire:model="password" id="password" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+                        @error('password') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
                     </div>
                     <div>
                         <label for="password_confirmation" class="block text-sm font-medium text-gray-700">Confirmar Nueva Contraseña</label>
                         <input type="password" wire:model="password_confirmation" id="password_confirmation" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+                        @error('password_confirmation') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
                     </div>
                 </div>
 

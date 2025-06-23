@@ -71,21 +71,6 @@ class CatalogosSeeder extends Seeder
             );
         }
 
-        // Insertar datos en cat_secciones_alumnos (solo si no existen)
-        $secciones = [
-            ['id_seccion' => 1, 'nombre_seccion' => 'A'],
-            ['id_seccion' => 2, 'nombre_seccion' => 'B'],
-            ['id_seccion' => 3, 'nombre_seccion' => 'C'],
-            ['id_seccion' => 4, 'nombre_seccion' => 'D'],
-            ['id_seccion' => 5, 'nombre_seccion' => 'U'],
-        ];
-        foreach ($secciones as $seccion) {
-            DB::table('cat_secciones_alumnos')->updateOrInsert(
-                ['id_seccion' => $seccion['id_seccion']],
-                $seccion
-            );
-        }
-
         // Insertar datos en cat_tipos_documentos (solo si no existen)
         $tipos_documentos = [
             ['id_tipo_documento' => 1, 'nombre_tipo_documento' => 'Reglamento Interno'],

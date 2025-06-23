@@ -6,9 +6,7 @@ use Livewire\Component;
 use App\Models\AuditoriaSistema;
 use App\Models\User;
 use Livewire\WithPagination;
-use Livewire\Attributes\Layout;
 
-#[Layout('layouts.app')]
 class OperacionesSistema extends Component
 {
     use WithPagination;
@@ -22,7 +20,8 @@ class OperacionesSistema extends Component
     public $filtro_ip = '';
     public $sortField = 'fecha_hora';
     public $sortDirection = 'desc';
-
+    public $perPage = 15;
+ 
     protected $queryString = [
         'filtro_usuario' => ['except' => '', 'as' => 'u_op'],
         'filtro_accion' => ['except' => '', 'as' => 'ac_op'],
@@ -36,6 +35,22 @@ class OperacionesSistema extends Component
         'page' => ['except' => 1, 'as' => 'p_op'],
     ];
 
+    public $showModal = false;
+    public $datosAnteriores = '';
+    public $datosNuevos = '';
+
+    public function mostrarDetalles($datosAnteriores, $datosNuevos)
+    {
+        $this->datosAnteriores = json_decode($datosAnteriores) ? json_encode(json_decode($datosAnteriores), JSON_PRETTY_PRINT) : 'Sin datos';
+        $this->datosNuevos = json_decode($datosNuevos) ? json_encode(json_decode($datosNuevos), JSON_PRETTY_PRINT) : 'Sin datos';
+        $this->showModal = true;
+    }
+
+    public function cerrarModal()
+    {
+        $this->showModal = false;
+    }
+
     public function sortBy($field)
     {
         if ($this->sortField === $field) {
@@ -47,8 +62,17 @@ class OperacionesSistema extends Component
         $this->resetPage();
     }
 
-    public function aplicarFiltros()
+    public function limpiarFiltros()
     {
+        $this->reset([
+            'filtro_usuario',
+            'filtro_accion',
+            'filtro_tabla',
+            'filtro_id_registro',
+            'filtro_fecha_desde',
+            'filtro_fecha_hasta',
+            'filtro_ip',
+        ]);
         $this->resetPage();
     }
 
@@ -101,13 +125,21 @@ class OperacionesSistema extends Component
             $query->orderBy($this->sortField, $this->sortDirection);
         }
 
-        $operaciones = $query->paginate(15); // 15 registros por página
-
+        $operaciones = $query->paginate($this->perPage);
+ 
         return view('livewire.auditoria.operaciones-sistema', [
             'operaciones' => $operaciones,
         ]);
     }
 
+    public function updatingFiltroUsuario() { $this->resetPage('p_op'); }
+    public function updatingFiltroAccion() { $this->resetPage('p_op'); }
+    public function updatingFiltroTabla() { $this->resetPage('p_op'); }
+    public function updatingFiltroIdRegistro() { $this->resetPage('p_op'); }
+    public function updatingFiltroFechaDesde() { $this->resetPage('p_op'); }
+    public function updatingFiltroFechaHasta() { $this->resetPage('p_op'); }
+    public function updatingFiltroIp() { $this->resetPage('p_op'); }
+ 
     // TODO: Implementar lógica de exportación
     public function exportar($formato)
     {

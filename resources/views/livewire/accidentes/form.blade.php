@@ -1,1108 +1,612 @@
-@extends('layouts.app')
-
-@section('content')
-<div class="mx-auto px-4">
-    <!-- Header -->
-    <div class="mb-8">
-        <nav class="flex items-center text-sm text-secondary-500 mb-4">
-            <a href="{{ route('accidentes.index') }}" class="hover:text-secondary-700">Accidentes</a>
-            <svg class="mx-2 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-            <span class="text-secondary-900">{{ $modo == 'create' ? 'Nuevo Accidente' : ($modo == 'edit' ? 'Editar Accidente' : 'Detalles de Accidente') }}</span>
-        </nav>
-        <div class="flex items-center justify-between">
-            <div>
-                <h1 class="text-2xl font-semibold text-secondary-900">
-                    {{ $modo == 'create' ? 'Nuevo Accidente' : ($modo == 'edit' ? 'Editar Accidente' : 'Detalles de Accidente') }}
-                </h1>
-                <p class="mt-1 text-sm text-secondary-600">
-                    {{ $modo == 'create' ? 'Complete los datos para registrar un nuevo accidente' : ($modo == 'edit' ? 'Modifique los datos del accidente' : 'Información detallada del accidente') }}
-                </p>
-            </div>
-            @if($modo == 'show')
-            <div class="flex space-x-3">
-                <a href="{{ route('accidentes.edit', $accidente_id ?? 1) }}" class="inline-flex items-center px-4 py-2 border border-secondary-300 rounded-lg text-sm font-medium text-secondary-700 bg-white hover:bg-secondary-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-colors duration-200">
-                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
-                    </svg>
-                    Editar
-                </a>
-            </div>
-            @endif
-        </div>
-    </div>
-
-    <!-- Formulario -->
-    <div class="bg-white rounded-xl border border-secondary-200">
-        <form action="{{ $modo == 'create' ? route('accidentes.index') : route('accidentes.index') }}" method="POST" class="space-y-6 p-6">
-            @csrf
-            @if($modo == 'edit')
-                @method('PUT')
-            @endif
-
-            <!-- Información de los Alumnos -->
-            <div class="border-b border-secondary-200 pb-6">
-                <h3 class="text-lg font-medium text-secondary-900 mb-4">Alumnos Involucrados</h3>
-                
-                <!-- Campo de búsqueda con autocompletado -->
-                <div class="mb-4">
-                    <label for="buscar_alumno" class="block text-sm font-medium text-secondary-700 mb-2">
-                        Buscar y Agregar Alumnos <span class="text-danger-500">*</span>
-                    </label>
-                    <div class="flex gap-2">
-                        <div class="flex-1 relative">
-                            <input
-                                type="text"
-                                id="buscar_alumno"
-                                class="block w-full px-3 py-2 border border-secondary-300 rounded-lg text-sm placeholder-secondary-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 {{ $modo == 'show' ? 'bg-secondary-50' : 'bg-white' }}"
-                                placeholder="Escriba el nombre del alumno..."
-                                {{ $modo == 'show' ? 'readonly' : '' }}
-                                autocomplete="off"
-                            >
-                            <!-- Dropdown de sugerencias -->
-                            <div id="sugerencias_alumnos" class="absolute z-10 mt-1 w-full bg-white border border-secondary-300 rounded-lg shadow-lg hidden max-h-60 overflow-y-auto">
-                                <!-- Las sugerencias se llenarán dinámicamente con JavaScript -->
-                            </div>
-                        </div>
-                        <!-- Botón para agregar nuevo alumno -->
-                        <button
-                            type="button"
-                            id="btn_nuevo_alumno"
-                            class="inline-flex items-center px-4 py-2 bg-blue-600 border border-transparent rounded-lg font-medium text-sm text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-200 {{ $modo == 'show' ? 'opacity-50 cursor-not-allowed' : '' }}"
-                            @if($modo == 'show') disabled @endif
-                        >
-                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
-                            </svg>
-                            Nuevo Alumno
-                        </button>
-                    </div>
-                    <p class="text-xs text-secondary-500 mt-1">Escriba para buscar o haga clic en "Nuevo Alumno" para agregar uno nuevo</p>
-                </div>
-
-                <!-- Lista de alumnos seleccionados -->
-                <div id="alumnos_seleccionados" class="space-y-2">
-                    <label class="block text-sm font-medium text-secondary-700 mb-2">Alumnos Seleccionados:</label>
-                    <div id="lista_alumnos" class="min-h-[60px] border border-secondary-200 rounded-lg p-3 bg-secondary-50">
-                        @php
-                            // Simular alumnos seleccionados para el mockup según el ID del accidente
-                            $alumnosSeleccionados = [];
-                            if (isset($accidente_id)) {
-                                switch($accidente_id) {
-                                    case 1:
-                                        $alumnosSeleccionados = [
-                                            ['id' => 1, 'nombre' => 'Juan Pérez', 'grado' => '5to A', 'dni' => '12345678']
-                                        ];
-                                        break;
-                                    case 2:
-                                        $alumnosSeleccionados = [
-                                            ['id' => 2, 'nombre' => 'María García', 'grado' => '3ro B', 'dni' => '87654321']
-                                        ];
-                                        break;
-                                    case 3:
-                                        $alumnosSeleccionados = [
-                                            ['id' => 3, 'nombre' => 'Carlos López', 'grado' => '6to A', 'dni' => '11223344'],
-                                            ['id' => 4, 'nombre' => 'Ana Martínez', 'grado' => '4to C', 'dni' => '55667788']
-                                        ];
-                                        break;
-                                }
-                            }
-                        @endphp
-                        
-                        @if(empty($alumnosSeleccionados))
-                            <p class="text-sm text-secondary-500 italic">No hay alumnos seleccionados</p>
-                        @else
-                            @foreach($alumnosSeleccionados as $alumno)
-                            <div class="alumno-item flex items-center justify-between bg-white border border-secondary-200 rounded-lg p-3" data-id="{{ $alumno['id'] }}">
-                                <div class="flex-1">
-                                    <div class="font-medium text-secondary-900">{{ $alumno['nombre'] }}</div>
-                                    <div class="text-sm text-secondary-600">{{ $alumno['grado'] }} - DNI: {{ $alumno['dni'] }}</div>
-                                </div>
-                                @if($modo != 'show')
-                                <button type="button" class="btn-remover-alumno text-red-600 hover:text-red-800 p-1" data-id="{{ $alumno['id'] }}">
-                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                                    </svg>
-                                </button>
-                                @endif
-                                <input type="hidden" name="alumnos_ids[]" value="{{ $alumno['id'] }}">
-                            </div>
-                            @endforeach
-                        @endif
-                    </div>
-                </div>
-            </div>
-
-            <!-- Detalles del Accidente -->
-            <div class="border-b border-secondary-200 pb-6">
-                <h3 class="text-lg font-medium text-secondary-900 mb-4">Detalles del Accidente</h3>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <!-- Fecha del Accidente -->
-                    <div class="space-y-1">
-                        <label for="fecha_accidente" class="block text-sm font-medium text-secondary-700">
-                            Fecha del Accidente <span class="text-danger-500">*</span>
-                        </label>
-                        <input
-                            type="date"
-                            name="fecha_accidente"
-                            id="fecha_accidente"
-                            class="block w-full px-3 py-2 border border-secondary-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 {{ $modo == 'show' ? 'bg-secondary-50' : 'bg-white' }}"
-                            value="{{ $accidente_id ?? '' == 1 ? '2024-01-15' : ($accidente_id ?? '' == 2 ? '2024-01-20' : '') }}"
-                            {{ $modo == 'show' ? 'readonly' : '' }}
-                            required
-                        >
-                    </div>
-
-                    <!-- Hora del Accidente -->
-                    <div class="space-y-1">
-                        <label for="hora_accidente" class="block text-sm font-medium text-secondary-700">
-                            Hora del Accidente <span class="text-danger-500">*</span>
-                        </label>
-                        <input
-                            type="time"
-                            name="hora_accidente"
-                            id="hora_accidente"
-                            class="block w-full px-3 py-2 border border-secondary-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 {{ $modo == 'show' ? 'bg-secondary-50' : 'bg-white' }}"
-                            value="{{ $accidente_id ?? '' == 1 ? '10:30' : ($accidente_id ?? '' == 2 ? '14:15' : '') }}"
-                            {{ $modo == 'show' ? 'readonly' : '' }}
-                            required
-                        >
-                    </div>
-
-                    <!-- Lugar del Accidente -->
-                    <div class="md:col-span-2 space-y-1">
-                        <label for="lugar_accidente" class="block text-sm font-medium text-secondary-700">
-                            Lugar del Accidente <span class="text-danger-500">*</span>
-                        </label>
-                        <input
-                            type="text"
-                            name="lugar_accidente"
-                            id="lugar_accidente"
-                            class="block w-full px-3 py-2 border border-secondary-300 rounded-lg text-sm placeholder-secondary-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 {{ $modo == 'show' ? 'bg-secondary-50' : 'bg-white' }}"
-                            placeholder="Ej: Patio de recreo, Aula 5B, Escaleras principales"
-                            value="{{ $accidente_id ?? '' == 1 ? 'Patio de juegos' : ($accidente_id ?? '' == 2 ? 'Aula de educación física' : '') }}"
-                            {{ $modo == 'show' ? 'readonly' : '' }}
-                            required
-                        >
-                    </div>
-
-                    <!-- Descripción del Accidente -->
-                    <div class="md:col-span-2 space-y-1">
-                        <label for="descripcion_accidente" class="block text-sm font-medium text-secondary-700">
-                            Descripción del Accidente <span class="text-danger-500">*</span>
-                        </label>
-                        <textarea
-                            name="descripcion_accidente"
-                            id="descripcion_accidente"
-                            rows="4"
-                            class="block w-full px-3 py-2 border border-secondary-300 rounded-lg text-sm placeholder-secondary-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 {{ $modo == 'show' ? 'bg-secondary-50' : 'bg-white' }}"
-                            placeholder="Describa detalladamente cómo ocurrió el accidente..."
-                            {{ $modo == 'show' ? 'readonly' : '' }}
-                            required>{{ $accidente_id ?? '' == 1 ? 'El alumno se encontraba jugando en el patio durante el recreo cuando se resbaló y cayó, golpeándose el brazo derecho contra el suelo.' : ($accidente_id ?? '' == 2 ? 'Durante la clase de educación física, la alumna tropezó mientras corría y se golpeó la rodilla.' : '') }}</textarea>
-                    </div>
-
-                    <!-- Tipo de Lesión -->
-                    <div class="md:col-span-2 space-y-1">
-                        <label for="tipo_lesion" class="block text-sm font-medium text-secondary-700">
-                            Tipo de Lesión <span class="text-danger-500">*</span>
-                        </label>
-                        <input
-                            type="text"
-                            name="tipo_lesion"
-                            id="tipo_lesion"
-                            class="block w-full px-3 py-2 border border-secondary-300 rounded-lg text-sm placeholder-secondary-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 {{ $modo == 'show' ? 'bg-secondary-50' : 'bg-white' }}"
-                            placeholder="Ej: Fractura, Contusión, Corte, Esguince"
-                            value="{{ $accidente_id ?? '' == 1 ? 'Fractura de brazo' : ($accidente_id ?? '' == 2 ? 'Contusión en rodilla' : '') }}"
-                            {{ $modo == 'show' ? 'readonly' : '' }}
-                            required
-                        >
-                    </div>
-                </div>
-            </div>
-
-            <!-- Protocolo de Emergencias -->
-            <div class="border-b border-secondary-200 pb-6">
-                <h3 class="text-lg font-medium text-secondary-900 mb-4">Protocolo de Emergencias</h3>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <!-- Protocolo Activado -->
-                    <div class="md:col-span-2 flex items-center">
-                        <div class="flex items-center h-5">
-                            <input
-                                type="checkbox"
-                                name="protocolo_activado"
-                                id="protocolo_activado"
-                                class="w-4 h-4 text-red-600 bg-white border-secondary-300 rounded focus:ring-red-500 focus:ring-2"
-                                {{ ($modo == 'create' || ($accidente_id ?? '' == 1 && $modo != 'create')) ? 'checked' : '' }}
-                                {{ $modo == 'show' ? 'disabled' : '' }}
-                            >
-                        </div>
-                        <div class="ml-3">
-                            <label for="protocolo_activado" class="text-sm font-medium text-secondary-700">
-                                Se activó el Protocolo de Emergencias
-                            </label>
-                            <p class="text-xs text-secondary-500">Marcar si se llamó al Sistema de Emergencias y Urgencias médicas</p>
-                        </div>
-                    </div>
-
-                    <!-- Llamada a Emergencia -->
-                    <div class="flex items-center">
-                        <div class="flex items-center h-5">
-                            <input
-                                type="checkbox"
-                                name="llamada_emergencia"
-                                id="llamada_emergencia"
-                                class="w-4 h-4 text-red-600 bg-white border-secondary-300 rounded focus:ring-red-500 focus:ring-2"
-                                {{ ($accidente_id ?? '' == 1 && $modo != 'create') ? 'checked' : '' }}
-                                {{ $modo == 'show' ? 'disabled' : '' }}
-                            >
-                        </div>
-                        <div class="ml-3">
-                            <label for="llamada_emergencia" class="text-sm font-medium text-secondary-700">
-                                Se realizó llamada de emergencia
-                            </label>
-                        </div>
-                    </div>
-
-                    <!-- Hora de Llamada -->
-                    <div class="space-y-1">
-                        <label for="hora_llamada" class="block text-sm font-medium text-secondary-700">Hora de Llamada</label>
-                        <input
-                            type="time"
-                            name="hora_llamada"
-                            id="hora_llamada"
-                            class="block w-full px-3 py-2 border border-secondary-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 {{ $modo == 'show' ? 'bg-secondary-50' : 'bg-white' }}"
-                            value="{{ $accidente_id ?? '' == 1 ? '10:35' : '' }}"
-                            {{ $modo == 'show' ? 'readonly' : '' }}
-                        >
-                    </div>
-
-                    <!-- Servicio de Emergencia -->
-                    <div class="md:col-span-2 space-y-1">
-                        <label for="servicio_emergencia" class="block text-sm font-medium text-secondary-700">Servicio de Emergencia Contactado</label>
-                        <input
-                            type="text"
-                            name="servicio_emergencia"
-                            id="servicio_emergencia"
-                            class="block w-full px-3 py-2 border border-secondary-300 rounded-lg text-sm placeholder-secondary-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 {{ $modo == 'show' ? 'bg-secondary-50' : 'bg-white' }}"
-                            placeholder="Ej: SAME, Cruz Roja, Emergencias Médicas FS"
-                            value="{{ $accidente_id ?? '' == 1 ? 'Emergencias Médicas FS' : '' }}"
-                            {{ $modo == 'show' ? 'readonly' : '' }}
-                        >
-                    </div>
-                </div>
-            </div>
-
-            <!-- Estado y Configuración -->
-            @if($modo != 'create')
-            <div class="border-b border-secondary-200 pb-6">
-                <h3 class="text-lg font-medium text-secondary-900 mb-4">Estado del Expediente</h3>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <!-- Número de Expediente -->
-                    <div class="space-y-1">
-                        <label for="numero_expediente" class="block text-sm font-medium text-secondary-700">Número de Expediente</label>
-                        <input
-                            type="text"
-                            name="numero_expediente"
-                            id="numero_expediente"
-                            class="block w-full px-3 py-2 border border-secondary-300 rounded-lg text-sm bg-secondary-50"
-                            value="{{ $accidente_id ?? '' == 1 ? 'EXP-2024-001' : ($accidente_id ?? '' == 2 ? 'EXP-2024-002' : '') }}"
-                            readonly
-                        >
-                        <p class="text-xs text-secondary-500">Generado automáticamente por el sistema</p>
-                    </div>
-
-                    <!-- Estado -->
-                    <div class="space-y-1">
-                        <label for="estado" class="block text-sm font-medium text-secondary-700">Estado</label>
-                        <select
-                            name="estado"
-                            id="estado"
-                            class="block w-full px-3 py-2 border border-secondary-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 {{ $modo == 'show' ? 'bg-secondary-50' : 'bg-white' }}"
-                            {{ $modo == 'show' ? 'disabled' : '' }}>
-                            <option value="Activo" {{ ($accidente_id ?? '' == 1) ? 'selected' : '' }}>Activo</option>
-                            <option value="Cerrado">Cerrado</option>
-                        </select>
-                    </div>
-
-                    <!-- Fecha de Carga -->
-                    <div class="space-y-1">
-                        <label for="fecha_carga" class="block text-sm font-medium text-secondary-700">Fecha de Carga</label>
-                        <input
-                            type="date"
-                            name="fecha_carga"
-                            id="fecha_carga"
-                            class="block w-full px-3 py-2 border border-secondary-300 rounded-lg text-sm bg-secondary-50"
-                            value="{{ $accidente_id ?? '' == 1 ? '2024-01-15' : ($accidente_id ?? '' == 2 ? '2024-01-20' : '') }}"
-                            readonly
-                        >
-                        <p class="text-xs text-secondary-500">Fecha de registro en el sistema</p>
-                    </div>
-                </div>
-            </div>
-            @endif
-
-            <!-- Documentos Adjuntos -->
-            <div class="border-b border-secondary-200 pb-6">
-                <h3 class="text-lg font-medium text-secondary-900 mb-4">Documentos Adjuntos</h3>
-                
-                <!-- Información explicativa -->
-                <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
-                    <div class="flex items-start">
-                        <svg class="w-5 h-5 text-blue-600 mt-0.5 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                        </svg>
-                        <div>
-                            <h4 class="text-sm font-medium text-blue-800 mb-1">Subida de Documentos</h4>
-                            <p class="text-sm text-blue-700">
-                                Puede adjuntar múltiples documentos relacionados con el accidente (fotos, informes médicos, facturas, etc.).
-                                Formatos permitidos: PDF, JPG, JPEG, PNG. Tamaño máximo por archivo: 10MB.
-                            </p>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Subida de archivos -->
-                @if($modo != 'show')
-                <div class="mb-6">
-                    <label class="block text-sm font-medium text-secondary-700 mb-2">
-                        Seleccionar Archivos
-                    </label>
-                    <div class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-secondary-300 border-dashed rounded-lg hover:border-secondary-400 transition-colors duration-200">
-                        <div class="space-y-1 text-center">
-                            <svg class="mx-auto h-12 w-12 text-secondary-400" stroke="currentColor" fill="none" viewBox="0 0 48 48">
-                                <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-                            </svg>
-                            <div class="flex text-sm text-secondary-600">
-                                <label for="archivos_accidente" class="relative cursor-pointer bg-white rounded-md font-medium text-primary-600 hover:text-primary-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-primary-500">
-                                    <span>Subir archivos</span>
-                                    <input
-                                        id="archivos_accidente"
-                                        name="archivos_accidente[]"
-                                        type="file"
-                                        class="sr-only"
-                                        multiple
-                                        accept=".pdf,.jpg,.jpeg,.png"
-                                    >
-                                </label>
-                                <p class="pl-1">o arrastrar y soltar</p>
-                            </div>
-                            <p class="text-xs text-secondary-500">
-                                PDF, JPG, JPEG, PNG hasta 10MB cada uno
-                            </p>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Campo para descripción general de archivos -->
-                <div class="mb-4">
-                    <label for="descripcion_archivos" class="block text-sm font-medium text-secondary-700 mb-2">
-                        Descripción de los Documentos (Opcional)
-                    </label>
-                    <textarea
-                        name="descripcion_archivos"
-                        id="descripcion_archivos"
-                        rows="2"
-                        class="block w-full px-3 py-2 border border-secondary-300 rounded-lg text-sm placeholder-secondary-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
-                        placeholder="Breve descripción de los documentos adjuntos..."
-                    ></textarea>
-                </div>
-                @endif
-
-                <!-- Lista de archivos seleccionados/existentes -->
-                <div id="lista_archivos_container">
-                    <label class="block text-sm font-medium text-secondary-700 mb-2">
-                        {{ $modo == 'show' ? 'Documentos del Accidente:' : 'Archivos Seleccionados:' }}
-                    </label>
-                    <div id="lista_archivos" class="space-y-2">
-                        @php
-                            // Simular archivos existentes para el mockup según el ID del accidente
-                            $archivosExistentes = [];
-                            if (isset($accidente_id) && $modo != 'create') {
-                                switch($accidente_id) {
-                                    case 1:
-                                        $archivosExistentes = [
-                                            ['nombre' => 'foto_lesion_brazo.jpg', 'tipo' => 'jpg', 'tamaño' => '2.3 MB', 'fecha' => '15/01/2024 10:45'],
-                                            ['nombre' => 'informe_medico_inicial.pdf', 'tipo' => 'pdf', 'tamaño' => '1.1 MB', 'fecha' => '15/01/2024 11:20']
-                                        ];
-                                        break;
-                                    case 2:
-                                        $archivosExistentes = [
-                                            ['nombre' => 'radiografia_rodilla.jpg', 'tipo' => 'jpg', 'tamaño' => '3.2 MB', 'fecha' => '20/01/2024 14:30']
-                                        ];
-                                        break;
-                                    case 3:
-                                        $archivosExistentes = [
-                                            ['nombre' => 'declaracion_testigos.pdf', 'tipo' => 'pdf', 'tamaño' => '856 KB', 'fecha' => '25/01/2024 09:15'],
-                                            ['nombre' => 'foto_lugar_accidente.png', 'tipo' => 'png', 'tamaño' => '4.1 MB', 'fecha' => '25/01/2024 09:20'],
-                                            ['nombre' => 'certificado_medico.pdf', 'tipo' => 'pdf', 'tamaño' => '1.8 MB', 'fecha' => '25/01/2024 16:45']
-                                        ];
-                                        break;
-                                }
-                            }
-                        @endphp
-                        
-                        @if(empty($archivosExistentes))
-                            <div class="text-center py-8 border-2 border-dashed border-secondary-200 rounded-lg">
-                                <svg class="mx-auto h-8 w-8 text-secondary-400 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+<div>
+    <!-- Modal de confirmación -->
+    @if($mensaje)
+        <div class="fixed inset-0 z-50 overflow-y-auto" x-data="{ show: true }" x-show="show" x-transition>
+            <div class="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+                <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" @click="show = false"></div>
+                <div class="inline-block align-bottom bg-white rounded-lg px-4 pt-5 pb-4 text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-sm sm:w-full sm:p-6">
+                    <div>
+                        <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full {{ $tipoMensaje === 'success' ? 'bg-green-100' : 'bg-red-100' }}">
+                            @if($tipoMensaje === 'success')
+                                <svg class="h-6 w-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
                                 </svg>
-                                <p class="text-sm text-secondary-500">{{ $modo == 'show' ? 'No hay documentos adjuntos' : 'No hay archivos seleccionados' }}</p>
+                            @endif
+                        </div>
+                        <div class="mt-3 text-center sm:mt-5">
+                            <h3 class="text-lg leading-6 font-medium text-gray-900">¡Éxito!</h3>
+                            <div class="mt-2">
+                                <p class="text-sm text-gray-500">{{ $mensaje }}</p>
+                                @if($modo == 'create' && $tipoMensaje === 'success')
+                                    <p class="text-xs text-gray-400 mt-2">Redirigiendo al listado en 3 segundos...</p>
+                                @endif
                             </div>
+                        </div>
+                    </div>
+                    <div class="mt-5 sm:mt-6">
+                        @if($modo == 'create')
+                            <button @click="show = false" wire:click="redirigirAlListado" type="button" class="inline-flex justify-center w-full rounded-md border border-transparent shadow-sm px-4 py-2 bg-green-600 hover:bg-green-700 text-base font-medium text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 sm:text-sm">
+                                Ir al Listado
+                            </button>
                         @else
-                            @foreach($archivosExistentes as $index => $archivo)
-                            <div class="archivo-item flex items-center justify-between bg-white border border-secondary-200 rounded-lg p-3" data-index="{{ $index }}">
-                                <div class="flex items-center flex-1">
-                                    <!-- Icono según tipo de archivo -->
-                                    @if($archivo['tipo'] == 'pdf')
-                                        <svg class="w-8 h-8 text-red-500 mr-3 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                                            <path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z" clip-rule="evenodd"></path>
-                                        </svg>
-                                    @else
-                                        <svg class="w-8 h-8 text-green-500 mr-3 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                                            <path fill-rule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clip-rule="evenodd"></path>
-                                        </svg>
-                                    @endif
-                                    <div class="flex-1 min-w-0">
-                                        <div class="font-medium text-secondary-900 truncate">{{ $archivo['nombre'] }}</div>
-                                        <div class="text-sm text-secondary-600">
-                                            {{ $archivo['tamaño'] }} • {{ $archivo['fecha'] }}
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="flex items-center ml-4">
-                                    <!-- Botón para ver/descargar -->
-                                    <button type="button" class="text-primary-600 hover:text-primary-800 p-1 mr-2" title="Ver archivo">
-                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
-                                        </svg>
-                                    </button>
-                                    @if($modo != 'show')
-                                    <!-- Botón para eliminar -->
-                                    <button type="button" class="btn-eliminar-archivo text-red-600 hover:text-red-800 p-1" data-index="{{ $index }}" title="Eliminar archivo">
-                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
-                                        </svg>
-                                    </button>
-                                    @endif
-                                </div>
-                            </div>
-                            @endforeach
+                            <button @click="show = false" wire:click="limpiarMensaje" type="button" class="inline-flex justify-center w-full rounded-md border border-transparent shadow-sm px-4 py-2 bg-green-600 hover:bg-green-700 text-base font-medium text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 sm:text-sm">
+                                Aceptar
+                            </button>
                         @endif
                     </div>
                 </div>
             </div>
+        </div>
+    @endif
 
-            <!-- Botones de Acción -->
-            <div class="flex items-center justify-between pt-6 border-t border-secondary-200">
-                <a href="{{ route('accidentes.index') }}" class="inline-flex items-center px-4 py-2 border border-secondary-300 rounded-lg text-sm font-medium text-secondary-700 bg-white hover:bg-secondary-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-colors duration-200">
-                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
-                    </svg>
-                    Volver al Listado
-                </a>
-                @if($modo != 'show')
-                <button type="submit" class="inline-flex items-center px-6 py-2 bg-red-600 border border-transparent rounded-lg font-medium text-sm text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-colors duration-200">
-                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-                    </svg>
-                    {{ $modo == 'create' ? 'Registrar Accidente' : 'Actualizar Accidente' }}
-                </button>
+    <div class="mx-auto px-4">
+        <!-- Header -->
+        <div class="mb-8">
+            <nav class="flex items-center text-sm text-secondary-500 mb-4">
+                <a href="{{ route('accidentes.index') }}" class="hover:text-secondary-700">Accidentes</a>
+                <svg class="mx-2 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                </svg>
+                <span class="text-secondary-900">{{ $modo == 'create' ? 'Nuevo Accidente' : ($modo == 'edit' ? 'Editar Accidente' : 'Detalles de Accidente') }}</span>
+            </nav>
+            <div class="flex items-center justify-between">
+                <div>
+                    <h1 class="text-2xl font-semibold text-secondary-900">
+                        {{ $modo == 'create' ? 'Nuevo Accidente' : ($modo == 'edit' ? 'Editar Accidente' : 'Detalles de Accidente') }}
+                    </h1>
+                    <p class="mt-1 text-sm text-secondary-600">
+                        {{ $modo == 'create' ? 'Complete los datos para registrar un nuevo accidente' : ($modo == 'edit' ? 'Modifique los datos del accidente' : 'Información detallada del accidente') }}
+                    </p>
+                </div>
+                @if($modo == 'show')
+                <div class="flex space-x-3">
+                    <a href="{{ route('accidentes.edit', $accidente_id ?? 1) }}" class="inline-flex items-center px-4 py-2 border border-secondary-300 rounded-lg text-sm font-medium text-secondary-700 bg-white hover:bg-secondary-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-colors duration-200">
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                        </svg>
+                        Editar
+                    </a>
+                </div>
                 @endif
             </div>
-        </form>
-    </div>
-</div>
-
-<!-- Modal para Nuevo Alumno -->
-<div id="modal_nuevo_alumno" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center p-4">
-    <div class="bg-white rounded-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
-        <div class="flex justify-between items-center p-6 border-b border-secondary-200">
-            <h3 class="text-lg font-semibold text-secondary-900">Agregar Nuevo Alumno</h3>
-            <button type="button" id="cerrar_modal" class="text-secondary-400 hover:text-secondary-600">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                </svg>
-            </button>
         </div>
-        
-        <div class="p-6">
-            <form id="form_nuevo_alumno" class="space-y-6">
-                <!-- Información Personal del Alumno -->
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <!-- Nombre -->
-                    <div class="space-y-1">
-                        <label for="modal_nombre" class="block text-sm font-medium text-secondary-700">
-                            Nombre <span class="text-danger-500">*</span>
-                        </label>
-                        <input
-                            type="text"
-                            id="modal_nombre"
-                            class="block w-full px-3 py-2 border border-secondary-300 rounded-lg text-sm placeholder-secondary-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
-                            placeholder="Ej: Ana"
-                            required
-                        >
-                    </div>
 
-                    <!-- Apellido -->
+        <!-- Formulario -->
+        <div class="bg-white rounded-xl border border-secondary-200">
+            <form wire:submit.prevent="guardar" class="space-y-6 p-6">
+                <!-- Selección de Escuela -->
+                <div class="border-b border-secondary-200 pb-6">
+                    <h3 class="text-lg font-medium text-secondary-900 mb-4">Información de la Escuela</h3>
                     <div class="space-y-1">
-                        <label for="modal_apellido" class="block text-sm font-medium text-secondary-700">
-                            Apellido <span class="text-danger-500">*</span>
+                        <label for="id_escuela" class="block text-sm font-medium text-secondary-700">
+                            Escuela <span class="text-danger-500">*</span>
                         </label>
-                        <input
-                            type="text"
-                            id="modal_apellido"
-                            class="block w-full px-3 py-2 border border-secondary-300 rounded-lg text-sm placeholder-secondary-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
-                            placeholder="Ej: Martínez"
-                            required
-                        >
-                    </div>
-
-                    <!-- DNI -->
-                    <div class="space-y-1">
-                        <label for="modal_dni" class="block text-sm font-medium text-secondary-700">
-                            DNI <span class="text-danger-500">*</span>
-                        </label>
-                        <input
-                            type="text"
-                            id="modal_dni"
-                            class="block w-full px-3 py-2 border border-secondary-300 rounded-lg text-sm placeholder-secondary-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
-                            placeholder="Ej: 45678912"
-                            required
-                        >
-                    </div>
-
-                    <!-- CUIL -->
-                    <div class="space-y-1">
-                        <label for="modal_cuil" class="block text-sm font-medium text-secondary-700">
-                            CUIL <span class="text-danger-500">*</span>
-                        </label>
-                        <input
-                            type="text"
-                            id="modal_cuil"
-                            class="block w-full px-3 py-2 border border-secondary-300 rounded-lg text-sm placeholder-secondary-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
-                            placeholder="Ej: 23-45678912-4"
-                            required
-                        >
-                    </div>
-
-                    <!-- Fecha de Nacimiento -->
-                    <div class="space-y-1">
-                        <label for="modal_fecha_nacimiento" class="block text-sm font-medium text-secondary-700">
-                            Fecha de Nacimiento <span class="text-danger-500">*</span>
-                        </label>
-                        <input
-                            type="date"
-                            id="modal_fecha_nacimiento"
-                            class="block w-full px-3 py-2 border border-secondary-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
-                            required
-                        >
-                    </div>
-
-                    <!-- Sala/Grado/Curso -->
-                    <div class="space-y-1">
-                        <label for="modal_sala_grado_curso" class="block text-sm font-medium text-secondary-700">
-                            Sala/Grado/Curso <span class="text-danger-500">*</span>
-                        </label>
-                        <input
-                            type="text"
-                            id="modal_sala_grado_curso"
-                            class="block w-full px-3 py-2 border border-secondary-300 rounded-lg text-sm placeholder-secondary-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
-                            placeholder="Ej: 7° Grado, 3° Año, Sala de 5"
-                            required
-                        >
-                    </div>
-
-                    <!-- Sección -->
-                    <div class="space-y-1">
-                        <label for="modal_seccion" class="block text-sm font-medium text-secondary-700">
-                            Sección <span class="text-danger-500">*</span>
-                        </label>
-                        <select
-                            id="modal_seccion"
-                            class="block w-full px-3 py-2 border border-secondary-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
-                            required
-                        >
-                            <option value="">Seleccione una sección</option>
-                            <option value="A">A</option>
-                            <option value="B">B</option>
-                            <option value="C">C</option>
-                            <option value="D">D</option>
+                        <select wire:model="id_escuela" id="id_escuela" class="block w-full px-3 py-2 border border-secondary-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 {{ $modo == 'show' || $es_usuario_general ? 'bg-secondary-50' : 'bg-white' }}" {{ $modo == 'show' || $es_usuario_general ? 'disabled' : '' }} required>
+                            <option value="">Seleccione una escuela</option>
+                            @foreach($escuelas as $escuela)
+                                <option value="{{ $escuela->id_escuela }}">{{ $escuela->nombre }}</option>
+                            @endforeach
                         </select>
-                    </div>
-
-                    <!-- Nombre del Padre/Madre -->
-                    <div class="space-y-1">
-                        <label for="modal_nombre_padre_madre" class="block text-sm font-medium text-secondary-700">
-                            Nombre del Padre/Madre <span class="text-danger-500">*</span>
-                        </label>
-                        <input
-                            type="text"
-                            id="modal_nombre_padre_madre"
-                            class="block w-full px-3 py-2 border border-secondary-300 rounded-lg text-sm placeholder-secondary-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
-                            placeholder="Ej: Carlos Martínez"
-                            required
-                        >
-                    </div>
-
-                    <!-- Teléfono de Contacto -->
-                    <div class="space-y-1">
-                        <label for="modal_telefono_contacto" class="block text-sm font-medium text-secondary-700">
-                            Teléfono de Contacto <span class="text-danger-500">*</span>
-                        </label>
-                        <input
-                            type="tel"
-                            id="modal_telefono_contacto"
-                            class="block w-full px-3 py-2 border border-secondary-300 rounded-lg text-sm placeholder-secondary-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
-                            placeholder="Ej: (351) 555-1234"
-                            required
-                        >
+                        @if($es_usuario_general)
+                            <p class="text-xs text-secondary-500 mt-1">La escuela se asigna automáticamente según su usuario</p>
+                        @endif
+                        @error('id_escuela') 
+                            <span class="text-red-500 text-sm">{{ $message }}</span> 
+                        @enderror
                     </div>
                 </div>
 
-                <!-- Botones del Modal -->
-                <div class="flex justify-end space-x-3 pt-6 border-t border-secondary-200">
-                    <button type="button" id="cancelar_modal" class="px-4 py-2 border border-secondary-300 rounded-lg text-sm font-medium text-secondary-700 bg-white hover:bg-secondary-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-colors duration-200">
-                        Cancelar
+                <!-- Información de los Alumnos -->
+                <div class="border-b border-secondary-200 pb-6">
+                    <h3 class="text-lg font-medium text-secondary-900 mb-4">Alumnos Involucrados</h3>
+                    
+                    <!-- Campo de búsqueda con autocompletado -->
+                    <div class="mb-4">
+                        <label for="buscar_alumno" class="block text-sm font-medium text-secondary-700 mb-2">
+                            Buscar y Agregar Alumnos <span class="text-danger-500">*</span>
+                        </label>
+                        <div class="flex gap-2">
+                            <div class="flex-1 relative">
+                                <input wire:model.live="buscar_alumno" type="text" id="buscar_alumno" class="block w-full px-3 py-2 border border-secondary-300 rounded-lg text-sm placeholder-secondary-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 {{ $modo == 'show' ? 'bg-secondary-50' : 'bg-white' }}" placeholder="Escriba el nombre del alumno..." {{ $modo == 'show' ? 'readonly' : '' }} autocomplete="off">
+                                
+                                <!-- Dropdown de sugerencias -->
+                                @if(strlen($buscar_alumno) >= 2 && $id_escuela)
+                                    @php $sugerencias = $this->buscarAlumnos(); @endphp
+                                    @if($sugerencias->count() > 0)
+                                    <div class="absolute z-10 mt-1 w-full bg-white border border-secondary-300 rounded-lg shadow-lg max-h-60 overflow-y-auto">
+                                        @foreach($sugerencias as $alumno)
+                                        <div wire:click="agregarAlumno({{ $alumno->id_alumno }})" class="p-2 hover:bg-secondary-50 cursor-pointer border-b border-secondary-100">
+                                            <div class="font-medium text-secondary-900">{{ $alumno->nombre_completo }}</div>
+                                            <div class="text-sm text-secondary-600">{{ $alumno->sala_grado_curso }} - DNI: {{ $alumno->dni }}</div>
+                                        </div>
+                                        @endforeach
+                                    </div>
+                                    @endif
+                                @endif
+                            </div>
+                            <!-- Botón para agregar nuevo alumno -->
+                            <button wire:click="abrirModalAlumno" type="button" class="inline-flex items-center px-4 py-2 bg-blue-600 border border-transparent rounded-lg font-medium text-sm text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-200 {{ $modo == 'show' || !$id_escuela ? 'opacity-50 cursor-not-allowed' : '' }}" {{ $modo == 'show' || !$id_escuela ? 'disabled' : '' }}>
+                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                                </svg>
+                                Nuevo Alumno
+                            </button>
+                        </div>
+                        <p class="text-xs text-secondary-500 mt-1">Escriba para buscar o haga clic en "Nuevo Alumno" para agregar uno nuevo</p>
+                    </div>
+
+                    <!-- Lista de alumnos seleccionados -->
+                    <div class="space-y-2">
+                        <label class="block text-sm font-medium text-secondary-700 mb-2">Alumnos Seleccionados:</label>
+                        <div class="min-h-[60px] border border-secondary-200 rounded-lg p-3 bg-secondary-50">
+                            @if(empty($alumnos_seleccionados))
+                                <p class="text-sm text-secondary-500 italic">No hay alumnos seleccionados</p>
+                            @else
+                                @php $alumnosDetalle = $this->getAlumnosSeleccionadosDetalle(); @endphp
+                                @foreach($alumnosDetalle as $alumno)
+                                <div class="flex items-center justify-between bg-white border border-secondary-200 rounded-lg p-3 mb-2">
+                                    <div class="flex-1">
+                                        <div class="font-medium text-secondary-900">{{ $alumno->nombre_completo }}</div>
+                                        <div class="text-sm text-secondary-600">{{ $alumno->sala_grado_curso }} - DNI: {{ $alumno->dni }}</div>
+                                    </div>
+                                    @if($modo != 'show')
+                                    <button wire:click="removerAlumno({{ $alumno->id_alumno }})" type="button" class="text-red-600 hover:text-red-800 p-1">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                                        </svg>
+                                    </button>
+                                    @endif
+                                </div>
+                                @endforeach
+                            @endif
+                        </div>
+                        @error('alumnos_seleccionados') 
+                            <span class="text-red-500 text-sm">{{ $message }}</span> 
+                        @enderror
+                    </div>
+                </div>
+
+                <!-- Detalles del Accidente -->
+                <div class="border-b border-secondary-200 pb-6">
+                    <h3 class="text-lg font-medium text-secondary-900 mb-4">Detalles del Accidente</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <!-- Fecha del Accidente -->
+                        <div class="space-y-1">
+                            <label for="fecha_accidente" class="block text-sm font-medium text-secondary-700">
+                                Fecha del Accidente <span class="text-danger-500">*</span>
+                            </label>
+                            <input wire:model="fecha_accidente" type="date" id="fecha_accidente" class="block w-full px-3 py-2 border border-secondary-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 {{ $modo == 'show' ? 'bg-secondary-50' : 'bg-white' }}" {{ $modo == 'show' ? 'readonly' : '' }} required>
+                            @error('fecha_accidente') 
+                                <span class="text-red-500 text-sm">{{ $message }}</span> 
+                            @enderror
+                        </div>
+
+                        <!-- Hora del Accidente -->
+                        <div class="space-y-1">
+                            <label for="hora_accidente" class="block text-sm font-medium text-secondary-700">
+                                Hora del Accidente <span class="text-danger-500">*</span>
+                            </label>
+                            <input wire:model="hora_accidente" type="time" id="hora_accidente" class="block w-full px-3 py-2 border border-secondary-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 {{ $modo == 'show' ? 'bg-secondary-50' : 'bg-white' }}" {{ $modo == 'show' ? 'readonly' : '' }} required>
+                            @error('hora_accidente') 
+                                <span class="text-red-500 text-sm">{{ $message }}</span> 
+                            @enderror
+                        </div>
+
+                        <!-- Lugar del Accidente -->
+                        <div class="md:col-span-2 space-y-1">
+                            <label for="lugar_accidente" class="block text-sm font-medium text-secondary-700">
+                                Lugar del Accidente <span class="text-danger-500">*</span>
+                            </label>
+                            <input wire:model="lugar_accidente" type="text" id="lugar_accidente" class="block w-full px-3 py-2 border border-secondary-300 rounded-lg text-sm placeholder-secondary-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 {{ $modo == 'show' ? 'bg-secondary-50' : 'bg-white' }}" placeholder="Ej: Patio de recreo, Aula 5B, Escaleras principales" {{ $modo == 'show' ? 'readonly' : '' }} required>
+                            @error('lugar_accidente') 
+                                <span class="text-red-500 text-sm">{{ $message }}</span> 
+                            @enderror
+                        </div>
+
+                        <!-- Descripción del Accidente -->
+                        <div class="md:col-span-2 space-y-1">
+                            <label for="descripcion_accidente" class="block text-sm font-medium text-secondary-700">
+                                Descripción del Accidente <span class="text-danger-500">*</span>
+                            </label>
+                            <textarea wire:model="descripcion_accidente" id="descripcion_accidente" rows="4" class="block w-full px-3 py-2 border border-secondary-300 rounded-lg text-sm placeholder-secondary-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 {{ $modo == 'show' ? 'bg-secondary-50' : 'bg-white' }}" placeholder="Describa detalladamente cómo ocurrió el accidente..." {{ $modo == 'show' ? 'readonly' : '' }} required></textarea>
+                            @error('descripcion_accidente') 
+                                <span class="text-red-500 text-sm">{{ $message }}</span> 
+                            @enderror
+                        </div>
+
+                        <!-- Tipo de Lesión -->
+                        <div class="md:col-span-2 space-y-1">
+                            <label for="tipo_lesion" class="block text-sm font-medium text-secondary-700">
+                                Tipo de Lesión <span class="text-danger-500">*</span>
+                            </label>
+                            <input wire:model="tipo_lesion" type="text" id="tipo_lesion" class="block w-full px-3 py-2 border border-secondary-300 rounded-lg text-sm placeholder-secondary-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 {{ $modo == 'show' ? 'bg-secondary-50' : 'bg-white' }}" placeholder="Ej: Fractura, Contusión, Corte, Esguince" {{ $modo == 'show' ? 'readonly' : '' }} required>
+                            @error('tipo_lesion') 
+                                <span class="text-red-500 text-sm">{{ $message }}</span> 
+                            @enderror
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Protocolo de Emergencias -->
+                <div class="border-b border-secondary-200 pb-6">
+                    <h3 class="text-lg font-medium text-secondary-900 mb-4">Protocolo de Emergencias</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <!-- Protocolo Activado -->
+                        <div class="md:col-span-2 flex items-center">
+                            <div class="flex items-center h-5">
+                                <input wire:model="protocolo_activado" type="checkbox" id="protocolo_activado" class="w-4 h-4 text-red-600 bg-white border-secondary-300 rounded focus:ring-red-500 focus:ring-2" {{ $modo == 'show' ? 'disabled' : '' }}>
+                            </div>
+                            <div class="ml-3">
+                                <label for="protocolo_activado" class="text-sm font-medium text-secondary-700">
+                                    Se activó el Protocolo de Emergencias
+                                </label>
+                                <p class="text-xs text-secondary-500">Marcar si se llamó al Sistema de Emergencias y Urgencias médicas</p>
+                            </div>
+                        </div>
+
+                        <!-- Llamada a Emergencia -->
+                        <div class="flex items-center">
+                            <div class="flex items-center h-5">
+                                <input wire:model="llamada_emergencia" type="checkbox" id="llamada_emergencia" class="w-4 h-4 text-red-600 bg-white border-secondary-300 rounded focus:ring-red-500 focus:ring-2" {{ $modo == 'show' ? 'disabled' : '' }}>
+                            </div>
+                            <div class="ml-3">
+                                <label for="llamada_emergencia" class="text-sm font-medium text-secondary-700">
+                                    Se realizó llamada de emergencia
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Hora de Llamada -->
+                        <div class="space-y-1">
+                            <label for="hora_llamada" class="block text-sm font-medium text-secondary-700">Hora de Llamada</label>
+                            <input wire:model="hora_llamada" type="time" id="hora_llamada" class="block w-full px-3 py-2 border border-secondary-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 {{ $modo == 'show' ? 'bg-secondary-50' : 'bg-white' }}" {{ $modo == 'show' ? 'readonly' : '' }}>
+                            @error('hora_llamada') 
+                                <span class="text-red-500 text-sm">{{ $message }}</span> 
+                            @enderror
+                        </div>
+
+                        <!-- Servicio de Emergencia -->
+                        <div class="md:col-span-2 space-y-1">
+                            <label for="servicio_emergencia" class="block text-sm font-medium text-secondary-700">Servicio de Emergencia Contactado</label>
+                            <input wire:model="servicio_emergencia" type="text" id="servicio_emergencia" class="block w-full px-3 py-2 border border-secondary-300 rounded-lg text-sm placeholder-secondary-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 {{ $modo == 'show' ? 'bg-secondary-50' : 'bg-white' }}" placeholder="Ej: SAME, Cruz Roja, Emergencias Médicas FS" {{ $modo == 'show' ? 'readonly' : '' }}>
+                            @error('servicio_emergencia') 
+                                <span class="text-red-500 text-sm">{{ $message }}</span> 
+                            @enderror
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Estado y Configuración -->
+                @if($modo != 'create')
+                <div class="border-b border-secondary-200 pb-6">
+                    <h3 class="text-lg font-medium text-secondary-900 mb-4">Estado del Expediente</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <!-- Estado -->
+                        <div class="space-y-1">
+                            <label for="id_estado_accidente" class="block text-sm font-medium text-secondary-700">Estado</label>
+                            <select wire:model="id_estado_accidente" id="id_estado_accidente" class="block w-full px-3 py-2 border border-secondary-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 {{ $modo == 'show' || $es_usuario_general ? 'bg-secondary-50' : 'bg-white' }}" {{ $modo == 'show' || $es_usuario_general ? 'disabled' : '' }}>
+                                @foreach($estados as $estado)
+                                    <option value="{{ $estado->id_estado_accidente }}">{{ $estado->nombre_estado }}</option>
+                                @endforeach
+                            </select>
+                            @if($es_usuario_general)
+                                <p class="text-xs text-secondary-500 mt-1">Solo los administradores pueden modificar el estado del expediente</p>
+                            @endif
+                            @error('id_estado_accidente')
+                                <span class="text-red-500 text-sm">{{ $message }}</span>
+                            @enderror
+                        </div>
+                    </div>
+                </div>
+                @endif
+
+                <!-- Documentos Adjuntos -->
+                <div class="border-b border-secondary-200 pb-6">
+                    <h3 class="text-lg font-medium text-secondary-900 mb-4">Documentos Adjuntos</h3>
+                    
+                    <!-- Información explicativa -->
+                    <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+                        <div class="flex items-start">
+                            <svg class="w-5 h-5 text-blue-600 mt-0.5 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                            <div>
+                                <h4 class="text-sm font-medium text-blue-800 mb-1">Subida de Documentos</h4>
+                                <p class="text-sm text-blue-700">
+                                    Puede adjuntar múltiples documentos relacionados con el accidente (fotos, informes médicos, facturas, etc.).
+                                    Formatos permitidos: PDF, JPG, JPEG, PNG. Tamaño máximo por archivo: 10MB.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Subida de archivos -->
+                    @if($modo != 'show')
+                    <div class="mb-6"
+                         x-data="{ isUploading: false, progress: 0 }"
+                         x-on:livewire-upload-start="isUploading = true"
+                         x-on:livewire-upload-finish="isUploading = false"
+                         x-on:livewire-upload-error="isUploading = false"
+                         x-on:livewire-upload-progress="progress = $event.detail.progress">
+                        <label class="block text-sm font-medium text-secondary-700 mb-2">
+                            Seleccionar Archivos
+                        </label>
+                        <div class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-secondary-300 border-dashed rounded-lg hover:border-secondary-400 transition-colors duration-200"
+                             @dragover.prevent @dragenter.prevent @drop.prevent="$wire.uploadMultiple('archivos_adjuntos', $event.dataTransfer.files)">
+                            <div class="space-y-1 text-center">
+                                <svg class="mx-auto h-12 w-12 text-secondary-400" stroke="currentColor" fill="none" viewBox="0 0 48 48">
+                                    <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                                </svg>
+                                <div class="flex text-sm text-secondary-600">
+                                    <label for="archivos_adjuntos" class="relative cursor-pointer bg-white rounded-md font-medium text-primary-600 hover:text-primary-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-primary-500">
+                                        <span>Subir archivos</span>
+                                        <input wire:model="archivos_adjuntos" id="archivos_adjuntos" name="archivos_adjuntos" type="file" class="sr-only" multiple>
+                                    </label>
+                                    <p class="pl-1">o arrastrar y soltar</p>
+                                </div>
+                                <p class="text-xs text-secondary-500">
+                                    PDF, JPG, JPEG, PNG hasta 10MB cada uno
+                                </p>
+                            </div>
+                        </div>
+                        <!-- Progress Bar -->
+                        <div x-show="isUploading">
+                            <progress max="100" x-bind:value="progress" class="w-full"></progress>
+                        </div>
+                    </div>
+
+                    <!-- Campo para descripción general de archivos - OCULTO -->
+                    <div class="mb-4" style="display: none;">
+                        <label for="archivos_descripcion" class="block text-sm font-medium text-secondary-700 mb-2">
+                            Descripción de los Documentos (Opcional)
+                        </label>
+                        <textarea wire:model.live="archivos_descripcion" id="archivos_descripcion" rows="2" class="block w-full px-3 py-2 border border-secondary-300 rounded-lg text-sm placeholder-secondary-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500" placeholder="Breve descripción de los documentos adjuntos..."></textarea>
+                    </div>
+                    @endif
+
+                    <!-- Lista de archivos seleccionados/existentes -->
+                    <div id="lista_archivos_container">
+                        <label class="block text-sm font-medium text-secondary-700 mb-2">
+                            {{ $modo == 'show' ? 'Documentos del Accidente:' : 'Archivos Seleccionados:' }}
+                        </label>
+                        <div class="space-y-2">
+                            @if (count($archivos_existentes) > 0)
+                                @foreach ($archivos_existentes as $archivo)
+                                    <div class="flex items-center justify-between bg-white border border-secondary-200 rounded-lg p-3 mb-2">
+                                        <div class="flex items-center flex-1">
+                                            <div class="flex-shrink-0 mr-3">
+                                                <svg class="w-6 h-6 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                                                </svg>
+                                            </div>
+                                            <div class="flex-1 min-w-0">
+                                                <a href="{{ Storage::url($archivo->ruta_archivo) }}" target="_blank" class="font-medium text-secondary-900 truncate hover:text-primary-600 transition-colors duration-200">
+                                                    {{ $archivo->nombre_archivo }}
+                                                </a>
+                                                <div class="text-sm text-secondary-600">
+                                                    {{ round($archivo->tamano / 1024, 2) }} KB
+                                                    @if($archivo->descripcion)
+                                                        • {{ $archivo->descripcion }}
+                                                    @endif
+                                                </div>
+                                            </div>
+                                        </div>
+                                        @if($modo != 'show')
+                                        <button wire:click.prevent="eliminarArchivoExistente({{ $archivo->id_archivo }})" type="button" class="text-red-600 hover:text-red-800 p-1 ml-2 transition-colors duration-200" title="Eliminar archivo">
+                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                                            </svg>
+                                        </button>
+                                        @endif
+                                    </div>
+                                @endforeach
+                            @endif
+
+                            @if (count($archivos_adjuntos) > 0)
+                                @foreach ($archivos_adjuntos as $index => $archivo)
+                                    <div class="flex items-center justify-between bg-white border border-secondary-200 rounded-lg p-3 mb-2">
+                                        <div class="flex items-center flex-1">
+                                            <div class="flex-1 min-w-0">
+                                                <div class="font-medium text-secondary-900 truncate">{{ $archivo->getClientOriginalName() }}</div>
+                                                <div class="text-sm text-secondary-600">{{ round($archivo->getSize() / 1024, 2) }} KB</div>
+                                            </div>
+                                        </div>
+                                        <button wire:click.prevent="removeUpload('archivos_adjuntos', '{{ $archivo->getFilename() }}')" type="button" class="text-red-600 hover:text-red-800 p-1">
+                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                                            </svg>
+                                        </button>
+                                    </div>
+                                @endforeach
+                            @endif
+
+                            @if (count($archivos_existentes) == 0 && count($archivos_adjuntos) == 0)
+                                <div class="text-center py-8 border-2 border-dashed border-secondary-200 rounded-lg">
+                                    <svg class="mx-auto h-8 w-8 text-secondary-400 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                                    </svg>
+                                    <p class="text-sm text-secondary-500">{{ $modo == 'show' ? 'No hay documentos adjuntos' : 'No hay archivos seleccionados' }}</p>
+                                </div>
+                            @endif
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Botones de Acción -->
+                <div class="flex items-center justify-between pt-6 border-t border-secondary-200">
+                    <a href="{{ route('accidentes.index') }}" class="inline-flex items-center px-4 py-2 border border-secondary-300 rounded-lg text-sm font-medium text-secondary-700 bg-white hover:bg-secondary-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-colors duration-200">
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+                        </svg>
+                        Volver al Listado
+                    </a>
+                    @if($modo != 'show')
+                    <button type="submit" class="inline-flex items-center px-6 py-2 bg-red-600 border border-transparent rounded-lg font-medium text-sm text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-colors duration-200">
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                        </svg>
+                        {{ $modo == 'create' ? 'Registrar Accidente' : 'Actualizar Accidente' }}
                     </button>
-                    <button type="submit" class="px-6 py-2 bg-primary-600 border border-transparent rounded-lg font-medium text-sm text-white hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-colors duration-200">
-                        Agregar Alumno
-                    </button>
+                    @endif
                 </div>
             </form>
         </div>
     </div>
-</div>
 
-@endsection
-
-@push('scripts')
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    console.log('Inicializando formulario de accidentes...');
-    
-    // Datos de alumnos para autocompletado
-    const alumnosData = {
-        '1': { id: 1, nombre: 'Juan Pérez', grado: '5to A', dni: '12345678' },
-        '2': { id: 2, nombre: 'María García', grado: '3ro B', dni: '87654321' },
-        '3': { id: 3, nombre: 'Carlos López', grado: '6to A', dni: '11223344' },
-        '4': { id: 4, nombre: 'Ana Martínez', grado: '4to C', dni: '55667788' },
-        '5': { id: 5, nombre: 'Diego Rodríguez', grado: '2do A', dni: '99887766' },
-        '6': { id: 6, nombre: 'Sofía González', grado: '1er Año', dni: '44556677' },
-        '7': { id: 7, nombre: 'Lucas Fernández', grado: '3er Año', dni: '33445566' },
-        '8': { id: 8, nombre: 'Valentina Ruiz', grado: '4to B', dni: '22334455' },
-        '9': { id: 9, nombre: 'Mateo Silva', grado: '2do C', dni: '66778899' },
-        '10': { id: 10, nombre: 'Isabella Torres', grado: '6to B', dni: '11223355' }
-    };
-    
-    console.log('Total de alumnos disponibles:', Object.keys(alumnosData).length);
-
-    let alumnosSeleccionados = [];
-
-    // Elementos DOM
-    const buscarInput = document.getElementById('buscar_alumno');
-    const sugerenciasDiv = document.getElementById('sugerencias_alumnos');
-    const listaAlumnos = document.getElementById('lista_alumnos');
-    const btnNuevoAlumno = document.getElementById('btn_nuevo_alumno');
-    const modal = document.getElementById('modal_nuevo_alumno');
-    const formModal = document.getElementById('form_nuevo_alumno');
-    const cerrarModal = document.getElementById('cerrar_modal');
-    const cancelarModal = document.getElementById('cancelar_modal');
-    
-    // Verificar que los elementos existen
-    console.log('Elementos encontrados:', {
-        buscarInput: !!buscarInput,
-        sugerenciasDiv: !!sugerenciasDiv,
-        listaAlumnos: !!listaAlumnos,
-        btnNuevoAlumno: !!btnNuevoAlumno,
-        modal: !!modal,
-        formModal: !!formModal
-    });
-
-    // Inicializar alumnos seleccionados desde el markup existente
-    const alumnosExistentes = document.querySelectorAll('.alumno-item');
-    alumnosExistentes.forEach(item => {
-        const id = parseInt(item.dataset.id);
-        if (alumnosData[id]) {
-            alumnosSeleccionados.push(alumnosData[id]);
-        }
-    });
-
-    // **FUNCIONALIDAD DE AUTOCOMPLETADO**
-    if (buscarInput && !buscarInput.readOnly) {
-        buscarInput.addEventListener('input', function() {
-            const termino = this.value.toLowerCase().trim();
-            console.log('Buscando:', termino, 'Longitud:', termino.length);
+    <!-- Modal para Nuevo Alumno -->
+    @if($mostrar_modal_alumno)
+    <div class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+            <div class="flex justify-between items-center p-6 border-b border-secondary-200">
+                <h3 class="text-lg font-semibold text-secondary-900">Agregar Nuevo Alumno</h3>
+                <button wire:click="cerrarModalAlumno" type="button" class="text-secondary-400 hover:text-secondary-600">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
             
-            if (termino.length < 1) {  // Cambiado de 2 a 1 para que funcione con una sola letra
-                ocultarSugerencias();
-                return;
-            }
-            
-            // Filtrar alumnos que coincidan y no estén ya seleccionados
-            const todosLosAlumnos = Object.values(alumnosData);
-            console.log('Total alumnos a buscar:', todosLosAlumnos.length);
-            console.log('Alumnos ya seleccionados:', alumnosSeleccionados.map(a => a.id));
-            
-            const sugerencias = todosLosAlumnos.filter(alumno => {
-                const yaSeleccionado = alumnosSeleccionados.some(sel => sel.id === alumno.id);
-                const coincide = alumno.nombre.toLowerCase().includes(termino) ||
-                               alumno.grado.toLowerCase().includes(termino) ||
-                               alumno.dni.includes(termino);
-                return !yaSeleccionado && coincide;
-            });
-            
-            console.log('Sugerencias encontradas:', sugerencias.length);
-            mostrarSugerencias(sugerencias);
-        });
+            <div class="p-6">
+                <form wire:submit.prevent="guardarNuevoAlumno" class="space-y-6">
+                    <!-- Información Personal del Alumno -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <!-- Nombre -->
+                        <div class="space-y-1">
+                            <label for="nuevo_alumno_nombre" class="block text-sm font-medium text-secondary-700">
+                                Nombre <span class="text-danger-500">*</span>
+                            </label>
+                            <input wire:model="nuevo_alumno.nombre" type="text" id="nuevo_alumno_nombre" class="block w-full px-3 py-2 border border-secondary-300 rounded-lg text-sm placeholder-secondary-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500" placeholder="Ej: Ana" required>
+                            @error('nuevo_alumno.nombre') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
+                        </div>
 
-        buscarInput.addEventListener('focus', function() {
-            if (this.value.length >= 1) {  // Cambiado para coincidir con el mínimo de caracteres
-                this.dispatchEvent(new Event('input'));
-            }
-        });
+                        <!-- Apellido -->
+                        <div class="space-y-1">
+                            <label for="nuevo_alumno_apellido" class="block text-sm font-medium text-secondary-700">
+                                Apellido <span class="text-danger-500">*</span>
+                            </label>
+                            <input wire:model="nuevo_alumno.apellido" type="text" id="nuevo_alumno_apellido" class="block w-full px-3 py-2 border border-secondary-300 rounded-lg text-sm placeholder-secondary-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500" placeholder="Ej: Martínez" required>
+                            @error('nuevo_alumno.apellido') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
+                        </div>
 
-        // Ocultar sugerencias al hacer clic fuera
-        document.addEventListener('click', function(e) {
-            if (!buscarInput.contains(e.target) && !sugerenciasDiv.contains(e.target)) {
-                ocultarSugerencias();
-            }
-        });
-    }
+                        <!-- DNI -->
+                        <div class="space-y-1">
+                            <label for="nuevo_alumno_dni" class="block text-sm font-medium text-secondary-700">
+                                DNI <span class="text-danger-500">*</span>
+                            </label>
+                            <input wire:model="nuevo_alumno.dni" type="text" id="nuevo_alumno_dni" class="block w-full px-3 py-2 border border-secondary-300 rounded-lg text-sm placeholder-secondary-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500" placeholder="Ej: 45678912" required>
+                            @error('nuevo_alumno.dni') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
+                        </div>
 
-    function mostrarSugerencias(sugerencias) {
-        console.log('Mostrando sugerencias:', sugerencias.length);
-        
-        if (sugerencias.length === 0) {
-            sugerenciasDiv.innerHTML = '<div class="p-3 text-sm text-secondary-500">No se encontraron alumnos</div>';
-        } else {
-            sugerenciasDiv.innerHTML = sugerencias.map(alumno => `
-                <div class="p-2 hover:bg-secondary-50 cursor-pointer border-b border-secondary-100 sugerencia-item"
-                     data-id="${alumno.id}" data-nombre="${alumno.nombre}" data-grado="${alumno.grado}" data-dni="${alumno.dni}">
-                    <div class="font-medium text-secondary-900">${alumno.nombre}</div>
-                    <div class="text-sm text-secondary-600">${alumno.grado} - DNI: ${alumno.dni}</div>
-                </div>
-            `).join('');
-            
-            // Agregar eventos de clic a las sugerencias
-            sugerenciasDiv.querySelectorAll('.sugerencia-item').forEach(item => {
-                item.addEventListener('click', function() {
-                    const alumno = {
-                        id: parseInt(this.dataset.id),
-                        nombre: this.dataset.nombre,
-                        grado: this.dataset.grado,
-                        dni: this.dataset.dni
-                    };
-                    agregarAlumno(alumno);
-                    buscarInput.value = '';
-                    ocultarSugerencias();
-                });
-            });
-        }
-        
-        sugerenciasDiv.classList.remove('hidden');
-    }
+                        <!-- CUIL -->
+                        <div class="space-y-1">
+                            <label for="nuevo_alumno_cuil" class="block text-sm font-medium text-secondary-700">
+                                CUIL <span class="text-danger-500">*</span>
+                            </label>
+                            <input wire:model="nuevo_alumno.cuil" type="text" id="nuevo_alumno_cuil" class="block w-full px-3 py-2 border border-secondary-300 rounded-lg text-sm placeholder-secondary-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500" placeholder="Ej: 23-45678912-4" required>
+                            @error('nuevo_alumno.cuil') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
+                        </div>
 
-    function ocultarSugerencias() {
-        console.log('Ocultando sugerencias');
-        sugerenciasDiv.classList.add('hidden');
-    }
+                        <!-- Fecha de Nacimiento -->
+                        <div class="space-y-1">
+                            <label for="nuevo_alumno_fecha_nacimiento" class="block text-sm font-medium text-secondary-700">
+                                Fecha de Nacimiento <span class="text-danger-500">*</span>
+                            </label>
+                            <input wire:model="nuevo_alumno.fecha_nacimiento" type="date" id="nuevo_alumno_fecha_nacimiento" class="block w-full px-3 py-2 border border-secondary-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500" required>
+                            @error('nuevo_alumno.fecha_nacimiento') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
+                        </div>
 
-    // **GESTIÓN DE ALUMNOS SELECCIONADOS**
-    function agregarAlumno(alumno) {
-        // Verificar que no esté ya agregado
-        if (alumnosSeleccionados.some(a => a.id === alumno.id)) {
-            alert('Este alumno ya está seleccionado');
-            return;
-        }
-        
-        alumnosSeleccionados.push(alumno);
-        actualizarListaAlumnos();
-    }
+                        <!-- Sala/Grado/Curso -->
+                        <div class="space-y-1">
+                            <label for="nuevo_alumno_sala_grado_curso" class="block text-sm font-medium text-secondary-700">
+                                Sala/Grado/Curso <span class="text-danger-500">*</span>
+                            </label>
+                            <input wire:model="nuevo_alumno.sala_grado_curso" type="text" id="nuevo_alumno_sala_grado_curso" class="block w-full px-3 py-2 border border-secondary-300 rounded-lg text-sm placeholder-secondary-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500" placeholder="Ej: 7° Grado, 3° Año, Sala de 5" required>
+                            @error('nuevo_alumno.sala_grado_curso') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
+                        </div>
 
-    function removerAlumno(id) {
-        alumnosSeleccionados = alumnosSeleccionados.filter(a => a.id !== id);
-        actualizarListaAlumnos();
-    }
+                        <!-- Nombre del Padre/Madre -->
+                        <div class="space-y-1">
+                            <label for="nuevo_alumno_nombre_padre_madre" class="block text-sm font-medium text-secondary-700">
+                                Nombre del Padre/Madre <span class="text-danger-500">*</span>
+                            </label>
+                            <input wire:model="nuevo_alumno.nombre_padre_madre" type="text" id="nuevo_alumno_nombre_padre_madre" class="block w-full px-3 py-2 border border-secondary-300 rounded-lg text-sm placeholder-secondary-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500" placeholder="Ej: Carlos Martínez" required>
+                            @error('nuevo_alumno.nombre_padre_madre') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
+                        </div>
 
-    function actualizarListaAlumnos() {
-        if (alumnosSeleccionados.length === 0) {
-            listaAlumnos.innerHTML = '<p class="text-sm text-secondary-500 italic">No hay alumnos seleccionados</p>';
-        } else {
-            listaAlumnos.innerHTML = alumnosSeleccionados.map(alumno => `
-                <div class="alumno-item flex items-center justify-between bg-white border border-secondary-200 rounded-lg p-3" data-id="${alumno.id}">
-                    <div class="flex-1">
-                        <div class="font-medium text-secondary-900">${alumno.nombre}</div>
-                        <div class="text-sm text-secondary-600">${alumno.grado} - DNI: ${alumno.dni}</div>
-                    </div>
-                    <button type="button" class="btn-remover-alumno text-red-600 hover:text-red-800 p-1" data-id="${alumno.id}">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                        </svg>
-                    </button>
-                    <input type="hidden" name="alumnos_ids[]" value="${alumno.id}">
-                </div>
-            `).join('');
-            
-            // Agregar eventos de remover
-            listaAlumnos.querySelectorAll('.btn-remover-alumno').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    const id = parseInt(this.dataset.id);
-                    removerAlumno(id);
-                });
-            });
-        }
-    }
-
-    // **MODAL PARA NUEVO ALUMNO**
-    if (btnNuevoAlumno && modal) {
-        console.log('Botón nuevo alumno encontrado:', btnNuevoAlumno);
-        console.log('Modal encontrado:', modal);
-        
-        btnNuevoAlumno.addEventListener('click', function(e) {
-            e.preventDefault();
-            console.log('Click en botón nuevo alumno');
-            modal.classList.remove('hidden');
-            document.body.style.overflow = 'hidden';
-            // Focus en el primer campo después de un pequeño delay
-            setTimeout(() => {
-                const primerCampo = document.getElementById('modal_nombre');
-                if (primerCampo) {
-                    primerCampo.focus();
-                }
-            }, 100);
-        });
-    } else {
-        console.error('No se encontró el botón o el modal:', { btnNuevoAlumno, modal });
-    }
-
-    function cerrarModalAlumno() {
-        if (modal) {
-            modal.classList.add('hidden');
-            document.body.style.overflow = 'auto';
-            if (formModal) {
-                formModal.reset();
-            }
-        }
-    }
-
-    if (cerrarModal) {
-        cerrarModal.addEventListener('click', cerrarModalAlumno);
-    }
-
-    if (cancelarModal) {
-        cancelarModal.addEventListener('click', cerrarModalAlumno);
-    }
-
-    // Cerrar modal con ESC
-    document.addEventListener('keydown', function(e) {
-        if (e.key === 'Escape' && modal && !modal.classList.contains('hidden')) {
-            cerrarModalAlumno();
-        }
-    });
-
-    // Cerrar modal al hacer clic fuera de él
-    if (modal) {
-        modal.addEventListener('click', function(e) {
-            if (e.target === modal) {
-                cerrarModalAlumno();
-            }
-        });
-    }
-
-    // Envío del formulario del modal
-    if (formModal) {
-        formModal.addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            const nombre = document.getElementById('modal_nombre').value.trim();
-            const apellido = document.getElementById('modal_apellido').value.trim();
-            const dni = document.getElementById('modal_dni').value.trim();
-            const grado = document.getElementById('modal_sala_grado_curso').value.trim();
-            const seccion = document.getElementById('modal_seccion').value;
-            
-            if (!nombre || !apellido || !dni || !grado || !seccion) {
-                alert('Por favor complete todos los campos obligatorios');
-                return;
-            }
-            
-            // Crear nuevo alumno con ID temporal
-            const nuevoId = Math.max(...Object.keys(alumnosData).map(k => parseInt(k))) + 1;
-            const nuevoAlumno = {
-                id: nuevoId,
-                nombre: `${nombre} ${apellido}`,
-                grado: `${grado} - Sección ${seccion}`,
-                dni: dni
-            };
-            
-            // Agregar a los datos y a la lista
-            alumnosData[nuevoId] = nuevoAlumno;
-            agregarAlumno(nuevoAlumno);
-            
-            // Cerrar modal
-            cerrarModalAlumno();
-            
-            // Mostrar mensaje de éxito
-            alert(`Alumno "${nuevoAlumno.nombre}" agregado exitosamente`);
-        });
-    }
-
-    // **VALIDACIÓN DE FECHA NO FUTURA**
-    const fechaInput = document.getElementById('fecha_accidente');
-    if (fechaInput && !fechaInput.readOnly) {
-        fechaInput.addEventListener('change', function() {
-            const fechaSeleccionada = new Date(this.value);
-            const hoy = new Date();
-            
-            if (fechaSeleccionada > hoy) {
-                alert('La fecha del accidente no puede ser futura');
-                this.value = '';
-            }
-        });
-    }
-
-    // **CONTROL DE PROTOCOLO DE EMERGENCIAS**
-    const protocoloCheckbox = document.getElementById('protocolo_activado');
-    const llamadaCheckbox = document.getElementById('llamada_emergencia');
-    const horaLlamada = document.getElementById('hora_llamada');
-    const servicioEmergencia = document.getElementById('servicio_emergencia');
-    
-    function toggleEmergenciaFields() {
-        if (protocoloCheckbox && !protocoloCheckbox.disabled) {
-            const isChecked = protocoloCheckbox.checked;
-            
-            if (llamadaCheckbox) llamadaCheckbox.disabled = !isChecked;
-            if (horaLlamada) horaLlamada.disabled = !isChecked;
-            if (servicioEmergencia) servicioEmergencia.disabled = !isChecked;
-            
-            if (!isChecked) {
-                if (llamadaCheckbox) llamadaCheckbox.checked = false;
-                if (horaLlamada) horaLlamada.value = '';
-                if (servicioEmergencia) servicioEmergencia.value = '';
-            }
-        }
-    }
-    
-    if (protocoloCheckbox) {
-        protocoloCheckbox.addEventListener('change', toggleEmergenciaFields);
-        toggleEmergenciaFields(); // Ejecutar al cargar
-    }
-
-    // **VALIDACIÓN DE FORMULARIO**
-    const form = document.querySelector('form');
-    const submitButton = document.querySelector('button[type="submit"]');
-    
-    if (form && submitButton) {
-        form.addEventListener('submit', function(e) {
-            // Validar que haya al menos un alumno seleccionado
-            if (alumnosSeleccionados.length === 0) {
-                e.preventDefault();
-                alert('Debe seleccionar al menos un alumno para el accidente');
-                buscarInput.focus();
-                return;
-            }
-            
-            submitButton.classList.add('opacity-75');
-            submitButton.disabled = true;
-            
-            // Simular procesamiento
-            setTimeout(() => {
-                submitButton.classList.remove('opacity-75');
-                submitButton.disabled = false;
-            }, 2000);
-        });
-    }
-
-    // **FUNCIONALIDAD BÁSICA DE SUBIDA DE ARCHIVOS (PROTOTIPO)**
-    const inputArchivos = document.getElementById('archivos_accidente');
-    const listaArchivos = document.getElementById('lista_archivos');
-
-    if (inputArchivos && !inputArchivos.disabled) {
-        console.log('Inicializando funcionalidad de archivos (prototipo)...');
-
-        // Manejar selección de archivos
-        inputArchivos.addEventListener('change', function(e) {
-            const archivos = Array.from(e.target.files);
-            if (archivos.length > 0) {
-                mostrarArchivosSeleccionados(archivos);
-            }
-        });
-
-        // Simular drag and drop visual
-        const dropZone = inputArchivos.closest('.border-dashed');
-        if (dropZone) {
-            dropZone.addEventListener('dragover', function(e) {
-                e.preventDefault();
-                dropZone.classList.add('border-primary-400', 'bg-primary-50');
-            });
-
-            dropZone.addEventListener('dragleave', function(e) {
-                e.preventDefault();
-                dropZone.classList.remove('border-primary-400', 'bg-primary-50');
-            });
-
-            dropZone.addEventListener('drop', function(e) {
-                e.preventDefault();
-                dropZone.classList.remove('border-primary-400', 'bg-primary-50');
-                alert('Funcionalidad de arrastrar archivos simulada para prototipo');
-            });
-        }
-    }
-
-    function mostrarArchivosSeleccionados(archivos) {
-        console.log('Archivos seleccionados:', archivos.length);
-        
-        // Limpiar lista actual
-        listaArchivos.innerHTML = '';
-        
-        archivos.forEach((archivo, index) => {
-            const tipoArchivo = archivo.name.split('.').pop().toLowerCase();
-            const tamañoFormateado = formatearTamaño(archivo.size);
-            
-            const archivoDiv = document.createElement('div');
-            archivoDiv.className = 'archivo-item flex items-center justify-between bg-white border border-secondary-200 rounded-lg p-3';
-            archivoDiv.dataset.index = index;
-            
-            archivoDiv.innerHTML = `
-                <div class="flex items-center flex-1">
-                    ${tipoArchivo === 'pdf' ? `
-                        <svg class="w-8 h-8 text-red-500 mr-3 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z" clip-rule="evenodd"></path>
-                        </svg>
-                    ` : `
-                        <svg class="w-8 h-8 text-green-500 mr-3 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clip-rule="evenodd"></path>
-                        </svg>
-                    `}
-                    <div class="flex-1 min-w-0">
-                        <div class="font-medium text-secondary-900 truncate">${archivo.name}</div>
-                        <div class="text-sm text-secondary-600">
-                            ${tamañoFormateado} • Seleccionado para subir
+                        <!-- Teléfono de Contacto -->
+                        <div class="space-y-1">
+                            <label for="nuevo_alumno_telefono_contacto" class="block text-sm font-medium text-secondary-700">
+                                Teléfono de Contacto <span class="text-danger-500">*</span>
+                            </label>
+                            <input wire:model="nuevo_alumno.telefono_contacto" type="tel" id="nuevo_alumno_telefono_contacto" class="block w-full px-3 py-2 border border-secondary-300 rounded-lg text-sm placeholder-secondary-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500" placeholder="Ej: (351) 555-1234" required>
+                            @error('nuevo_alumno.telefono_contacto') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
                         </div>
                     </div>
-                </div>
-                <div class="flex items-center ml-4">
-                    <button type="button" class="btn-eliminar-archivo text-red-600 hover:text-red-800 p-1" data-index="${index}" title="Eliminar archivo">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
-                        </svg>
-                    </button>
-                </div>
-            `;
-            
-            listaArchivos.appendChild(archivoDiv);
+
+                    <!-- Botones del Modal -->
+                    <div class="flex justify-end space-x-3 pt-6 border-t border-secondary-200">
+                        <button wire:click="cerrarModalAlumno" type="button" class="px-4 py-2 border border-secondary-300 rounded-lg text-sm font-medium text-secondary-700 bg-white hover:bg-secondary-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-colors duration-200">
+                            Cancelar
+                        </button>
+                        <button type="submit" class="px-6 py-2 bg-primary-600 border border-transparent rounded-lg font-medium text-sm text-white hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-colors duration-200">
+                            Agregar Alumno
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    @endif
+
+    @push('scripts')
+    <script>
+        document.addEventListener('livewire:init', () => {
+            Livewire.on('mostrar-mensaje', () => {
+                console.log('Mensaje mostrado - modo edición');
+            });
+
+            Livewire.on('mostrar-mensaje-y-redirigir', () => {
+                console.log('Mensaje mostrado - modo creación');
+                setTimeout(() => {
+                    @this.call('redirigirAlListado');
+                }, 3000);
+            });
         });
-        
-        // Agregar eventos para eliminar archivos
-        document.querySelectorAll('.btn-eliminar-archivo').forEach(btn => {
-            btn.addEventListener('click', function() {
-                const archivoItem = this.closest('.archivo-item');
-                archivoItem.remove();
-                console.log('Archivo eliminado (prototipo)');
-                
-                // Si no quedan archivos, mostrar mensaje
-                if (listaArchivos.children.length === 0) {
+
+        document.addEventListener('livewire:init', () => {
+            Livewire.on('mostrar-mensaje', () => {
+                console.log('Mensaje mostrado - modo edición');
+            });
+
+            Livewire.on('mostrar-mensaje-y-redirigir', () => {
+                console.log('Mensaje mostrado - modo creación');
+                setTimeout(() => {
+                    @this.call('redirigirAlListado');
+                }, 3000);
+            });
+
+            // Variables para manejar archivos seleccionados
+            let archivosSeleccionados = [];
+
+            // Funcionalidad de archivos mejorada
+            const inputArchivos = document.getElementById('archivos_accidente');
+            const listaArchivos = document.getElementById('lista_archivos');
+
+            if (inputArchivos) {
+                inputArchivos.addEventListener('change', function(e) {
+                    const nuevosArchivos = Array.from(e.target.files);
+                    if (nuevosArchivos.length > 0) {
+                        // Agregar nuevos archivos a los existentes en lugar de reemplazar
+                        archivosSeleccionados = [...archivosSeleccionados, ...nuevosArchivos];
+                        mostrarArchivos();
+                    }
+                });
+            }
+
+            function mostrarArchivos() {
+                if (!listaArchivos) return;
+
+                if (archivosSeleccionados.length === 0) {
                     listaArchivos.innerHTML = `
                         <div class="text-center py-8 border-2 border-dashed border-secondary-200 rounded-lg">
                             <svg class="mx-auto h-8 w-8 text-secondary-400 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -1111,67 +615,51 @@ document.addEventListener('DOMContentLoaded', function() {
                             <p class="text-sm text-secondary-500">No hay archivos seleccionados</p>
                         </div>
                     `;
+                    return;
                 }
-            });
-        });
-        
-        // Mostrar mensaje de confirmación
-        const mensaje = archivos.length === 1 ?
-            `1 archivo seleccionado` :
-            `${archivos.length} archivos seleccionados`;
-        
-        mostrarNotificacion(mensaje, 'success');
-    }
 
-    function formatearTamaño(bytes) {
-        if (bytes === 0) return '0 Bytes';
-        const k = 1024;
-        const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-        const i = Math.floor(Math.log(bytes) / Math.log(k));
-        return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
-    }
+                listaArchivos.innerHTML = '';
+                archivosSeleccionados.forEach((archivo, index) => {
+                    const div = document.createElement('div');
+                    div.className = 'flex items-center justify-between bg-white border border-secondary-200 rounded-lg p-3 mb-2';
+                    div.innerHTML = `
+                        <div class="flex items-center flex-1">
+                            <div class="flex-1 min-w-0">
+                                <div class="font-medium text-secondary-900 truncate">${archivo.name}</div>
+                                <div class="text-sm text-secondary-600">${formatBytes(archivo.size)} • Seleccionado para subir</div>
+                            </div>
+                        </div>
+                        <button type="button" class="text-red-600 hover:text-red-800 p-1 eliminar-archivo" data-index="${index}">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                            </svg>
+                        </button>
+                    `;
+                    listaArchivos.appendChild(div);
+                });
 
-    function mostrarNotificacion(mensaje, tipo = 'info') {
-        // Crear notificación temporal simple
-        const notificacion = document.createElement('div');
-        notificacion.className = `fixed top-4 right-4 z-50 px-4 py-2 rounded-lg text-white ${
-            tipo === 'success' ? 'bg-green-500' :
-            tipo === 'error' ? 'bg-red-500' : 'bg-blue-500'
-        } shadow-lg transition-opacity duration-300`;
-        notificacion.textContent = mensaje;
-        
-        document.body.appendChild(notificacion);
-        
-        // Eliminar después de 3 segundos
-        setTimeout(() => {
-            notificacion.style.opacity = '0';
-            setTimeout(() => {
-                if (document.body.contains(notificacion)) {
-                    document.body.removeChild(notificacion);
-                }
-            }, 300);
-        }, 3000);
-    }
-
-    // **FUNCIONALIDAD PARA ARCHIVOS EXISTENTES (SIMULADA)**
-    document.querySelectorAll('.btn-eliminar-archivo').forEach(btn => {
-        btn.addEventListener('click', function() {
-            if (confirm('¿Está seguro de que desea eliminar este archivo?')) {
-                const archivoItem = this.closest('.archivo-item');
-                archivoItem.remove();
-                mostrarNotificacion('Archivo eliminado', 'success');
+                // Agregar eventos para eliminar archivos
+                document.querySelectorAll('.eliminar-archivo').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const index = parseInt(this.dataset.index);
+                        archivosSeleccionados.splice(index, 1);
+                        mostrarArchivos();
+                    });
+                });
             }
-        });
-    });
 
-    // Simulación de vista de archivos
-    document.querySelectorAll('button[title="Ver archivo"]').forEach(btn => {
-        btn.addEventListener('click', function() {
-            const archivoItem = this.closest('.archivo-item');
-            const nombreArchivo = archivoItem.querySelector('.font-medium').textContent;
-            alert(`Vista previa de: ${nombreArchivo}\n(Funcionalidad simulada para prototipo)`);
+            function formatBytes(bytes, decimals = 2) {
+                if (bytes === 0) return '0 Bytes';
+                const k = 1024;
+                const dm = decimals < 0 ? 0 : decimals;
+                const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+                const i = Math.floor(Math.log(bytes) / Math.log(k));
+                return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
+            }
+
+            // Inicializar vista de archivos
+            mostrarArchivos();
         });
-    });
-});
-</script>
-@endpush
+    </script>
+    @endpush
+</div>

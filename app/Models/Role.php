@@ -23,7 +23,7 @@ class Role extends Model
      * The attributes that are mass assignable.
      */
     protected $fillable = [
-        'nombre',
+        'nombre_rol',
         'descripcion',
         'activo',
     ];

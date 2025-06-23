@@ -1,7 +1,16 @@
-@extends('layouts.app')
-
-@section('content')
 <div class="mx-auto px-4">
+    <!-- Mensajes flash -->
+    @if (session()->has('message'))
+        <div class="mb-6 bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-lg relative">
+            <div class="flex items-center">
+                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                </svg>
+                <span class="font-medium">{{ session('message') }}</span>
+            </div>
+        </div>
+    @endif
+
     <!-- Header Section -->
     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 mb-8">
         <div>
@@ -27,14 +36,21 @@
                      x-transition:leave-start="transform opacity-100 scale-100"
                      x-transition:leave-end="transform opacity-0 scale-95">
                     <div class="py-1" role="menu" aria-orientation="vertical" aria-labelledby="options-menu">
-                        {{-- TODO: Implementar rutas de exportación reales --}}
-                        <a href="#" class="flex items-center gap-2 px-4 py-2 text-sm text-secondary-700 hover:bg-secondary-100 hover:text-secondary-900" role="menuitem"><i class="fas fa-file-csv fa-fw text-secondary-400"></i>Exportar a CSV</a>
-                        <a href="#" class="flex items-center gap-2 px-4 py-2 text-sm text-secondary-700 hover:bg-secondary-100 hover:text-secondary-900" role="menuitem"><i class="fas fa-file-excel fa-fw text-secondary-400"></i>Exportar a Excel</a>
-                        <a href="#" class="flex items-center gap-2 px-4 py-2 text-sm text-secondary-700 hover:bg-secondary-100 hover:text-secondary-900" role="menuitem"><i class="fas fa-file-pdf fa-fw text-secondary-400"></i>Exportar a PDF</a>
+                        <button onclick="exportarSalidasEducativas('csv')" class="flex items-center gap-2 px-4 py-2 text-sm text-secondary-700 hover:bg-secondary-100 hover:text-secondary-900 w-full text-left" role="menuitem">
+                            <i class="fas fa-file-csv fa-fw text-secondary-400"></i>
+                            Exportar a CSV
+                        </button>
+                        <button onclick="exportarSalidasEducativas('excel')" class="flex items-center gap-2 px-4 py-2 text-sm text-secondary-700 hover:bg-secondary-100 hover:text-secondary-900 w-full text-left" role="menuitem">
+                            <i class="fas fa-file-excel fa-fw text-secondary-400"></i>
+                            Exportar a Excel
+                        </button>
+                        <button onclick="exportarSalidasEducativas('pdf')" class="flex items-center gap-2 px-4 py-2 text-sm text-secondary-700 hover:bg-secondary-100 hover:text-secondary-900 w-full text-left" role="menuitem">
+                            <i class="fas fa-file-pdf fa-fw text-secondary-400"></i>
+                            Exportar a PDF
+                        </button>
                     </div>
                 </div>
             </div>
-            {{-- TODO: Definir la ruta correcta para crear una nueva salida educativa --}}
             <a href="{{ route('salidas_educativas.create') }}" class="inline-flex items-center px-4 py-2 bg-primary-600 border border-transparent rounded-lg font-medium text-sm text-white hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-colors duration-200">
                 <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
@@ -46,7 +62,7 @@
 
     <!-- Filtros -->
     <div class="bg-white rounded-xl border border-secondary-200 mb-6">
-        <details class="group">
+        <details class="group" open>
             <summary class="flex items-center justify-between p-6 cursor-pointer list-none">
                 <div class="flex items-center text-secondary-900">
                     <svg class="w-5 h-5 mr-3 text-secondary-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -59,32 +75,32 @@
                 </svg>
             </summary>
             <div class="px-6 pb-6">
-                <form class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                     <div class="space-y-1">
                         <label for="filtro_destino" class="block text-sm font-medium text-secondary-700">Destino</label>
-                        <input type="text" name="filtro_destino" id="filtro_destino" class="block w-full px-3 py-2 border border-secondary-300 rounded-lg text-sm placeholder-secondary-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500" placeholder="Buscar por destino">
+                        <input wire:model.live="filtro_destino" type="text" id="filtro_destino" class="block w-full px-3 py-2 border border-secondary-300 rounded-lg text-sm placeholder-secondary-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500" placeholder="Buscar por destino">
                     </div>
+                    @if(auth()->user()->id_rol != 1)
                      <div class="space-y-1">
                         <label for="filtro_escuela" class="block text-sm font-medium text-secondary-700">Escuela</label>
-                        {{-- TODO: Implementar selección de escuela dinámica --}}
-                        <select name="filtro_escuela" id="filtro_escuela" class="block w-full px-3 py-2 border border-secondary-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500">
+                        <select wire:model.live="filtro_escuela" id="filtro_escuela" class="block w-full px-3 py-2 border border-secondary-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500">
                             <option value="">Todas</option>
-                            {{-- Opciones de escuelas --}}
+                            @foreach($escuelas as $escuela)
+                                <option value="{{ $escuela->id_escuela }}">{{ $escuela->nombre }}</option>
+                            @endforeach
                         </select>
                     </div>
+                    @endif
                     <div class="space-y-1">
                         <label for="filtro_fecha" class="block text-sm font-medium text-secondary-700">Fecha</label>
-                        <input type="date" name="filtro_fecha" id="filtro_fecha" class="block w-full px-3 py-2 border border-secondary-300 rounded-lg text-sm placeholder-secondary-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500">
+                        <input wire:model.live="filtro_fecha" type="date" id="filtro_fecha" class="block w-full px-3 py-2 border border-secondary-300 rounded-lg text-sm placeholder-secondary-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500">
                     </div>
                     <div class="flex items-end">
-                        <button type="submit" class="w-full inline-flex justify-center items-center px-4 py-2 bg-secondary-900 border border-transparent rounded-lg font-medium text-sm text-white hover:bg-secondary-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-secondary-500 transition-colors duration-200">
-                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-                            </svg>
-                            Buscar
+                        <button wire:click="limpiarFiltros" type="button" class="w-full inline-flex justify-center items-center px-4 py-2 bg-secondary-200 border border-transparent rounded-lg font-medium text-sm text-secondary-700 hover:bg-secondary-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-secondary-500 transition-colors duration-200">
+                            Limpiar
                         </button>
                     </div>
-                </form>
+                </div>
             </div>
         </details>
     </div>
@@ -96,31 +112,40 @@
                 <thead class="bg-secondary-50">
                     <tr>
                         <th scope="col" class="px-6 py-4 text-left text-xs font-medium text-secondary-500 uppercase tracking-wider">
-                            <button class="group inline-flex items-center hover:text-secondary-700">
+                            <button wire:click="sortBy('fecha_salida')" class="group inline-flex items-center hover:text-secondary-700">
                                 Fecha
-                                <svg class="ml-2 w-4 h-4 text-secondary-400 group-hover:text-secondary-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"></path>
-                                </svg>
+                                @if($sortField === 'fecha_salida')
+                                    @if($sortDirection === 'asc') <svg class="ml-2 w-4 h-4 text-primary-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"></path></svg>
+                                    @else <svg class="ml-2 w-4 h-4 text-primary-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                                    @endif
+                                @else <svg class="ml-2 w-4 h-4 text-secondary-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"></path></svg>
+                                @endif
                             </button>
                         </th>
                          <th scope="col" class="px-6 py-4 text-left text-xs font-medium text-secondary-500 uppercase tracking-wider">
-                             <button class="group inline-flex items-center hover:text-secondary-700">
+                             <button wire:click="sortBy('destino')" class="group inline-flex items-center hover:text-secondary-700">
                                 Destino
-                                <svg class="ml-2 w-4 h-4 text-secondary-400 group-hover:text-secondary-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"></path>
-                                </svg>
+                                @if($sortField === 'destino')
+                                    @if($sortDirection === 'asc') <svg class="ml-2 w-4 h-4 text-primary-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"></path></svg>
+                                    @else <svg class="ml-2 w-4 h-4 text-primary-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                                    @endif
+                                @else <svg class="ml-2 w-4 h-4 text-secondary-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"></path></svg>
+                                @endif
                             </button>
                         </th>
                          <th scope="col" class="px-6 py-4 text-left text-xs font-medium text-secondary-500 uppercase tracking-wider">
-                             <button class="group inline-flex items-center hover:text-secondary-700">
+                             <button wire:click="sortBy('id_escuela')" class="group inline-flex items-center hover:text-secondary-700">
                                 Escuela
-                                <svg class="ml-2 w-4 h-4 text-secondary-400 group-hover:text-secondary-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"></path>
-                                </svg>
+                                @if($sortField === 'id_escuela')
+                                    @if($sortDirection === 'asc') <svg class="ml-2 w-4 h-4 text-primary-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"></path></svg>
+                                    @else <svg class="ml-2 w-4 h-4 text-primary-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                                    @endif
+                                @else <svg class="ml-2 w-4 h-4 text-secondary-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"></path></svg>
+                                @endif
                             </button>
                         </th>
                         <th scope="col" class="px-6 py-4 text-center text-xs font-medium text-secondary-500 uppercase tracking-wider">
-                            Cantidad Alumnos
+                            Alumnos
                         </th>
                         <th scope="col" class="px-6 py-4 text-center text-xs font-medium text-secondary-500 uppercase tracking-wider">
                             Acciones
@@ -128,100 +153,84 @@
                     </tr>
                 </thead>
                 <tbody class="bg-white divide-y divide-secondary-200">
-                    {{-- Filas de ejemplo (reemplazar con datos reales) --}}
+                    @forelse($salidas as $salida)
                     <tr class="hover:bg-secondary-50 transition-colors duration-150">
                         <td class="px-6 py-4 whitespace-nowrap">
-                            <div class="text-sm font-medium text-secondary-900">2024-10-15</div>
+                            <div class="text-sm font-medium text-secondary-900">{{ $salida->fecha_salida->format('d/m/Y') }}</div>
                         </td>
                          <td class="px-6 py-4 whitespace-nowrap">
-                            <div class="text-sm text-secondary-900">Museo de Ciencias Naturales</div>
+                            <div class="text-sm text-secondary-900">{{ $salida->destino }}</div>
                         </td>
                          <td class="px-6 py-4 whitespace-nowrap">
-                            <div class="text-sm text-secondary-900">Colegio San Martín</div>
+                            <div class="text-sm text-secondary-900">{{ $salida->escuela->nombre ?? 'N/A' }}</div>
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-center">
-                            <div class="text-sm font-medium text-secondary-900">35</div>
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-center">
-                            <div class="flex items-center justify-center space-x-2">
-                                {{-- TODO: Definir la ruta correcta para ver detalles de la salida educativa --}}
-                                <a href="{{ route('salidas_educativas.show', 1) }}" class="p-2 text-secondary-400 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition-colors duration-200" title="Ver detalles">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
-                                    </svg>
-                                </a>
-                                {{-- TODO: Definir la ruta correcta para editar salida educativa --}}
-                                <a href="{{ route('salidas_educativas.edit', 1) }}" class="p-2 text-secondary-400 hover:text-warning-600 hover:bg-warning-50 rounded-lg transition-colors duration-200" title="Editar">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
-                                    </svg>
-                                </a>
-                            </div>
-                        </td>
-                    </tr>
-                     <tr class="hover:bg-secondary-50 transition-colors duration-150">
-                        <td class="px-6 py-4 whitespace-nowrap">
-                            <div class="text-sm font-medium text-secondary-900">2024-11-20</div>
-                        </td>
-                         <td class="px-6 py-4 whitespace-nowrap">
-                            <div class="text-sm text-secondary-900">Fábrica de Alfajores</div>
-                        </td>
-                         <td class="px-6 py-4 whitespace-nowrap">
-                            <div class="text-sm text-secondary-900">Instituto Belgrano</div>
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-center">
-                            <div class="text-sm font-medium text-secondary-900">28</div>
+                            <div class="text-sm font-medium text-secondary-900">{{ $salida->cantidad_alumnos }}</div>
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-center">
                             <div class="flex items-center justify-center space-x-2">
-                                {{-- TODO: Definir la ruta correcta para ver detalles de la salida educativa --}}
-                                <a href="{{ route('salidas_educativas.show', 2) }}" class="p-2 text-secondary-400 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition-colors duration-200" title="Ver detalles">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
-                                    </svg>
+                                <a href="{{ route('salidas_educativas.show', $salida->id_salida) }}" class="p-2 text-secondary-400 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition-colors duration-200" title="Ver detalles">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
                                 </a>
-                                {{-- TODO: Definir la ruta correcta para editar salida educativa --}}
-                                <a href="{{ route('salidas_educativas.edit', 2) }}" class="p-2 text-secondary-400 hover:text-warning-600 hover:bg-warning-50 rounded-lg transition-colors duration-200" title="Editar">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
-                                    </svg>
+                                <a href="{{ route('salidas_educativas.edit', $salida->id_salida) }}" class="p-2 text-secondary-400 hover:text-warning-600 hover:bg-warning-50 rounded-lg transition-colors duration-200" title="Editar">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
                                 </a>
+                                <button wire:click="eliminar({{ $salida->id_salida }})" wire:confirm="¿Está seguro que desea eliminar esta Salida Educativa?" class="p-2 text-secondary-400 hover:text-danger-600 hover:bg-danger-50 rounded-lg transition-colors duration-200" title="Eliminar">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                                </button>
                             </div>
                         </td>
                     </tr>
-                    {{-- Fin Filas de ejemplo --}}
+                    @empty
+                    <tr>
+                        <td colspan="5" class="px-6 py-12 text-center">
+                            <div class="text-secondary-500">No hay registros disponibles.</div>
+                        </td>
+                    </tr>
+                    @endforelse
                 </tbody>
             </table>
         </div>
 
         <!-- Paginación -->
-        <div class="px-6 py-4 bg-secondary-50 border-t border-secondary-200 flex flex-col sm:flex-row items-center justify-between">
-            <div class="text-sm text-secondary-700 mb-4 sm:mb-0">
-                Mostrando <span class="font-medium text-secondary-900">1</span> a <span class="font-medium text-secondary-900">2</span> de <span class="font-medium text-secondary-900">15</span> resultados
-            </div>
-            <nav class="inline-flex rounded-lg shadow-sm" aria-label="Paginación">
-                <button type="button" class="relative inline-flex items-center px-2 py-2 rounded-l-lg border border-secondary-300 bg-white text-sm font-medium text-secondary-500 hover:bg-secondary-50 focus:z-10 focus:outline-none focus:ring-1 focus:ring-primary-500 focus:border-primary-500 disabled:opacity-50 disabled:cursor-not-allowed">
-                    <span class="sr-only">Anterior</span>
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
-                    </svg>
-                </button>
-                <button type="button" class="relative inline-flex items-center px-4 py-2 border border-secondary-300 bg-primary-600 text-sm font-medium text-white hover:bg-primary-700 focus:z-10 focus:outline-none focus:ring-1 focus:ring-primary-500 focus:border-primary-500" aria-current="page">
-                    1
-                </button>
-                <button type="button" class="relative inline-flex items-center px-4 py-2 border border-secondary-300 bg-white text-sm font-medium text-secondary-700 hover:bg-secondary-50 focus:z-10 focus:outline-none focus:ring-1 focus:ring-primary-500 focus:border-primary-500">
-                    2
-                </button>
-                <button type="button" class="relative inline-flex items-center px-2 py-2 rounded-r-lg border border-secondary-300 bg-white text-sm font-medium text-secondary-500 hover:bg-secondary-50 focus:z-10 focus:outline-none focus:ring-1 focus:ring-primary-500 focus:border-primary-500">
-                    <span class="sr-only">Siguiente</span>
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-                    </svg>
-                </button>
-            </nav>
+        @if($salidas->hasPages())
+        <div class="px-6 py-4 bg-secondary-50 border-t border-secondary-200">
+            {{ $salidas->links() }}
         </div>
+        @endif
     </div>
 </div>
-@endsection
+
+@push('scripts')
+<script>
+    function exportarSalidasEducativas(formato) {
+        const filtroDestino = @this.get('filtro_destino');
+        const filtroEscuela = @this.get('filtro_escuela');
+        const filtroFecha = @this.get('filtro_fecha');
+        
+        const params = new URLSearchParams();
+        if (filtroDestino) params.append('filtro_destino', filtroDestino);
+        if (filtroEscuela) params.append('filtro_escuela', filtroEscuela);
+        if (filtroFecha) params.append('filtro_fecha', filtroFecha);
+        
+        let url = '';
+        switch(formato) {
+            case 'csv':
+                url = '{{ route("salidas_educativas.export.csv") }}';
+                break;
+            case 'excel':
+                url = '{{ route("salidas_educativas.export.excel") }}';
+                break;
+            case 'pdf':
+                url = '{{ route("salidas_educativas.export.pdf") }}';
+                break;
+        }
+        
+        if (params.toString()) {
+            url += '?' + params.toString();
+        }
+        
+        window.open(url, '_blank');
+    }
+</script>
+@endpush

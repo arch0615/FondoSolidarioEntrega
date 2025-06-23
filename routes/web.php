@@ -32,326 +32,303 @@ Route::middleware('guest')->group(function () {
 Route::middleware('auth')->group(function () {
     Route::get('/dashboard', [\App\Http\Controllers\DashboardController::class, 'index'])->name('dashboard');
 
-    // Mockup de rutas para Escuelas (sin controlador real aún)
-    Route::prefix('escuelas')->name('escuelas.')->group(function () {
-        Route::get('/', function () {
-            // Simular datos para el mockup de la lista
-            return view('livewire.escuelas.index');
-        })->name('index');
+    // Rutas para Escuelas (conectado a BD)
+    Route::prefix('escuelas')->name('escuelas.')->middleware('auth')->group(function () {
+        Route::get('/', \App\Livewire\Escuelas\Index::class)->name('index');
 
         Route::get('/create', function () {
-            return view('livewire.escuelas.form', ['modo' => 'create']);
+            return view('escuelas.form', ['modo' => 'create']);
         })->name('create');
 
         Route::get('/{id}/edit', function ($id) {
-            // Simular carga de escuela para edición
-            return view('livewire.escuelas.form', ['modo' => 'edit', 'escuela_id' => $id]);
+            return view('escuelas.form', ['modo' => 'edit', 'escuela_id' => $id]);
         })->name('edit');
 
         Route::get('/{id}', function ($id) {
-            // Simular carga de escuela para visualización
-            return view('livewire.escuelas.form', ['modo' => 'show', 'escuela_id' => $id]);
+            return view('escuelas.form', ['modo' => 'show', 'escuela_id' => $id]);
         })->name('show');
+
+        // Rutas de exportación
+        Route::get('/export/csv', [\App\Http\Controllers\EscuelaExportController::class, 'exportarCSV'])->name('export.csv');
+        Route::get('/export/excel', [\App\Http\Controllers\EscuelaExportController::class, 'exportarExcel'])->name('export.excel');
+        Route::get('/export/pdf', [\App\Http\Controllers\EscuelaExportController::class, 'exportarPDF'])->name('export.pdf');
     });
 
-    // Mockup de rutas para Empleados (sin controlador real aún)
-    Route::prefix('empleados')->name('empleados.')->group(function () {
-        Route::get('/', function () {
-            // Simular datos para el mockup de la lista
-            return view('livewire.empleados.index');
-        })->name('index');
+    // Rutas para Empleados (conectado a BD)
+    Route::prefix('empleados')->name('empleados.')->middleware('auth')->group(function () {
+        Route::get('/', \App\Livewire\Empleados\Index::class)->name('index');
 
         Route::get('/create', function () {
-            return view('livewire.empleados.form', ['modo' => 'create']);
+            return view('empleados.form', ['modo' => 'create']);
         })->name('create');
 
         Route::get('/{id}/edit', function ($id) {
-            // Simular carga de empleado para edición
-            return view('livewire.empleados.form', ['modo' => 'edit', 'empleado_id' => $id]);
+            return view('empleados.form', ['modo' => 'edit', 'empleado_id' => $id]);
         })->name('edit');
 
         Route::get('/{id}', function ($id) {
-            // Simular carga de empleado para visualización
-            return view('livewire.empleados.form', ['modo' => 'show', 'empleado_id' => $id]);
+            return view('empleados.form', ['modo' => 'show', 'empleado_id' => $id]);
         })->name('show');
+
+        // Rutas de exportación
+        Route::get('/export/csv', [\App\Http\Controllers\EmpleadosExportController::class, 'exportarCSV'])->name('export.csv');
+        Route::get('/export/excel', [\App\Http\Controllers\EmpleadosExportController::class, 'exportarExcel'])->name('export.excel');
+        Route::get('/export/pdf', [\App\Http\Controllers\EmpleadosExportController::class, 'exportarPDF'])->name('export.pdf');
     });
 
     // Mockup de rutas para Prestadores (sin controlador real aún)
-    Route::prefix('prestadores')->name('prestadores.')->group(function () {
-        Route::get('/', function () {
-            // Simular datos para el mockup de la lista
-            return view('livewire.prestadores.index');
-        })->name('index');
+    Route::prefix('prestadores')->name('prestadores.')->middleware('auth')->group(function () {
+        Route::get('/', \App\Livewire\Prestadores\Index::class)->name('index');
 
         Route::get('/create', function () {
-            return view('livewire.prestadores.form', ['modo' => 'create']);
+            return view('prestadores.form', ['modo' => 'create']);
         })->name('create');
 
         Route::get('/{id}/edit', function ($id) {
-            // Simular carga de prestador para edición
-            return view('livewire.prestadores.form', ['modo' => 'edit', 'prestador_id' => $id]);
+            return view('prestadores.form', ['modo' => 'edit', 'prestador_id' => $id]);
         })->name('edit');
 
         Route::get('/{id}', function ($id) {
-            // Simular carga de prestador para visualización
-            return view('livewire.prestadores.form', ['modo' => 'show', 'prestador_id' => $id]);
+            return view('prestadores.form', ['modo' => 'show', 'prestador_id' => $id]);
         })->name('show');
+
+        // Rutas de exportación
+        Route::get('/export/csv', [\App\Http\Controllers\PrestadorExportController::class, 'exportarCSV'])->name('export.csv');
+        Route::get('/export/excel', [\App\Http\Controllers\PrestadorExportController::class, 'exportarExcel'])->name('export.excel');
+        Route::get('/export/pdf', [\App\Http\Controllers\PrestadorExportController::class, 'exportarPDF'])->name('export.pdf');
     });
 
-    // Mockup de rutas para Usuarios (sin controlador real aún) - Solo Admin
+    // Rutas para Usuarios usando componentes Livewire - Solo Admin
     Route::prefix('usuarios')->name('usuarios.')->middleware(['auth', 'role:admin'])->group(function () {
-        Route::get('/', function () {
-            // Simular datos para el mockup de la lista
-            return view('livewire.usuarios.index');
-        })->name('index');
+        Route::get('/', \App\Livewire\Usuarios\Index::class)->name('index');
 
         Route::get('/create', function () {
-            return view('livewire.usuarios.form', ['modo' => 'create']);
+            return view('usuarios.form', ['modo' => 'create']);
         })->name('create');
 
         Route::get('/{id}/edit', function ($id) {
-            // Simular carga de usuario para edición
-            return view('livewire.usuarios.form', ['modo' => 'edit', 'usuario_id' => $id]);
+            return view('usuarios.form', ['modo' => 'edit', 'usuario_id' => $id]);
         })->name('edit');
 
         Route::get('/{id}', function ($id) {
-            // Simular carga de usuario para visualización
-            return view('livewire.usuarios.form', ['modo' => 'show', 'usuario_id' => $id]);
+            return view('usuarios.form', ['modo' => 'show', 'usuario_id' => $id]);
         })->name('show');
+
+        // Rutas de exportación
+        Route::get('/export/csv', [\App\Http\Controllers\UsuariosExportController::class, 'exportarCSV'])->name('export.csv');
+        Route::get('/export/excel', [\App\Http\Controllers\UsuariosExportController::class, 'exportarExcel'])->name('export.excel');
     });
 
-    // Mockup de rutas para Alumnos (sin controlador real aún)
-    Route::prefix('alumnos')->name('alumnos.')->group(function () {
-        Route::get('/', function () {
-            // Simular datos para el mockup de la lista
-            return view('livewire.alumnos.index');
-        })->name('index');
+    // Rutas para Alumnos (conectado a BD)
+    Route::prefix('alumnos')->name('alumnos.')->middleware('auth')->group(function () {
+        Route::get('/', \App\Livewire\Alumnos\Index::class)->name('index');
 
         Route::get('/create', function () {
-            return view('livewire.alumnos.form', ['modo' => 'create']);
+            return view('alumnos.form', ['modo' => 'create']);
         })->name('create');
 
         Route::get('/{id}/edit', function ($id) {
-            // Simular carga de alumno para edición
-            return view('livewire.alumnos.form', ['modo' => 'edit', 'alumno_id' => $id]);
+            return view('alumnos.form', ['modo' => 'edit', 'alumno_id' => $id]);
         })->name('edit');
 
         Route::get('/{id}', function ($id) {
-            // Simular carga de alumno para visualización
-            return view('livewire.alumnos.form', ['modo' => 'show', 'alumno_id' => $id]);
+            return view('alumnos.form', ['modo' => 'show', 'alumno_id' => $id]);
         })->name('show');
+
+        // Rutas de exportación
+        Route::get('/export/csv', [\App\Http\Controllers\AlumnosExportController::class, 'exportarCSV'])->name('export.csv');
+        Route::get('/export/excel', [\App\Http\Controllers\AlumnosExportController::class, 'exportarExcel'])->name('export.excel');
+        Route::get('/export/pdf', [\App\Http\Controllers\AlumnosExportController::class, 'exportarPDF'])->name('export.pdf');
     });
 
-    // Mockup de rutas para Accidentes (sin controlador real aún)
-    Route::prefix('accidentes')->name('accidentes.')->group(function () {
-        Route::get('/', function () {
-            // Simular datos para el mockup de la lista
-            return view('livewire.accidentes.index');
-        })->name('index');
+    // Rutas para Accidentes (conectado a BD)
+    Route::prefix('accidentes')->name('accidentes.')->middleware('auth')->group(function () {
+        Route::get('/', \App\Livewire\Accidentes\Index::class)->name('index');
 
         Route::get('/create', function () {
-            return view('livewire.accidentes.form', ['modo' => 'create']);
+            return view('accidentes.form', ['modo' => 'create']);
         })->name('create');
 
         Route::get('/{id}/edit', function ($id) {
-            // Simular carga de accidente para edición
-            return view('livewire.accidentes.form', ['modo' => 'edit', 'accidente_id' => $id]);
+            return view('accidentes.form', ['modo' => 'edit', 'accidente_id' => $id]);
         })->name('edit');
 
         Route::get('/{id}', function ($id) {
-            // Simular carga de accidente para visualización
-            return view('livewire.accidentes.form', ['modo' => 'show', 'accidente_id' => $id]);
+            return view('accidentes.form', ['modo' => 'show', 'accidente_id' => $id]);
         })->name('show');
+
+        // Rutas de exportación
+        Route::get('/export/csv', [\App\Http\Controllers\AccidentesExportController::class, 'exportarCSV'])->name('export.csv');
+        Route::get('/export/excel', [\App\Http\Controllers\AccidentesExportController::class, 'exportarExcel'])->name('export.excel');
+        Route::get('/export/pdf', [\App\Http\Controllers\AccidentesExportController::class, 'exportarPDF'])->name('export.pdf');
     });
 
-    // Mockup de rutas para Salidas Educativas (sin controlador real aún)
-    Route::prefix('salidas-educativas')->name('salidas_educativas.')->group(function () {
-        Route::get('/', function () {
-            // Simular datos para el mockup de la lista
-            return view('livewire.salidas_educativas.index');
-        })->name('index');
+    // Rutas para Salidas Educativas (conectado a BD)
+    Route::prefix('salidas-educativas')->name('salidas-educativas.')->middleware('auth')->group(function () {
+        Route::get('/', \App\Livewire\SalidasEducativas\Index::class)->name('index');
 
         Route::get('/create', function () {
-            return view('livewire.salidas_educativas.form', ['modo' => 'create']);
+            return view('salidas_educativas.form', ['modo' => 'create']);
         })->name('create');
 
         Route::get('/{id}/edit', function ($id) {
-            // Simular carga de salida educativa para edición
-            return view('livewire.salidas_educativas.form', ['modo' => 'edit', 'salida_id' => $id]);
+            return view('salidas_educativas.form', ['modo' => 'edit', 'salida_id' => $id]);
         })->name('edit');
 
         Route::get('/{id}', function ($id) {
-            // Simular carga de salida educativa para visualización
-            return view('livewire.salidas_educativas.form', ['modo' => 'show', 'salida_id' => $id]);
+            return view('salidas_educativas.form', ['modo' => 'show', 'salida_id' => $id]);
         })->name('show');
+
+        // Rutas de exportación
+        Route::get('/export/csv', [\App\Http\Controllers\SalidaEducativaExportController::class, 'exportarCSV'])->name('export.csv');
+        Route::get('/export/excel', [\App\Http\Controllers\SalidaEducativaExportController::class, 'exportarExcel'])->name('export.excel');
+        Route::get('/export/pdf', [\App\Http\Controllers\SalidaEducativaExportController::class, 'exportarPDF'])->name('export.pdf');
     });
 
-    // Mockup de rutas para Pasantías (sin controlador real aún)
-    Route::prefix('pasantias')->name('pasantias.')->group(function () {
-        Route::get('/', function () {
-            // Simular datos para el mockup de la lista
-            return view('livewire.pasantias.index');
-        })->name('index');
+    // Rutas para Pasantías (conectado a BD)
+    Route::prefix('pasantias')->name('pasantias.')->middleware('auth')->group(function () {
+        Route::get('/', \App\Livewire\Pasantias\Index::class)->name('index');
 
         Route::get('/create', function () {
-            return view('livewire.pasantias.form', ['modo' => 'create']);
+            return view('pasantias.form', ['modo' => 'create']);
         })->name('create');
 
         Route::get('/{id}/edit', function ($id) {
-            // Simular carga de pasantía para edición
-            return view('livewire.pasantias.form', ['modo' => 'edit', 'pasantia_id' => $id]);
+            return view('pasantias.form', ['modo' => 'edit', 'pasantia_id' => $id]);
         })->name('edit');
 
         Route::get('/{id}', function ($id) {
-            // Simular carga de pasantía para visualización
-            return view('livewire.pasantias.form', ['modo' => 'show', 'pasantia_id' => $id]);
+            return view('pasantias.form', ['modo' => 'show', 'pasantia_id' => $id]);
         })->name('show');
+
+        // Rutas de exportación
+        Route::get('/export/csv', [App\Http\Controllers\PasantiaExportController::class, 'exportCsv'])->name('export.csv');
+        Route::get('/export/excel', [App\Http\Controllers\PasantiaExportController::class, 'exportExcel'])->name('export.excel');
+        Route::get('/export/pdf', [App\Http\Controllers\PasantiaExportController::class, 'exportPdf'])->name('export.pdf');
     });
 
-    // Mockup de rutas para Beneficiarios SVO (sin controlador real aún)
-    Route::prefix('beneficiarios-svo')->name('beneficiarios_svo.')->group(function () {
-        Route::get('/', function () {
-            // Simular datos para el mockup de la lista
-            return view('livewire.beneficiarios_svo.index');
-        })->name('index');
+    // Rutas para Beneficiarios SVO (conectado a BD)
+    Route::prefix('beneficiarios-svo')->name('beneficiarios_svo.')->middleware('auth')->group(function () {
+        Route::get('/', \App\Livewire\BeneficiariosSvo\Index::class)->name('index');
 
         Route::get('/create', function () {
-            return view('livewire.beneficiarios_svo.form', ['modo' => 'create']);
+            return view('beneficiarios_svo.form', ['modo' => 'create']);
         })->name('create');
 
         Route::get('/{id}/edit', function ($id) {
-            // Simular carga de beneficiario para edición
-            return view('livewire.beneficiarios_svo.form', ['modo' => 'edit', 'beneficiario_id' => $id]);
+            return view('beneficiarios_svo.form', ['modo' => 'edit', 'beneficiario_id' => $id]);
         })->name('edit');
 
         Route::get('/{id}', function ($id) {
-            // Simular carga de beneficiario para visualización
-            return view('livewire.beneficiarios_svo.form', ['modo' => 'show', 'beneficiario_id' => $id]);
+            return view('beneficiarios_svo.form', ['modo' => 'show', 'beneficiario_id' => $id]);
         })->name('show');
+
+        // Rutas de exportación
+        Route::get('/export/csv', [\App\Http\Controllers\BeneficiarioSvoExportController::class, 'exportarCSV'])->name('export.csv');
+        Route::get('/export/excel', [\App\Http\Controllers\BeneficiarioSvoExportController::class, 'exportarExcel'])->name('export.excel');
+        Route::get('/export/pdf', [\App\Http\Controllers\BeneficiarioSvoExportController::class, 'exportarPDF'])->name('export.pdf');
     });
 
-    // Mockup de rutas para Derivaciones (sin controlador real aún)
-    Route::prefix('derivaciones')->name('derivaciones.')->group(function () {
-        Route::get('/', function () {
-            // Simular datos para el mockup de la lista
-            return view('livewire.derivaciones.index');
-        })->name('index');
+    // Rutas para Derivaciones (conectado a BD)
+    Route::prefix('derivaciones')->name('derivaciones.')->middleware('auth')->group(function () {
+        Route::get('/', \App\Livewire\Derivaciones\Index::class)->name('index');
 
-        Route::get('/create', function () { // Usualmente se crea desde un accidente
-            return view('livewire.derivaciones.form', ['modo' => 'create']);
+        Route::get('/create/{id_accidente?}', function ($id_accidente = null) {
+            return view('derivaciones.form', ['modo' => 'create', 'accidente_id' => $id_accidente]);
         })->name('create');
 
         Route::get('/{id}/edit', function ($id) {
-            // Simular carga de derivacion para edición
-            return view('livewire.derivaciones.form', ['modo' => 'edit', 'derivacion_id' => $id]);
+            return view('derivaciones.form', ['modo' => 'edit', 'derivacion_id' => $id]);
         })->name('edit');
 
         Route::get('/{id}', function ($id) {
-            // Simular carga de derivacion para visualización
-            return view('livewire.derivaciones.form', ['modo' => 'show', 'derivacion_id' => $id]);
+            return view('derivaciones.form', ['modo' => 'show', 'derivacion_id' => $id]);
         })->name('show');
+
+        Route::get('/{id}/print', [\App\Http\Controllers\DerivacionController::class, 'print'])->name('print');
+
+        // Rutas de exportación
+        Route::get('/export/csv', [\App\Http\Controllers\DerivacionesExportController::class, 'exportarCSV'])->name('export.csv');
+        Route::get('/export/excel', [\App\Http\Controllers\DerivacionesExportController::class, 'exportarExcel'])->name('export.excel');
+        Route::get('/export/pdf', [\App\Http\Controllers\DerivacionesExportController::class, 'exportarPDF'])->name('export.pdf');
     });
 
-    // Mockup de rutas para Reintegros
-    Route::prefix('reintegros')->name('reintegros.')->group(function () {
-        Route::get('/', function () {
-            $reintegrosMockup = collect([
-                [
-                    'id_reintegro' => 'REI-001',
-                    'id_accidente' => 'ACC-001',
-                    'nombre_alumno' => 'Juan Pérez',
-                    'escuela' => 'Colegio San Martín',
-                    'fecha_solicitud' => '2024-05-20',
-                    'monto_solicitado' => 1500.00,
-                    'estado' => 'En Proceso',
-                    'solicitud_informacion' => null,
-                ],
-                [
-                    'id_reintegro' => 'REI-002',
-                    'id_accidente' => 'ACC-002',
-                    'nombre_alumno' => 'Ana López',
-                    'escuela' => 'Instituto Belgrano',
-                    'fecha_solicitud' => '2024-05-22',
-                    'monto_solicitado' => 8250.50,
-                    'estado' => 'Autorizado',
-                    'solicitud_informacion' => null,
-                ],
-                [
-                    'id_reintegro' => 'REI-003',
-                    'id_accidente' => 'ACC-003',
-                    'nombre_alumno' => 'Carlos Sanchez',
-                    'escuela' => 'Colegio San Martín',
-                    'fecha_solicitud' => '2024-05-25',
-                    'monto_solicitado' => 3100.00,
-                    'estado' => 'Solicitud de Información',
-                    'solicitud_informacion' => 'Falta el comprobante de la farmacia. Por favor, adjúntelo.',
-                ],
-                 [
-                    'id_reintegro' => 'REI-004',
-                    'id_accidente' => 'ACC-004',
-                    'nombre_alumno' => 'Laura Gomez',
-                    'escuela' => 'Instituto Belgrano',
-                    'fecha_solicitud' => '2024-05-28',
-                    'monto_solicitado' => 500.00,
-                    'estado' => 'Rechazado',
-                    'solicitud_informacion' => null,
-                ],
-            ]);
-            return view('livewire.reintegros.index', ['reintegros' => $reintegrosMockup]);
-        })->name('index');
-
+    // Rutas para Reintegros (conectado a BD)
+    Route::prefix('reintegros')->name('reintegros.')->middleware('auth')->group(function () {
+        Route::get('/', \App\Livewire\Reintegros\Index::class)->name('index');
         Route::get('/pendientes', \App\Livewire\Reintegros\Pendientes::class)->name('pendientes');
 
         Route::get('/create', function () {
-            return view('livewire.reintegros.form', ['modo' => 'create', 'estado' => 'En Proceso']);
+            return view('reintegros.form', ['modo' => 'create']);
         })->name('create');
 
         Route::get('/{id}/edit', function ($id) {
-            // Mockup: En un caso real, se cargaría el estado del reintegro
-            return view('livewire.reintegros.form', ['modo' => 'edit', 'reintegro_id' => $id, 'estado' => 'En Proceso']);
+            return view('reintegros.form', ['modo' => 'edit', 'reintegro_id' => $id]);
         })->name('edit');
 
         Route::get('/{id}', function ($id) {
-            // Mockup: En un caso real, se cargaría el estado del reintegro
-            return view('livewire.reintegros.form', ['modo' => 'show', 'reintegro_id' => $id, 'estado' => 'Autorizado']);
+            return view('reintegros.form', ['modo' => 'show', 'reintegro_id' => $id]);
         })->name('show');
+
+        // Rutas de exportación
+        Route::get('/export/csv', [\App\Http\Controllers\ReintegroExportController::class, 'exportarCSV'])->name('export.csv');
+        Route::get('/export/excel', [\App\Http\Controllers\ReintegroExportController::class, 'exportarExcel'])->name('export.excel');
+        Route::get('/export/pdf', [\App\Http\Controllers\ReintegroExportController::class, 'exportarPDF'])->name('export.pdf');
     });
 
-    // Mockup de rutas para Documentos (sin controlador real aún)
-    Route::prefix('documentos')->name('documentos.')->group(function () {
-        Route::get('/', function () {
-            // Simular datos para el mockup de la lista
-            return view('livewire.documentos.index');
-        })->name('index');
+    // Rutas para Documentos Institucionales (conectado a BD)
+    Route::prefix('documentos')->name('documentos.')->middleware('auth')->group(function () {
+        Route::get('/', \App\Livewire\Documentos\Index::class)->name('index');
 
         Route::get('/create', function () {
-            return view('livewire.documentos.form', ['modo' => 'create']);
+            return view('documentos.form', ['modo' => 'create']);
         })->name('create');
 
         Route::get('/{id}/edit', function ($id) {
-            // Simular carga de documento para edición
-            return view('livewire.documentos.form', ['modo' => 'edit', 'documento_id' => $id]);
+            return view('documentos.form', ['modo' => 'edit', 'documento_id' => $id]);
         })->name('edit');
 
         Route::get('/{id}', function ($id) {
-            // Simular carga de documento para visualización
-            return view('livewire.documentos.form', ['modo' => 'show', 'documento_id' => $id]);
+            return view('documentos.form', ['modo' => 'show', 'documento_id' => $id]);
         })->name('show');
+
+        // Rutas de exportación
+        Route::get('/export/csv', [\App\Http\Controllers\DocumentosExportController::class, 'exportarCSV'])->name('export.csv');
+        Route::get('/export/excel', [\App\Http\Controllers\DocumentosExportController::class, 'exportarExcel'])->name('export.excel');
+        Route::get('/export/pdf', [\App\Http\Controllers\DocumentosExportController::class, 'exportarPDF'])->name('export.pdf');
     });
     
     // Rutas de Auditoría
     Route::prefix('auditoria')->name('auditoria.')->middleware(['auth', 'role:admin'])->group(function () {
-        Route::get('/accesos', function () {
-            return view('livewire.auditoria.accesos-sistema');
-        })->name('accesos');
-        Route::get('/operaciones', function () {
-            return view('livewire.auditoria.operaciones-sistema');
-        })->name('operaciones');
+        Route::get('/accesos', \App\Livewire\Auditoria\AccesosSistema::class)->name('accesos');
+        Route::get('/operaciones', \App\Livewire\Auditoria\OperacionesSistema::class)->name('operaciones');
+
+        // Rutas de exportación de auditoría
+        Route::prefix('export')->name('export.')->group(function () {
+            Route::get('/accesos/csv', [\App\Http\Controllers\AuditoriaExportController::class, 'exportarAccesosCSV'])->name('accesos.csv');
+            Route::get('/accesos/excel', [\App\Http\Controllers\AuditoriaExportController::class, 'exportarAccesosExcel'])->name('accesos.excel');
+            Route::get('/accesos/pdf', [\App\Http\Controllers\AuditoriaExportController::class, 'exportarAccesosPDF'])->name('accesos.pdf');
+            Route::get('/operaciones/csv', [\App\Http\Controllers\AuditoriaExportController::class, 'exportarOperacionesCSV'])->name('operaciones.csv');
+            Route::get('/operaciones/excel', [\App\Http\Controllers\AuditoriaExportController::class, 'exportarOperacionesExcel'])->name('operaciones.excel');
+            Route::get('/operaciones/pdf', [\App\Http\Controllers\AuditoriaExportController::class, 'exportarOperacionesPDF'])->name('operaciones.pdf');
+        });
     });
 
     // Ruta de Historial de Auditorías para múltiples roles
     Route::prefix('auditoria')->name('auditoria.')->middleware(['auth', 'role:admin,medico_auditor,usuario_general'])->group(function () {
         Route::get('/historial-auditorias', \App\Livewire\Auditoria\HistorialAuditorias::class)->name('historial-auditorias');
+        
+        Route::get('/detalle/{type}/{id}', function ($type, $id) {
+            $item = null;
+            if ($type === 'auditoria') {
+                $item = \App\Models\AuditoriaSistema::with(['reintegro.accidente.alumnos.alumno', 'reintegro.accidente.escuela', 'usuario'])->findOrFail($id);
+            } elseif ($type === 'solicitud') {
+                $item = \App\Models\SolicitudInfoAuditor::with(['reintegro.accidente.alumnos.alumno', 'reintegro.accidente.escuela', 'auditor', 'estadoSolicitud', 'usuarioResponde'])->findOrFail($id);
+            } else {
+                abort(404);
+            }
+            return view('auditoria.detalle', ['item' => $item, 'itemType' => $type]);
+        })->name('detalle');
     });
 
     // Rutas de Perfil

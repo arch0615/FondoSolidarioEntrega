@@ -14,10 +14,12 @@
                     <div>
                         <label for="nombre" class="block text-sm font-medium text-gray-700">Nombre</label>
                         <input type="text" wire:model="nombre" id="nombre" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+                        @error('nombre') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
                     </div>
                     <div>
                         <label for="email" class="block text-sm font-medium text-gray-700">Correo Electrónico</label>
                         <input type="email" wire:model="email" id="email" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+                        @error('email') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
                     </div>
                 </div>
 
@@ -39,14 +41,17 @@
                     <div>
                         <label for="current_password" class="block text-sm font-medium text-gray-700">Contraseña Actual</label>
                         <input type="password" wire:model="current_password" id="current_password" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+                        @error('current_password') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
                     </div>
                     <div>
                         <label for="password" class="block text-sm font-medium text-gray-700">Nueva Contraseña</label>
                         <input type="password" wire:model="password" id="password" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+                        @error('password') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
                     </div>
                     <div>
                         <label for="password_confirmation" class="block text-sm font-medium text-gray-700">Confirmar Nueva Contraseña</label>
                         <input type="password" wire:model="password_confirmation" id="password_confirmation" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+                        @error('password_confirmation') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
                     </div>
                 </div>
 

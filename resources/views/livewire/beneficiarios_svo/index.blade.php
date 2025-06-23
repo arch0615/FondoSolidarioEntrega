@@ -1,7 +1,4 @@
-@extends('layouts.app')
-
-@section('content')
-<div class="mx-auto px-4">
+<div>
     <!-- Header Section -->
     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 mb-8">
         <div>
@@ -27,14 +24,21 @@
                      x-transition:leave-start="transform opacity-100 scale-100"
                      x-transition:leave-end="transform opacity-0 scale-95">
                     <div class="py-1" role="menu" aria-orientation="vertical" aria-labelledby="options-menu">
-                        {{-- TODO: Implementar rutas de exportación reales --}}
-                        <a href="#" class="flex items-center gap-2 px-4 py-2 text-sm text-secondary-700 hover:bg-secondary-100 hover:text-secondary-900" role="menuitem"><i class="fas fa-file-csv fa-fw text-secondary-400"></i>Exportar a CSV</a>
-                        <a href="#" class="flex items-center gap-2 px-4 py-2 text-sm text-secondary-700 hover:bg-secondary-100 hover:text-secondary-900" role="menuitem"><i class="fas fa-file-excel fa-fw text-secondary-400"></i>Exportar a Excel</a>
-                        <a href="#" class="flex items-center gap-2 px-4 py-2 text-sm text-secondary-700 hover:bg-secondary-100 hover:text-secondary-900" role="menuitem"><i class="fas fa-file-pdf fa-fw text-secondary-400"></i>Exportar a PDF</a>
+                        <button onclick="exportarBeneficiarios('csv')" class="flex items-center gap-2 px-4 py-2 text-sm text-secondary-700 hover:bg-secondary-100 hover:text-secondary-900 w-full text-left" role="menuitem">
+                            <i class="fas fa-file-csv fa-fw text-secondary-400"></i>
+                            Exportar a CSV
+                        </button>
+                        <button onclick="exportarBeneficiarios('excel')" class="flex items-center gap-2 px-4 py-2 text-sm text-secondary-700 hover:bg-secondary-100 hover:text-secondary-900 w-full text-left" role="menuitem">
+                            <i class="fas fa-file-excel fa-fw text-secondary-400"></i>
+                            Exportar a Excel
+                        </button>
+                        <button onclick="exportarBeneficiarios('pdf')" class="flex items-center gap-2 px-4 py-2 text-sm text-secondary-700 hover:bg-secondary-100 hover:text-secondary-900 w-full text-left" role="menuitem">
+                            <i class="fas fa-file-pdf fa-fw text-secondary-400"></i>
+                            Exportar a PDF
+                        </button>
                     </div>
                 </div>
             </div>
-            {{-- TODO: Definir la ruta correcta para crear un nuevo beneficiario --}}
             <a href="{{ route('beneficiarios_svo.create') }}" class="inline-flex items-center px-4 py-2 bg-primary-600 border border-transparent rounded-lg font-medium text-sm text-white hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-colors duration-200">
                 <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
@@ -44,9 +48,20 @@
         </div>
     </div>
 
+    @if (session()->has('message'))
+        <div class="mb-6 bg-success-50 border border-success-200 text-success-700 px-4 py-3 rounded-lg relative">
+            <div class="flex items-center">
+                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                </svg>
+                <span class="font-medium">{{ session('message') }}</span>
+            </div>
+        </div>
+    @endif
+
     <!-- Filtros -->
     <div class="bg-white rounded-xl border border-secondary-200 mb-6">
-        <details class="group">
+        <details class="group" open>
             <summary class="flex items-center justify-between p-6 cursor-pointer list-none">
                 <div class="flex items-center text-secondary-900">
                     <svg class="w-5 h-5 mr-3 text-secondary-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -59,40 +74,42 @@
                 </svg>
             </summary>
             <div class="px-6 pb-6">
-                <form class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                     <div class="space-y-1">
-                        <label for="filtro_empleado" class="block text-sm font-medium text-secondary-700">Empleado</label>
-                        <input type="text" name="filtro_empleado" id="filtro_empleado" class="block w-full px-3 py-2 border border-secondary-300 rounded-lg text-sm placeholder-secondary-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500" placeholder="Buscar por empleado (nombre o DNI)">
+                        <label for="filtro_nombre" class="block text-sm font-medium text-secondary-700">Beneficiario / Empleado</label>
+                        <input wire:model.live="filtro_nombre" type="text" id="filtro_nombre" class="block w-full px-3 py-2 border border-secondary-300 rounded-lg text-sm placeholder-secondary-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500" placeholder="Buscar por nombre o apellido">
                     </div>
                      <div class="space-y-1">
-                        <label for="filtro_beneficiario" class="block text-sm font-medium text-secondary-700">Beneficiario</label>
-                        <input type="text" name="filtro_beneficiario" id="filtro_beneficiario" class="block w-full px-3 py-2 border border-secondary-300 rounded-lg text-sm placeholder-secondary-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500" placeholder="Buscar por beneficiario (nombre o DNI)">
+                        <label for="filtro_dni" class="block text-sm font-medium text-secondary-700">DNI</label>
+                        <input wire:model.live="filtro_dni" type="text" id="filtro_dni" class="block w-full px-3 py-2 border border-secondary-300 rounded-lg text-sm placeholder-secondary-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500" placeholder="Buscar por DNI">
                     </div>
+                    @if(Auth::user()->rol !== 'Usuario General')
+                    @if(Auth::user()->rol !== 'usuario_general')
                      <div class="space-y-1">
                         <label for="filtro_escuela" class="block text-sm font-medium text-secondary-700">Escuela</label>
-                        {{-- TODO: Implementar selección de escuela dinámica --}}
-                        <select name="filtro_escuela" id="filtro_escuela" class="block w-full px-3 py-2 border border-secondary-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500">
+                        <select wire:model.live="filtro_escuela" id="filtro_escuela" class="block w-full px-3 py-2 border border-secondary-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500">
                             <option value="">Todas</option>
-                            {{-- Opciones de escuelas --}}
+                            @foreach($escuelas as $escuela)
+                                <option value="{{ $escuela->id_escuela }}">{{ $escuela->nombre }}</option>
+                            @endforeach
                         </select>
                     </div>
+                    @endif
+                    @endif
                     <div class="space-y-1">
                         <label for="filtro_estado" class="block text-sm font-medium text-secondary-700">Estado</label>
-                        <select name="filtro_estado" id="filtro_estado" class="block w-full px-3 py-2 border border-secondary-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500">
+                        <select wire:model.live="filtro_estado" id="filtro_estado" class="block w-full px-3 py-2 border border-secondary-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500">
                             <option value="">Todos</option>
-                            <option value="activo">Activo</option>
-                            <option value="inactivo">Inactivo</option>
+                            <option value="1">Activo</option>
+                            <option value="0">Inactivo</option>
                         </select>
                     </div>
                     <div class="flex items-end">
-                        <button type="submit" class="w-full inline-flex justify-center items-center px-4 py-2 bg-secondary-900 border border-transparent rounded-lg font-medium text-sm text-white hover:bg-secondary-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-secondary-500 transition-colors duration-200">
-                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-                            </svg>
-                            Buscar
+                        <button wire:click="limpiarFiltros" type="button" class="w-full inline-flex justify-center items-center px-4 py-2 bg-secondary-100 border border-transparent rounded-lg font-medium text-sm text-secondary-700 hover:bg-secondary-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-secondary-500 transition-colors duration-200">
+                            Limpiar
                         </button>
                     </div>
-                </form>
+                </div>
             </div>
         </details>
     </div>
@@ -104,35 +121,45 @@
                 <thead class="bg-secondary-50">
                     <tr>
                         <th scope="col" class="px-6 py-4 text-left text-xs font-medium text-secondary-500 uppercase tracking-wider">
-                            <button class="group inline-flex items-center hover:text-secondary-700">
+                            <button wire:click="sortBy('empleado.nombre')" class="group inline-flex items-center hover:text-secondary-700">
                                 Empleado
-                                <svg class="ml-2 w-4 h-4 text-secondary-400 group-hover:text-secondary-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"></path>
-                                </svg>
+                                @if($sortField === 'empleado.nombre')
+                                    @if($sortDirection === 'asc') <svg class="ml-2 w-4 h-4 text-primary-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"></path></svg>
+                                    @else <svg class="ml-2 w-4 h-4 text-primary-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg> @endif
+                                @else <svg class="ml-2 w-4 h-4 text-secondary-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"></path></svg>
+                                @endif
                             </button>
                         </th>
+                        @if(Auth::user()->rol !== 'Usuario General')
                         <th scope="col" class="px-6 py-4 text-left text-xs font-medium text-secondary-500 uppercase tracking-wider">
-                            <button class="group inline-flex items-center hover:text-secondary-700">
+                            <button wire:click="sortBy('escuela.nombre')" class="group inline-flex items-center hover:text-secondary-700">
                                 Escuela
-                                <svg class="ml-2 w-4 h-4 text-secondary-400 group-hover:text-secondary-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"></path>
-                                </svg>
+                                @if($sortField === 'escuela.nombre')
+                                    @if($sortDirection === 'asc') <svg class="ml-2 w-4 h-4 text-primary-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"></path></svg>
+                                    @else <svg class="ml-2 w-4 h-4 text-primary-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg> @endif
+                                @else <svg class="ml-2 w-4 h-4 text-secondary-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"></path></svg>
+                                @endif
                             </button>
                         </th>
+                        @endif
                          <th scope="col" class="px-6 py-4 text-left text-xs font-medium text-secondary-500 uppercase tracking-wider">
-                             <button class="group inline-flex items-center hover:text-secondary-700">
+                             <button wire:click="sortBy('apellido')" class="group inline-flex items-center hover:text-secondary-700">
                                  Beneficiario
-                                <svg class="ml-2 w-4 h-4 text-secondary-400 group-hover:text-secondary-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"></path>
-                                </svg>
+                                @if($sortField === 'apellido')
+                                    @if($sortDirection === 'asc') <svg class="ml-2 w-4 h-4 text-primary-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"></path></svg>
+                                    @else <svg class="ml-2 w-4 h-4 text-primary-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg> @endif
+                                @else <svg class="ml-2 w-4 h-4 text-secondary-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"></path></svg>
+                                @endif
                             </button>
                         </th>
                          <th scope="col" class="px-6 py-4 text-left text-xs font-medium text-secondary-500 uppercase tracking-wider">
-                             <button class="group inline-flex items-center hover:text-secondary-700">
+                             <button wire:click="sortBy('id_parentesco')" class="group inline-flex items-center hover:text-secondary-700">
                                 Parentesco
-                                <svg class="ml-2 w-4 h-4 text-secondary-400 group-hover:text-secondary-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"></path>
-                                </svg>
+                                @if($sortField === 'id_parentesco')
+                                    @if($sortDirection === 'asc') <svg class="ml-2 w-4 h-4 text-primary-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"></path></svg>
+                                    @else <svg class="ml-2 w-4 h-4 text-primary-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg> @endif
+                                @else <svg class="ml-2 w-4 h-4 text-secondary-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"></path></svg>
+                                @endif
                             </button>
                         </th>
                         <th scope="col" class="px-6 py-4 text-center text-xs font-medium text-secondary-500 uppercase tracking-wider">
@@ -147,119 +174,113 @@
                     </tr>
                 </thead>
                 <tbody class="bg-white divide-y divide-secondary-200">
-                    {{-- Filas de ejemplo (reemplazar con datos reales) --}}
+                    @forelse($beneficiarios as $beneficiario)
                     <tr class="hover:bg-secondary-50 transition-colors duration-150">
                         <td class="px-6 py-4 whitespace-nowrap">
-                            <div class="text-sm font-medium text-secondary-900">Juan Pérez (DNI: 12345678)</div>
+                            <div class="text-sm font-medium text-secondary-900">{{ $beneficiario->empleado->apellido ?? 'N/A' }}, {{ $beneficiario->empleado->nombre ?? 'N/A' }}</div>
+                            <div class="text-xs text-secondary-500">DNI: {{ $beneficiario->empleado->dni ?? 'N/A' }}</div>
                         </td>
+                        @if(Auth::user()->rol !== 'Usuario General')
                         <td class="px-6 py-4 whitespace-nowrap">
-                            <div class="text-sm text-secondary-500">Colegio San Martín</div>
+                            <div class="text-sm text-secondary-500">{{ $beneficiario->escuela->nombre ?? 'N/A' }}</div>
+                        </td>
+                        @endif
+                         <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="text-sm font-medium text-secondary-900">{{ $beneficiario->apellido }}, {{ $beneficiario->nombre }}</div>
+                            <div class="text-xs text-secondary-500">DNI: {{ $beneficiario->dni }}</div>
                         </td>
                          <td class="px-6 py-4 whitespace-nowrap">
-                            <div class="text-sm text-secondary-900">Ana Pérez (DNI: 45678901)</div>
-                        </td>
-                         <td class="px-6 py-4 whitespace-nowrap">
-                            <div class="text-sm text-secondary-900">Cónyuge</div>
+                            <div class="text-sm text-secondary-900">{{ $beneficiario->parentesco->nombre_parentesco ?? 'N/A' }}</div>
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-center">
-                            <div class="text-sm font-medium text-secondary-900">50%</div>
+                            <div class="text-sm font-medium text-secondary-900">{{ $beneficiario->porcentaje }}%</div>
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-center">
-                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-success-100 text-success-800">
+                            <button wire:click="cambiarEstado({{ $beneficiario->id_beneficiario }})"
+                                class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
+                                {{ $beneficiario->activo ? 'bg-success-100 text-success-800' : 'bg-danger-100 text-danger-800' }}
+                                transition-colors duration-200 hover:bg-opacity-80">
                                 <svg class="w-1.5 h-1.5 mr-1.5" fill="currentColor" viewBox="0 0 8 8">
                                     <circle cx="4" cy="4" r="3"/>
                                 </svg>
-                                Activo
-                            </span>
+                                {{ $beneficiario->activo ? 'Activo' : 'Inactivo' }}
+                            </button>
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-center">
                             <div class="flex items-center justify-center space-x-2">
-                                {{-- TODO: Definir la ruta correcta para ver detalles del beneficiario --}}
-                                <a href="{{ route('beneficiarios_svo.show', 1) }}" class="p-2 text-secondary-400 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition-colors duration-200" title="Ver detalles">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
-                                    </svg>
+                                <a href="{{ route('beneficiarios_svo.show', $beneficiario->id_beneficiario) }}" class="p-2 text-secondary-400 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition-colors duration-200" title="Ver detalles">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
                                 </a>
-                                {{-- TODO: Definir la ruta correcta para editar beneficiario --}}
-                                <a href="{{ route('beneficiarios_svo.edit', 1) }}" class="p-2 text-secondary-400 hover:text-warning-600 hover:bg-warning-50 rounded-lg transition-colors duration-200" title="Editar">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
-                                    </svg>
+                                <a href="{{ route('beneficiarios_svo.edit', $beneficiario->id_beneficiario) }}" class="p-2 text-secondary-400 hover:text-warning-600 hover:bg-warning-50 rounded-lg transition-colors duration-200" title="Editar">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
                                 </a>
+                                <button wire:click="eliminar({{ $beneficiario->id_beneficiario }})" wire:confirm="¿Está seguro que desea eliminar este beneficiario?" class="p-2 text-secondary-400 hover:text-danger-600 hover:bg-danger-50 rounded-lg transition-colors duration-200" title="Eliminar">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                                </button>
                             </div>
                         </td>
                     </tr>
-                     <tr class="hover:bg-secondary-50 transition-colors duration-150">
-                        <td class="px-6 py-4 whitespace-nowrap">
-                            <div class="text-sm font-medium text-secondary-900">Juan Pérez (DNI: 12345678)</div>
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap">
-                            <div class="text-sm text-secondary-500">Colegio San Martín</div>
-                        </td>
-                         <td class="px-6 py-4 whitespace-nowrap">
-                            <div class="text-sm text-secondary-900">Luis Pérez (DNI: 56789012)</div>
-                        </td>
-                         <td class="px-6 py-4 whitespace-nowrap">
-                            <div class="text-sm text-secondary-900">Hijo</div>
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-center">
-                            <div class="text-sm font-medium text-secondary-900">50%</div>
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-center">
-                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-success-100 text-success-800">
-                                <svg class="w-1.5 h-1.5 mr-1.5" fill="currentColor" viewBox="0 0 8 8">
-                                    <circle cx="4" cy="4" r="3"/>
-                                </svg>
-                                Activo
-                            </span>
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-center">
-                            <div class="flex items-center justify-center space-x-2">
-                                {{-- TODO: Definir la ruta correcta para ver detalles del beneficiario --}}
-                                <a href="{{ route('beneficiarios_svo.show', 2) }}" class="p-2 text-secondary-400 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition-colors duration-200" title="Ver detalles">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
-                                    </svg>
-                                </a>
-                                {{-- TODO: Definir la ruta correcta para editar beneficiario --}}
-                                <a href="{{ route('beneficiarios_svo.edit', 2) }}" class="p-2 text-secondary-400 hover:text-warning-600 hover:bg-warning-50 rounded-lg transition-colors duration-200" title="Editar">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
-                                    </svg>
-                                </a>
-                            </div>
+                    @empty
+                    <tr>
+                        <td colspan="{{ Auth::user()->rol !== 'Usuario General' ? '7' : '6' }}" class="px-6 py-12 text-center">
+                            <div class="text-secondary-500">No hay registros disponibles.</div>
                         </td>
                     </tr>
-                    {{-- Fin Filas de ejemplo --}}
+                    @endforelse
                 </tbody>
             </table>
         </div>
 
         <!-- Paginación -->
-        <div class="px-6 py-4 bg-secondary-50 border-t border-secondary-200 flex flex-col sm:flex-row items-center justify-between">
-            <div class="text-sm text-secondary-700 mb-4 sm:mb-0">
-                Mostrando <span class="font-medium text-secondary-900">1</span> a <span class="font-medium text-secondary-900">2</span> de <span class="font-medium text-secondary-900">5</span> resultados
+        <div class="px-6 py-4 bg-secondary-50 border-t border-secondary-200">
+            <div class="flex flex-col sm:flex-row items-center justify-between">
+                <div class="text-sm text-secondary-700 mb-4 sm:mb-0">
+                    @if($beneficiarios->total() > 0)
+                        Mostrando <span class="font-medium text-secondary-900">{{ $beneficiarios->firstItem() }}</span> a <span class="font-medium text-secondary-900">{{ $beneficiarios->lastItem() }}</span> de <span class="font-medium text-secondary-900">{{ $beneficiarios->total() }}</span> resultados
+                    @else
+                        No hay resultados para mostrar
+                    @endif
+                </div>
+                @if($beneficiarios->hasPages())
+                    {{ $beneficiarios->links('pagination.custom-tailwind') }}
+                @endif
             </div>
-            <nav class="inline-flex rounded-lg shadow-sm" aria-label="Paginación">
-                <button type="button" class="relative inline-flex items-center px-2 py-2 rounded-l-lg border border-secondary-300 bg-white text-sm font-medium text-secondary-500 hover:bg-secondary-50 focus:z-10 focus:outline-none focus:ring-1 focus:ring-primary-500 focus:border-primary-500 disabled:opacity-50 disabled:cursor-not-allowed">
-                    <span class="sr-only">Anterior</span>
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
-                    </svg>
-                </button>
-                <button type="button" class="relative inline-flex items-center px-4 py-2 border border-secondary-300 bg-primary-600 text-sm font-medium text-white hover:bg-primary-700 focus:z-10 focus:outline-none focus:ring-1 focus:ring-primary-500 focus:border-primary-500" aria-current="page">
-                    1
-                </button>
-                <button type="button" class="relative inline-flex items-center px-2 py-2 rounded-r-lg border border-secondary-300 bg-white text-sm font-medium text-secondary-500 hover:bg-secondary-50 focus:z-10 focus:outline-none focus:ring-1 focus:ring-primary-500 focus:border-primary-500">
-                    <span class="sr-only">Siguiente</span>
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-                    </svg>
-                </button>
-            </nav>
         </div>
     </div>
 </div>
-@endsection
+
+@push('scripts')
+<script>
+    function exportarBeneficiarios(formato) {
+        const filtroNombre = @this.get('filtro_nombre');
+        const filtroDni = @this.get('filtro_dni');
+        const filtroEscuela = @this.get('filtro_escuela');
+        const filtroEstado = @this.get('filtro_estado');
+        
+        const params = new URLSearchParams();
+        if (filtroNombre) params.append('filtro_nombre', filtroNombre);
+        if (filtroDni) params.append('filtro_dni', filtroDni);
+        if (filtroEscuela) params.append('filtro_escuela', filtroEscuela);
+        if (filtroEstado !== '') params.append('filtro_estado', filtroEstado);
+        
+        let url = '';
+        switch(formato) {
+            case 'csv':
+                url = '{{ route("beneficiarios_svo.export.csv") }}';
+                break;
+            case 'excel':
+                url = '{{ route("beneficiarios_svo.export.excel") }}';
+                break;
+            case 'pdf':
+                url = '{{ route("beneficiarios_svo.export.pdf") }}';
+                break;
+        }
+        
+        if (params.toString()) {
+            url += '?' + params.toString();
+        }
+        
+        window.open(url, '_blank');
+    }
+</script>
+@endpush

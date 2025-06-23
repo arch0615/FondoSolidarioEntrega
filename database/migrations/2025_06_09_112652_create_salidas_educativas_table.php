@@ -22,7 +22,7 @@ return new class extends Migration
             $table->string('proposito', 500)->nullable();
             $table->string('grado_curso', 50)->nullable();
             $table->integer('cantidad_alumnos')->nullable();
-            $table->string('docentes_acompa??antes', 500)->nullable();
+            $table->string('docentes_acompanantes', 500)->nullable();
             $table->string('transporte', 200)->nullable();
             $table->dateTime('fecha_carga')->nullable();
         });

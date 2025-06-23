@@ -18,7 +18,7 @@ class ArchivoAdjunto extends Model
         'id_entidad',
         'nombre_archivo',
         'tipo_archivo',
-        'tamaño',
+        'tamano',
         'ruta_archivo',
         'descripcion',
         'id_usuario_carga',
@@ -27,7 +27,7 @@ class ArchivoAdjunto extends Model
 
     protected $casts = [
         'fecha_carga' => 'datetime',
-        'tamaño' => 'integer'
+        'tamano' => 'integer'
     ];
 
     /**
@@ -57,13 +57,13 @@ class ArchivoAdjunto extends Model
     /**
      * Obtener el tamaño formateado del archivo
      */
-    public function getTamañoFormateadoAttribute(): string
+    public function getTamanoFormateadoAttribute(): string
     {
-        if (!$this->tamaño) {
+        if (!$this->tamano) {
             return 'N/A';
         }
 
-        $bytes = $this->tamaño;
+        $bytes = $this->tamano;
         $units = ['B', 'KB', 'MB', 'GB'];
         
         for ($i = 0; $bytes > 1024 && $i < count($units) - 1; $i++) {

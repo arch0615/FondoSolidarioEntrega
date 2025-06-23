@@ -29,7 +29,9 @@
                 <a href="{{ route('derivaciones.index') }}" class="block px-3 py-2 text-sm text-gray-600 hover:text-primary-600 hover:bg-primary-50 rounded transition-colors">Derivaciones</a>
                 <a href="{{ route('reintegros.index') }}" class="flex items-center justify-between px-3 py-2 text-sm text-gray-600 hover:text-primary-600 hover:bg-primary-50 rounded transition-colors">
                     <span>Reintegros</span>
-                    <span class="ml-auto inline-block bg-warning-500 text-white text-xs font-semibold px-2 py-1 rounded-full">2</span>
+                   @if(isset($reintegrosPendientesCount) && $reintegrosPendientesCount > 0)
+                       <span class="ml-auto inline-block bg-warning-500 text-white text-xs font-semibold px-2 py-1 rounded-full">{{ $reintegrosPendientesCount }}</span>
+                   @endif
                 </a>
             </div>
         </div>
@@ -44,7 +46,7 @@
 
         <!-- Salidas Educativas - Solo Usuario General -->
         <div class="menu-item">
-            <a href="{{ route('salidas_educativas.index') }}" class="w-full flex items-center gap-3 p-3 text-left font-medium text-gray-700 hover:bg-primary-50 hover:text-primary-700 rounded-lg transition-colors {{ request()->routeIs('salidas_educativas.*') ? 'bg-primary-50 text-primary-700 font-semibold' : '' }}">
+            <a href="{{ route('salidas-educativas.index') }}" class="w-full flex items-center gap-3 p-3 text-left font-medium text-gray-700 hover:bg-primary-50 hover:text-primary-700 rounded-lg transition-colors {{ request()->routeIs('salidas-educativas.*') ? 'bg-primary-50 text-primary-700 font-semibold' : '' }}">
                 <i class="fas fa-route text-primary-700"></i>
                 <span class="text-sm">Salidas Educativas</span>
             </a>
@@ -106,7 +108,7 @@
                 <a href="{{ route('alumnos.index') }}" class="block px-3 py-2 text-sm text-gray-600 hover:text-primary-600 hover:bg-primary-50 rounded transition-colors">Alumnos</a>
                 <a href="{{ route('empleados.index') }}" class="block px-3 py-2 text-sm text-gray-600 hover:text-primary-600 hover:bg-primary-50 rounded transition-colors">Empleados</a>
                 <a href="{{ route('prestadores.index') }}" class="block px-3 py-2 text-sm text-gray-600 hover:text-primary-600 hover:bg-primary-50 rounded transition-colors {{ request()->routeIs('prestadores.*') ? 'bg-primary-50 text-primary-700 font-semibold' : '' }}">Prestadores</a>
-                <a href="{{ route('salidas_educativas.index') }}" class="block px-3 py-2 text-sm text-gray-600 hover:text-primary-600 hover:bg-primary-50 rounded transition-colors">Salidas Educativas</a>
+                <a href="{{ route('salidas-educativas.index') }}" class="block px-3 py-2 text-sm text-gray-600 hover:text-primary-600 hover:bg-primary-50 rounded transition-colors">Salidas Educativas</a>
                 <a href="{{ route('pasantias.index') }}" class="block px-3 py-2 text-sm text-gray-600 hover:text-primary-600 hover:bg-primary-50 rounded transition-colors">Pasantías</a>
                 <a href="{{ route('beneficiarios_svo.index') }}" class="block px-3 py-2 text-sm text-gray-600 hover:text-primary-600 hover:bg-primary-50 rounded transition-colors">Beneficiarios SVO</a>
                 <a href="{{ route('derivaciones.index') }}" class="block px-3 py-2 text-sm text-gray-600 hover:text-primary-600 hover:bg-primary-50 rounded transition-colors {{ request()->routeIs('derivaciones.*') ? 'bg-primary-50 text-primary-700 font-semibold' : '' }}">Derivaciones</a>
@@ -124,7 +126,7 @@
                 <i id="gestion-icon" class="fas fa-chevron-right text-xs"></i>
             </button>
             <div id="gestion-menu" class="ml-6 mt-1 space-y-1 hidden">
-                <a href="#" class="block px-3 py-2 text-sm text-gray-600 hover:text-primary-600 hover:bg-primary-50 rounded transition-colors">Accidentes</a>
+                <a href="{{ route('accidentes.index') }}" class="block px-3 py-2 text-sm text-gray-600 hover:text-primary-600 hover:bg-primary-50 rounded transition-colors">Accidentes</a>
                 <a href="{{ route('reintegros.index') }}" class="block px-3 py-2 text-sm text-gray-600 hover:text-primary-600 hover:bg-primary-50 rounded transition-colors">Listado de Reintegros</a>
                 <a href="{{ route('reintegros.pendientes') }}" class="block px-3 py-2 text-sm text-gray-600 hover:text-primary-600 hover:bg-primary-50 rounded transition-colors {{ request()->routeIs('reintegros.pendientes') ? 'bg-primary-50 text-primary-700 font-semibold' : '' }}">Reintegros por Atender</a>
                 <a href="{{ route('admin.gestion-pagos') }}" class="block px-3 py-2 text-sm text-gray-600 hover:text-primary-600 hover:bg-primary-50 rounded transition-colors {{ request()->routeIs('admin.gestion-pagos') ? 'bg-primary-50 text-primary-700 font-semibold' : '' }}">Gestión de Pagos</a>

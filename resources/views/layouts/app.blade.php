@@ -38,27 +38,7 @@
                 <!-- User Actions -->
                 <div class="flex items-center gap-4">
                     <!-- Notifications -->
-                    <div class="relative">
-                        <button onclick="toggleNotifications()" class="p-2 text-gray-600 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition-colors">
-                            <i class="fas fa-bell text-lg"></i>
-                            <span class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">3</span>
-                        </button>
-                        
-                        <!-- Notifications Dropdown -->
-                        <div id="notificationsDropdown" class="hidden absolute right-0 mt-2 w-80 bg-white border border-gray-200 rounded-lg shadow-lg z-50">
-                            <div class="p-4 border-b border-gray-200">
-                                <h3 class="font-semibold text-gray-900">Notificaciones</h3>
-                            </div>
-                            <div class="max-h-64 overflow-y-auto">
-                                <!-- Placeholder notifications -->
-                                <div class="p-3 border-b border-gray-100 hover:bg-gray-50">
-                                    <p class="text-sm font-medium text-gray-900">Reintegro pendiente</p>
-                                    <p class="text-xs text-gray-600">Caso #148 requiere documentación</p>
-                                    <p class="text-xs text-gray-500 mt-1">Hace 2 horas</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    @livewire('notification-bell')
 
                     <!-- User Menu -->
                     <div class="relative">
@@ -172,8 +152,14 @@
         // Close dropdowns when clicking outside
         document.addEventListener('click', function(e) {
             if (!e.target.closest('.relative')) {
-                document.getElementById('notificationsDropdown').classList.add('hidden');
-                document.getElementById('userDropdown').classList.add('hidden');
+                const notificationsDropdown = document.getElementById('notificationsDropdown');
+                const userDropdown = document.getElementById('userDropdown');
+                if (notificationsDropdown) {
+                    notificationsDropdown.classList.add('hidden');
+                }
+                if (userDropdown) {
+                    userDropdown.classList.add('hidden');
+                }
             }
         });
 

@@ -6,6 +6,12 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
+use App\Models\CatEstadoAccidente;
+use App\Models\AccidenteAlumno;
+use App\Models\Derivacion;
+use App\Models\Reintegro;
+use App\Models\Escuela;
+use App\Models\User;
 
 class Accidente extends Model
 {
@@ -25,7 +31,7 @@ class Accidente extends Model
         'hora_llamada',
         'servicio_emergencia',
         'numero_expediente',
-        'id_estado',
+        'id_estado_accidente',
         'fecha_carga',
         'id_usuario_carga'
     ];
@@ -60,7 +66,7 @@ class Accidente extends Model
      */
     public function estado(): BelongsTo
     {
-        return $this->belongsTo(CatEstadoAccidente::class, 'id_estado', 'id_estado');
+        return $this->belongsTo(CatEstadoAccidente::class, 'id_estado_accidente', 'id_estado_accidente');
     }
 
     /**
@@ -74,9 +80,9 @@ class Accidente extends Model
     /**
      * Archivos adjuntos del accidente
      */
-    public function archivos(): MorphMany
+    public function archivos(): HasMany
     {
-        return $this->morphMany(ArchivoAdjunto::class, 'entidad', 'tipo_entidad', 'id_entidad', 'id_accidente')
+        return $this->hasMany(ArchivoAdjunto::class, 'id_entidad', 'id_accidente')
                     ->where('tipo_entidad', 'accidente');
     }
 
@@ -95,6 +101,7 @@ class Accidente extends Model
     {
         return $this->hasMany(Reintegro::class, 'id_accidente', 'id_accidente');
     }
+
 
     /**
      * Generar número de expediente automático

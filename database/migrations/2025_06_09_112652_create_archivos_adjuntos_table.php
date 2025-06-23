@@ -17,7 +17,7 @@ return new class extends Migration
             $table->integer('id_entidad');
             $table->string('nombre_archivo');
             $table->string('tipo_archivo', 10)->nullable();
-            $table->integer('tama??o')->nullable();
+            $table->integer('tamano')->nullable();
             $table->string('ruta_archivo', 500);
             $table->string('descripcion', 500)->nullable();
             $table->integer('id_usuario_carga')->index('idx_usuario_carga');

@@ -54,6 +54,14 @@ class AuditoriaSistema extends Model
     }
 
     /**
+     * Get the reintegro associated with the audit record.
+     */
+    public function reintegro()
+    {
+        return $this->belongsTo(Reintegro::class, 'id_registro', 'id_reintegro');
+    }
+
+    /**
      * Create a new audit record.
      */
     public static function registrarAccion($idUsuario, $accion, $tablaAfectada = null, $idRegistro = null, $datosAnteriores = null, $datosNuevos = null)

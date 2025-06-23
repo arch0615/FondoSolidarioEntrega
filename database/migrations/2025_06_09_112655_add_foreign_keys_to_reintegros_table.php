@@ -17,6 +17,7 @@ return new class extends Migration
             $table->foreign(['id_accidente'], 'reintegros_ibfk_1')->references(['id_accidente'])->on('accidentes')->onUpdate('restrict')->onDelete('restrict');
             $table->foreign(['id_usuario_solicita'], 'reintegros_ibfk_2')->references(['id_usuario'])->on('usuarios')->onUpdate('restrict')->onDelete('restrict');
             $table->foreign(['id_medico_auditor'], 'reintegros_ibfk_3')->references(['id_usuario'])->on('usuarios')->onUpdate('restrict')->onDelete('restrict');
+            $table->foreign(['id_alumno'], 'reintegros_ibfk_6')->references(['id_alumno'])->on('alumnos')->onUpdate('restrict')->onDelete('restrict');
         });
     }
 
@@ -31,6 +32,7 @@ return new class extends Migration
             $table->dropForeign('reintegros_ibfk_1');
             $table->dropForeign('reintegros_ibfk_2');
             $table->dropForeign('reintegros_ibfk_3');
+            $table->dropForeign('reintegros_ibfk_6');
         });
     }
 };

@@ -15,7 +15,6 @@ return new class extends Migration
             $table->integer('id_accidente', true);
             $table->string('numero_expediente', 20)->nullable()->unique('numero_expediente');
             $table->integer('id_escuela')->index('idx_escuela');
-            $table->integer('id_alumno')->index('idx_alumno');
             $table->integer('id_usuario_carga')->index('id_usuario_carga');
             $table->date('fecha_accidente')->index('idx_fecha');
             $table->time('hora_accidente')->nullable();

@@ -2,97 +2,76 @@
 
 namespace App\Livewire\Auditoria;
 
+use App\Models\AuditoriaSistema;
+use App\Models\Escuela;
+use App\Models\SolicitudInfoAuditor;
 use Livewire\Component;
+use Livewire\WithPagination;
 
 class HistorialAuditorias extends Component
 {
-    public $reintegros = [];
-    public $showModal = false;
-    public $selectedReintegro;
-    public $escuelas = [];
+    use WithPagination;
+
     public $filtro_fecha_desde = '';
     public $filtro_fecha_hasta = '';
     public $filtro_escuela = '';
+    public $sortField = 'fecha_hora';
+    public $sortDirection = 'desc';
+    public $perPage = 10;
 
-    public function mount()
+    protected $queryString = [
+        'filtro_fecha_desde' => ['except' => ''],
+        'filtro_fecha_hasta' => ['except' => ''],
+        'filtro_escuela' => ['except' => ''],
+        'sortField' => ['except' => 'fecha_hora'],
+        'sortDirection' => ['except' => 'desc'],
+        'page' => ['except' => 1],
+    ];
+
+    public function sortBy($field)
     {
-        $this->escuelas = [
-            'Escuela Normal N°5',
-            'Colegio San José',
-            'Instituto Belgrano',
-        ];
-
-        $this->reintegros = [
-            [
-                'id' => 1,
-                'nombre_alumno' => 'Juan Pérez',
-                'escuela' => 'Escuela Normal N°5',
-                'estado' => 'Aprobado',
-                'monto_solicitado' => 1500.00,
-                'codigo_accidente' => 'ACC-001',
-                'fecha_aprobacion' => '2025-05-15',
-                'motivo_rechazo' => null,
-                'fecha_rechazo' => null,
-                'solicitud_informacion' => null,
-                'fecha_solicitud' => '2025-05-10',
-                'dias_transcurridos' => null,
-                'documentos' => [
-                    ['nombre' => 'Factura_medica.pdf', 'url' => '#'],
-                    ['nombre' => 'Informe_accidente.pdf', 'url' => '#'],
-                ],
-                'info_accidente' => 'Caída en el patio durante el recreo.'
-            ],
-            [
-                'id' => 2,
-                'nombre_alumno' => 'María García',
-                'escuela' => 'Colegio San José',
-                'estado' => 'Rechazado',
-                'monto_solicitado' => 850.50,
-                'codigo_accidente' => 'ACC-002',
-                'fecha_aprobacion' => null,
-                'motivo_rechazo' => 'Factura no válida',
-                'fecha_rechazo' => '2025-05-12',
-                'solicitud_informacion' => null,
-                'fecha_solicitud' => '2025-05-08',
-                'dias_transcurridos' => null,
-                'documentos' => [
-                    ['nombre' => 'Factura_invalida.jpg', 'url' => '#'],
-                ],
-                'info_accidente' => 'Lesión durante la clase de educación física.'
-            ],
-            [
-                'id' => 3,
-                'nombre_alumno' => 'Carlos López',
-                'escuela' => 'Instituto Belgrano',
-                'estado' => 'Solicitud de Información',
-                'monto_solicitado' => 2300.00,
-                'codigo_accidente' => 'ACC-003',
-                'fecha_aprobacion' => null,
-                'motivo_rechazo' => null,
-                'fecha_rechazo' => null,
-                'solicitud_informacion' => 'Falta certificado médico',
-                'fecha_solicitud' => '2025-05-20',
-                'dias_transcurridos' => 5,
-                'documentos' => [],
-                'info_accidente' => 'Accidente leve en el laboratorio de química.'
-            ],
-        ];
+        if ($this->sortField === $field) {
+            $this->sortDirection = $this->sortDirection === 'asc' ? 'desc' : 'asc';
+        } else {
+            $this->sortDirection = 'asc';
+        }
+        $this->sortField = $field;
+        $this->resetPage();
     }
 
-    public function showReintegroModal($id)
+    public function limpiarFiltros()
     {
-        $this->selectedReintegro = collect($this->reintegros)->firstWhere('id', $id);
-        $this->showModal = true;
-    }
-
-    public function closeModal()
-    {
-        $this->showModal = false;
-        $this->selectedReintegro = null;
+        $this->reset(['filtro_fecha_desde', 'filtro_fecha_hasta', 'filtro_escuela']);
+        $this->resetPage();
     }
 
     public function render()
     {
-        return view('livewire.auditoria.historial-auditorias');
+        // 1. Obtener solicitudes de información
+        $solicitudesQuery = SolicitudInfoAuditor::query()
+            ->with(['reintegro.accidente.alumnos.alumno', 'reintegro.accidente.escuela', 'auditor', 'estadoSolicitud']);
+
+        // Aplicar filtros comunes
+        if ($this->filtro_fecha_desde) {
+            $solicitudesQuery->where('fecha_solicitud', '>=', $this->filtro_fecha_desde);
+        }
+        if ($this->filtro_fecha_hasta) {
+            $solicitudesQuery->where('fecha_solicitud', '<=', $this->filtro_fecha_hasta);
+        }
+        if ($this->filtro_escuela) {
+            $solicitudesQuery->whereHas('reintegro.accidente', function ($q) {
+                $q->where('id_escuela', $this->filtro_escuela);
+            });
+        }
+        
+        // Aplicar ordenamiento y paginación
+        $solicitudes = $solicitudesQuery->orderBy('fecha_solicitud', $this->sortDirection)->paginate($this->perPage);
+
+        $escuelas = Escuela::where('activo', 1)->orderBy('nombre')->get();
+
+        return view('livewire.auditoria.historial-auditorias', [
+            'solicitudes' => $solicitudes,
+            'escuelas' => $escuelas,
+        ]);
     }
 }
