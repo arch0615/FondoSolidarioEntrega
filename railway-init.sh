@@ -3,14 +3,8 @@
 # Script de inicialización para Railway
 echo "Iniciando configuración de Railway..."
 
-# Verificar que .env.example existe
-if [ ! -f ".env.example" ]; then
-    echo "Error: .env.example no encontrado"
-    exit 1
-fi
-
 # Limpiar variables de entorno conflictivas
-echo "Limpiando variables de entorno de Railway..."
+echo "Limpiando TODAS las variables de entorno de Railway..."
 unset DATABASE_URL
 unset DATABASE_HOST
 unset DATABASE_PORT
@@ -22,21 +16,63 @@ unset DB_PORT
 unset DB_DATABASE
 unset DB_USERNAME
 unset DB_PASSWORD
+unset DB_CONNECTION
 
-# Copiar .env.example a .env con credenciales hardcodeadas
-echo "Copiando .env.example a .env..."
-cp .env.example .env
+# Crear .env completamente desde cero con credenciales hardcodeadas
+echo "Creando .env hardcodeado desde cero..."
+cat > .env << 'EOF'
+APP_NAME="Fondo Solidario JAEC"
+APP_ENV=production
+APP_KEY=
+APP_DEBUG=false
+APP_URL=https://web-production-97c9.up.railway.app
+
+LOG_CHANNEL=stack
+LOG_DEPRECATIONS_CHANNEL=null
+LOG_LEVEL=debug
+
+DB_CONNECTION=mysql
+DB_HOST=sql5.freesqldatabase.com
+DB_PORT=3306
+DB_DATABASE=sql5786391
+DB_USERNAME=sql5786391
+DB_PASSWORD=Ds1MD1Neh8
+
+BROADCAST_DRIVER=log
+CACHE_DRIVER=file
+CACHE_PREFIX=fondo_solidario_cache
+FILESYSTEM_DISK=local
+QUEUE_CONNECTION=sync
+SESSION_DRIVER=file
+SESSION_LIFETIME=120
+SESSION_ENCRYPT=false
+
+MEMCACHED_HOST=127.0.0.1
+
+REDIS_HOST=127.0.0.1
+REDIS_PASSWORD=null
+REDIS_PORT=6379
+
+MAIL_MAILER=smtp
+MAIL_HOST=mailpit
+MAIL_PORT=1025
+MAIL_USERNAME=null
+MAIL_PASSWORD=null
+MAIL_ENCRYPTION=null
+MAIL_FROM_ADDRESS="hello@example.com"
+MAIL_FROM_NAME="Fondo Solidario JAEC"
+EOF
 
 # Verificar que .env fue creado
 if [ -f ".env" ]; then
-    echo ".env creado exitosamente"
-    echo "Configuración de base de datos desde .env:"
-    grep "DB_" .env | head -6
+    echo ".env creado exitosamente desde cero"
+    echo "Configuración de base de datos HARDCODEADA:"
+    grep "DB_" .env
     echo ""
-    echo "Variables de entorno limpiadas - Laravel usará solo .env"
+    echo "Variables de entorno limpiadas - Laravel usará SOLO este .env"
 else
     echo "Error: .env no fue creado"
     exit 1
 fi
 
-echo "Configuración de Railway completada"
+echo "Configuración de Railway completada con .env hardcodeado"
