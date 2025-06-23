@@ -10,8 +10,7 @@
         "laravel/framework": "^11.0",
         "laravel/sanctum": "^4.0",
         "laravel/tinker": "^2.8",
-        "livewire/livewire": "^3.0",
-        "maatwebsite/excel": "*"
+        "livewire/livewire": "^3.0"
     },
     "require-dev": {
         "fakerphp/faker": "^1.9.1",
@@ -39,6 +38,7 @@
     },
     "scripts": {
         "post-autoload-dump": [
+            "@php -r \"if (!file_exists('bootstrap/cache')) { mkdir('bootstrap/cache', 0755, true); }\"",
             "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
             "@php artisan package:discover --ansi"
         ],
