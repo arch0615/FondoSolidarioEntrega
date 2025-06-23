@@ -40,6 +40,7 @@
         "post-autoload-dump": [
             "@php -r \"if (!file_exists('bootstrap/cache')) { mkdir('bootstrap/cache', 0755, true); }\"",
             "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
+            "@php artisan config:clear --ansi",
             "@php artisan package:discover --ansi"
         ],
         "post-update-cmd": [
