@@ -33,7 +33,6 @@ cmds = [
     "php artisan cache:clear --env=production",
     "php artisan route:clear --env=production",
     "php artisan view:clear --env=production",
-    "php artisan config:cache --env=production",
     "php artisan route:cache --env=production",
     "php artisan view:cache --env=production"
 ]

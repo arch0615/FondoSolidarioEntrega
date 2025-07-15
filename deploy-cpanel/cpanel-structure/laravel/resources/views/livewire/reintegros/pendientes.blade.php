@@ -1,0 +1,418 @@
+<div class="mx-auto px-4" x-data="{ 
+    showDetail: @entangle('showDetailPanel'),
+    showInfoModal: @entangle('solicitandoInformacion'),
+    showRechazoModal: @entangle('rechazandoReintegro'),
+    showAprobacionModal: @entangle('aprobandoReintegro'),
+    showPagoModal: @entangle('pagandoReintegro')
+}">
+    @if (session()->has('message'))
+        <div class="mb-6 bg-success-50 border border-success-200 text-success-700 px-4 py-3 rounded-lg relative">
+            <div class="flex items-center">
+                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                </svg>
+                <span class="font-medium">{{ session('message') }}</span>
+            </div>
+        </div>
+    @endif
+
+    <!-- Header Section -->
+    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 mb-8">
+        <div>
+            <h1 class="text-2xl font-semibold text-secondary-900">Reintegros Pendientes de Auditoría</h1>
+            <p class="mt-1 text-sm text-secondary-600">Revisa y gestiona las solicitudes de reintegro que requieren tu atención.</p>
+        </div>
+    </div>
+
+    <!-- Filtros -->
+    <div class="bg-white rounded-xl border border-secondary-200 mb-6">
+        <div class="p-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div class="space-y-1">
+                    <label for="filtro_id_accidente" class="block text-sm font-medium text-secondary-700">ID Accidente</label>
+                    <input wire:model.live="filtro_id_accidente" type="text" id="filtro_id_accidente" class="block w-full px-3 py-2 border border-secondary-300 rounded-lg text-sm placeholder-secondary-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500" placeholder="Buscar por ID Accidente">
+                </div>
+                @if(Auth::user()->id_rol != 1) {{-- Asumiendo que rol 1 es usuario_general y no ve todas las escuelas --}}
+                <div class="space-y-1">
+                    <label for="filtro_escuela" class="block text-sm font-medium text-secondary-700">Escuela</label>
+                    <select wire:model.live="filtro_escuela" id="filtro_escuela" class="block w-full px-3 py-2 border border-secondary-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500">
+                        <option value="">Todas</option>
+                        @foreach($escuelas as $escuela)
+                            <option value="{{ $escuela->id_escuela }}">{{ $escuela->nombre }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                @endif
+                <div class="space-y-1">
+                    <label for="filtro_fecha_solicitud" class="block text-sm font-medium text-secondary-700">Fecha Solicitud</label>
+                    <input wire:model.live="filtro_fecha_solicitud" type="date" id="filtro_fecha_solicitud" class="block w-full px-3 py-2 border border-secondary-300 rounded-lg text-sm placeholder-secondary-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500">
+                </div>
+                <div class="flex items-end col-span-full lg:col-span-1">
+                    <button wire:click="limpiarFiltros" type="button" class="w-full sm:w-auto inline-flex justify-center items-center px-4 py-2 bg-secondary-100 border border-transparent rounded-lg font-medium text-sm text-secondary-700 hover:bg-secondary-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-secondary-500 transition-colors duration-200">
+                        Limpiar Filtros
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tabla de Reintegros Pendientes -->
+    <div class="bg-white rounded-xl border border-secondary-200 overflow-hidden">
+        <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-secondary-200">
+                <thead class="bg-secondary-50">
+                    <tr>
+                        <th scope="col" class="px-6 py-4 text-left text-xs font-medium text-secondary-500 uppercase tracking-wider">
+                            <button wire:click="sortBy('id_reintegro')" class="group inline-flex items-center">
+                                ID
+                                @if($sortField === 'id_reintegro')
+                                    @if($sortDirection === 'asc') <svg class="ml-2 w-4 h-4 text-primary-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"></path></svg>
+                                    @else <svg class="ml-2 w-4 h-4 text-primary-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                                    @endif
+                                @else <svg class="ml-2 w-4 h-4 text-secondary-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 9l4-4 4 4m0 6l-4 4-4-4"></path></svg>
+                                @endif
+                            </button>
+                        </th>
+                        <th scope="col" class="px-6 py-4 text-left text-xs font-medium text-secondary-500 uppercase tracking-wider">Accidente (Alumno)</th>
+                        <th scope="col" class="px-6 py-4 text-left text-xs font-medium text-secondary-500 uppercase tracking-wider">
+                            <button wire:click="sortBy('fecha_solicitud')" class="group inline-flex items-center">
+                                Fecha Solicitud
+                                @if($sortField === 'fecha_solicitud')
+                                    @if($sortDirection === 'asc') <svg class="ml-2 w-4 h-4 text-primary-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"></path></svg>
+                                    @else <svg class="ml-2 w-4 h-4 text-primary-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                                    @endif
+                                @else <svg class="ml-2 w-4 h-4 text-secondary-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 9l4-4 4 4m0 6l-4 4-4-4"></path></svg>
+                                @endif
+                            </button>
+                        </th>
+                        <th scope="col" class="px-6 py-4 text-right text-xs font-medium text-secondary-500 uppercase tracking-wider">
+                            <button wire:click="sortBy('monto_solicitado')" class="group inline-flex items-center">
+                                Monto Solicitado
+                                @if($sortField === 'monto_solicitado')
+                                    @if($sortDirection === 'asc') <svg class="ml-2 w-4 h-4 text-primary-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"></path></svg>
+                                    @else <svg class="ml-2 w-4 h-4 text-primary-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                                    @endif
+                                @else <svg class="ml-2 w-4 h-4 text-secondary-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 9l4-4 4 4m0 6l-4 4-4-4"></path></svg>
+                                @endif
+                            </button>
+                        </th>
+                        <th scope="col" class="px-6 py-4 text-center text-xs font-medium text-secondary-500 uppercase tracking-wider">Estado</th>
+                        <th scope="col" class="px-6 py-4 text-center text-xs font-medium text-secondary-500 uppercase tracking-wider">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-secondary-200">
+                    @forelse ($reintegros as $reintegro)
+                        <tr class="hover:bg-secondary-50 transition-colors duration-150">
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="text-sm font-medium text-secondary-900 flex items-center">
+                                    @if($reintegro->estadoReintegro->descripcion == 'Nuevo')
+                                        <span class="h-3 w-3 bg-success-500 rounded-full mr-3" title="Nuevo"></span>
+                                    @elseif($reintegro->estadoReintegro->descripcion == 'Pendiente Información')
+                                        <span class="h-3 w-3 bg-warning-500 rounded-full mr-3" title="Pendiente Información"></span>
+                                    @endif
+                                    REI-{{ str_pad($reintegro->id_reintegro, 3, '0', STR_PAD_LEFT) }}
+                                </div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="text-sm text-secondary-900">{{ $reintegro->alumno->nombre_completo ?? 'N/A' }}</div>
+                                <div class="text-sm text-secondary-500">{{ $reintegro->accidente->escuela->nombre ?? 'N/A' }}</div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="text-sm font-medium text-secondary-900">{{ $reintegro->fecha_solicitud ? $reintegro->fecha_solicitud->format('d/m/Y') : 'N/A' }}</div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-right">
+                                <div class="text-sm font-medium text-secondary-900">$ {{ number_format($reintegro->monto_solicitado, 2) }}</div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-center">
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {{ $reintegro->estadoReintegro->color_clase ?? 'bg-secondary-100 text-secondary-800' }}">
+                                    {{ $reintegro->estadoReintegro->descripcion ?? 'Sin Estado' }}
+                                </span>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-center">
+                                <div class="flex items-center justify-center space-x-2">
+                                    <button wire:click="verDetalle({{ $reintegro->id_reintegro }})" class="p-2 text-secondary-400 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition-colors duration-200" title="Ver detalles">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="6" class="px-6 py-12 text-center text-secondary-500">
+                                <div class="flex flex-col items-center">
+                                    <svg class="w-12 h-12 text-secondary-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 13h6m-3-3v6m-9 1V7a2 2 0 012-2h10l4 4v10a2 2 0 01-2 2H5a2 2 0 01-2-2z" /></svg>
+                                    <h3 class="mt-2 text-lg font-medium text-secondary-800">No hay reintegros pendientes</h3>
+                                    <p class="mt-1 text-sm text-secondary-600">No se encontraron reintegros que requieran auditoría en este momento.</p>
+                                </div>
+                            </td>
+                        </tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Paginación -->
+        <div class="px-6 py-4 bg-secondary-50 border-t border-secondary-200">
+            <div class="flex flex-col sm:flex-row items-center justify-between">
+                <div class="text-sm text-secondary-700 mb-4 sm:mb-0">
+                    @if($reintegros->total() > 0)
+                        Mostrando <span class="font-medium text-secondary-900">{{ $reintegros->firstItem() }}</span> a <span class="font-medium text-secondary-900">{{ $reintegros->lastItem() }}</span> de <span class="font-medium text-secondary-900">{{ $reintegros->total() }}</span> resultados
+                    @else
+                        No hay resultados para mostrar
+                    @endif
+                </div>
+                @if($reintegros->hasPages())
+                    {{ $reintegros->links('pagination.custom-tailwind') }}
+                @endif
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal/Side Panel para Detalles del Reintegro -->
+    <div x-show="showDetail" 
+         class="fixed inset-0 bg-black bg-opacity-50 z-40 transition-opacity" 
+         @click="showDetail = null"
+         x-transition:enter="ease-out duration-300"
+         x-transition:enter-start="opacity-0"
+         x-transition:enter-end="opacity-100"
+         x-transition:leave="ease-in duration-200"
+         x-transition:leave-start="opacity-100"
+         x-transition:leave-end="opacity-0"
+         style="display: none;"></div>
+
+    <div x-show="showDetail" 
+         class="fixed inset-y-0 right-0 w-full max-w-2xl bg-white z-50 shadow-xl transform"
+         x-transition:enter="transition ease-out duration-300"
+         x-transition:enter-start="translate-x-full"
+         x-transition:enter-end="translate-x-0"
+         x-transition:leave="transition ease-in duration-200"
+         x-transition:leave-start="translate-x-0"
+         x-transition:leave-end="translate-x-full"
+         style="display: none;">
+        
+        @if ($reintegroSeleccionado)
+            <div class="h-full flex flex-col">
+                <div class="flex justify-between items-center px-6 py-4 bg-secondary-50 border-b border-secondary-200">
+                    <h2 class="text-lg font-semibold text-secondary-900">Detalle del Reintegro: REI-{{ str_pad($reintegroSeleccionado->id_reintegro, 3, '0', STR_PAD_LEFT) }}</h2>
+                    <button @click="showDetail = null" wire:click="cerrarDetalle" class="p-2 text-secondary-400 hover:text-secondary-600 hover:bg-secondary-100 rounded-full transition-colors duration-200">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                    </button>
+                </div>
+
+                <div class="flex-grow p-6 overflow-y-auto">
+                    <!-- Información del Accidente -->
+                    <div class="mb-6">
+                        <h3 class="text-base font-semibold text-secondary-800 border-b border-secondary-200 pb-2 mb-4">Información del Accidente</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                            <div><span class="font-medium text-secondary-600">ID Accidente:</span> <span class="text-secondary-900">{{ $reintegroSeleccionado->accidente->id_accidente_entero ?? 'N/A' }}</span></div>
+                            <div><span class="font-medium text-secondary-600">Alumno:</span> <span class="text-secondary-900">{{ $reintegroSeleccionado->alumno->nombre_completo ?? 'N/A' }}</span></div>
+                            <div><span class="font-medium text-secondary-600">Escuela:</span> <span class="text-secondary-900">{{ $reintegroSeleccionado->accidente->escuela->nombre ?? 'N/A' }}</span></div>
+                            <div><span class="font-medium text-secondary-600">Fecha Solicitud:</span> <span class="text-secondary-900">{{ $reintegroSeleccionado->fecha_solicitud ? $reintegroSeleccionado->fecha_solicitud->format('d/m/Y') : 'N/A' }}</span></div>
+                            <div><span class="font-medium text-secondary-600">Tipo de Gasto:</span> <span class="text-secondary-900">{{ $reintegroSeleccionado->tipoGasto->descripcion ?? 'N/A' }}</span></div>
+                            <div class="md:col-span-2"><span class="font-medium text-secondary-600">Descripción del Gasto:</span> <span class="text-secondary-900">{{ $reintegroSeleccionado->descripcion_gasto }}</span></div>
+                            <div class="md:col-span-2"><span class="font-medium text-secondary-600">Monto Solicitado:</span> <span class="text-secondary-900 font-bold text-lg">$ {{ number_format($reintegroSeleccionado->monto_solicitado, 2) }}</span></div>
+                            <div><span class="font-medium text-secondary-600">Estado Actual:</span> 
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {{ $reintegroSeleccionado->estadoReintegro->color_clase ?? 'bg-secondary-100 text-secondary-800' }}">
+                                    {{ $reintegroSeleccionado->estadoReintegro->descripcion ?? 'Sin Estado' }}
+                                </span>
+                            </div>
+                            @if($reintegroSeleccionado->observaciones_auditor)
+                                <div class="md:col-span-2"><span class="font-medium text-secondary-600">Observaciones Auditor:</span> <span class="text-secondary-900">{{ $reintegroSeleccionado->observaciones_auditor }}</span></div>
+                            @endif
+                            @if($reintegroSeleccionado->monto_autorizado)
+                                <div><span class="font-medium text-secondary-600">Monto Autorizado:</span> <span class="text-secondary-900 font-bold text-lg">$ {{ number_format($reintegroSeleccionado->monto_autorizado, 2) }}</span></div>
+                            @endif
+                            @if($reintegroSeleccionado->fecha_autorizacion)
+                                <div><span class="font-medium text-secondary-600">Fecha Autorización:</span> <span class="text-secondary-900">{{ $reintegroSeleccionado->fecha_autorizacion->format('d/m/Y') }}</span></div>
+                            @endif
+                            @if($reintegroSeleccionado->fecha_pago)
+                                <div><span class="font-medium text-secondary-600">Fecha Pago:</span> <span class="text-secondary-900">{{ $reintegroSeleccionado->fecha_pago->format('d/m/Y') }}</span></div>
+                            @endif
+                            @if($reintegroSeleccionado->numero_transferencia)
+                                <div><span class="font-medium text-secondary-600">No. Transferencia:</span> <span class="text-secondary-900">{{ $reintegroSeleccionado->numero_transferencia }}</span></div>
+                            @endif
+                        </div>
+                    </div>
+
+                    <!-- Documentos Adjuntos -->
+                    <div>
+                        <h3 class="text-base font-semibold text-secondary-800 border-b border-secondary-200 pb-2 mb-4">Documentos Adjuntos</h3>
+                        <ul class="space-y-3">
+                            @forelse ($reintegroSeleccionado->archivos as $doc)
+                                <li class="flex items-center justify-between p-3 bg-secondary-50 rounded-lg border border-secondary-200">
+                                    <div class="flex items-center">
+                                        <svg class="w-6 h-6 text-primary-500 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                                        <span class="text-sm font-medium text-secondary-800">{{ $doc->nombre_archivo }}</span>
+                                    </div>
+                                    <a href="{{ Storage::url($doc->ruta_archivo) }}" target="_blank" class="inline-flex items-center px-3 py-1.5 bg-white border border-secondary-300 rounded-md text-xs font-medium text-secondary-700 hover:bg-secondary-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
+                                        Ver
+                                    </a>
+                                </li>
+                            @empty
+                                <li class="text-sm text-secondary-500">No hay documentos adjuntos.</li>
+                            @endforelse
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="px-6 py-4 bg-secondary-50 border-t border-secondary-200 flex justify-end items-center space-x-3">
+                    @if(optional($reintegroSeleccionado)->id_estado_reintegro == $estadoAutorizadoId)
+                        <button wire:click="mostrarModalPago" class="inline-flex items-center px-4 py-2 bg-info-600 border border-transparent rounded-lg font-medium text-sm text-white hover:bg-info-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-info-500">
+                            <i class="fas fa-money-bill-wave mr-2"></i>
+                            Marcar como Pagado
+                        </button>
+                    @endif
+                    @if(optional($reintegroSeleccionado)->id_estado_reintegro == $estadoNuevoId || optional($reintegroSeleccionado)->id_estado_reintegro == $estadoPendienteInfoId)
+                        <button wire:click="mostrarModalAprobacion" class="inline-flex items-center px-4 py-2 bg-success-600 border border-transparent rounded-lg font-medium text-sm text-white hover:bg-success-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-success-500">
+                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                            Aprobar
+                        </button>
+                        <button wire:click="mostrarModalRechazo" class="inline-flex items-center px-4 py-2 bg-danger-600 border border-transparent rounded-lg font-medium text-sm text-white hover:bg-danger-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-danger-500">
+                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                            Rechazar
+                        </button>
+                        <button wire:click="mostrarModalSolicitudInfo" class="inline-flex items-center px-4 py-2 bg-warning-500 border border-transparent rounded-lg font-medium text-sm text-white hover:bg-warning-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-warning-500">
+                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.546-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            Solicitar Información
+                        </button>
+                    @endif
+                </div>
+            </div>
+        @endif
+    </div>
+
+    <!-- Modal para Solicitar Información -->
+    <div x-show="showInfoModal"
+         class="fixed inset-0 bg-gray-900 bg-opacity-60 z-50 flex justify-center items-center"
+         x-transition:enter="ease-out duration-300"
+         x-transition:enter-start="opacity-0"
+         x-transition:enter-end="opacity-100"
+         x-transition:leave="ease-in duration-200"
+         x-transition:leave-start="opacity-100"
+         x-transition:leave-end="opacity-0"
+         style="display: none;">
+        <div class="bg-white rounded-xl shadow-2xl w-full max-w-lg p-6 m-4" @click.away="showInfoModal = false">
+            <h3 class="text-xl font-semibold text-secondary-900 mb-4">Solicitar Información Adicional</h3>
+            <p class="text-sm text-secondary-600 mb-4">
+                Escribe el motivo de tu solicitud. Esta información será enviada a la escuela para que puedan adjuntar los documentos o datos necesarios.
+            </p>
+            <div>
+                <textarea wire:model="solicitudInfoTexto"
+                          class="w-full h-32 p-3 border border-secondary-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition"
+                          placeholder="Ej: Por favor, adjuntar el informe médico detallado y la factura de la consulta..."></textarea>
+                @error('solicitudInfoTexto') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
+            </div>
+            <div class="flex justify-end items-center mt-6 space-x-3">
+                <button wire:click="cancelarSolicitud" class="px-4 py-2 bg-secondary-200 text-secondary-800 rounded-lg hover:bg-secondary-300 transition-colors">
+                    Cancelar
+                </button>
+                <button wire:click="solicitarInformacion" class="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors">
+                    Enviar Solicitud
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para Motivo de Rechazo -->
+    <div x-show="showRechazoModal"
+         class="fixed inset-0 bg-gray-900 bg-opacity-60 z-50 flex justify-center items-center"
+         x-transition:enter="ease-out duration-300"
+         x-transition:enter-start="opacity-0"
+         x-transition:enter-end="opacity-100"
+         x-transition:leave="ease-in duration-200"
+         x-transition:leave-start="opacity-100"
+         x-transition:leave-end="opacity-0"
+         style="display: none;">
+        <div class="bg-white rounded-xl shadow-2xl w-full max-w-lg p-6 m-4" @click.away="showRechazoModal = false">
+            <h3 class="text-xl font-semibold text-secondary-900 mb-4">Motivo del Rechazo</h3>
+            <p class="text-sm text-secondary-600 mb-4">
+                Por favor, especifica el motivo por el cual este reintegro está siendo rechazado. Esta información quedará registrada en el sistema.
+            </p>
+            <div>
+                <textarea wire:model="motivoRechazo"
+                          class="w-full h-32 p-3 border border-secondary-300 rounded-lg focus:ring-2 focus:ring-danger-500 focus:border-danger-500 transition"
+                          placeholder="Ej: La documentación presentada no corresponde con el accidente reportado..."></textarea>
+                @error('motivoRechazo') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
+            </div>
+            <div class="flex justify-end items-center mt-6 space-x-3">
+                <button wire:click="cancelarRechazo" class="px-4 py-2 bg-secondary-200 text-secondary-800 rounded-lg hover:bg-secondary-300 transition-colors">
+                    Cancelar
+                </button>
+                <button wire:click="rechazarReintegro" class="px-4 py-2 bg-danger-600 text-white rounded-lg hover:bg-danger-700 transition-colors">
+                    Confirmar Rechazo
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para Aprobación de Reintegro -->
+    <div x-show="showAprobacionModal"
+         class="fixed inset-0 bg-gray-900 bg-opacity-60 z-50 flex justify-center items-center"
+         x-transition:enter="ease-out duration-300"
+         x-transition:enter-start="opacity-0"
+         x-transition:enter-end="opacity-100"
+         x-transition:leave="ease-in duration-200"
+         x-transition:leave-start="opacity-100"
+         x-transition:leave-end="opacity-0"
+         style="display: none;">
+        <div class="bg-white rounded-xl shadow-2xl w-full max-w-lg p-6 m-4" @click.away="showAprobacionModal = false">
+            <h3 class="text-xl font-semibold text-secondary-900 mb-4">Aprobar Reintegro</h3>
+            <p class="text-sm text-secondary-600 mb-4">
+                Ingresa el monto final autorizado para este reintegro y cualquier observación adicional.
+            </p>
+            <div class="space-y-4">
+                <div>
+                    <label for="montoAutorizado" class="block text-sm font-medium text-secondary-700">Monto Autorizado <span class="text-danger-500">*</span></label>
+                    <input type="number" step="0.01" wire:model="montoAutorizado" id="montoAutorizado" class="block w-full px-3 py-2 border border-secondary-300 rounded-lg text-sm focus:ring-2 focus:ring-success-500 focus:border-success-500">
+                    @error('montoAutorizado') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
+                </div>
+                <div>
+                    <label for="observacionesAuditor" class="block text-sm font-medium text-secondary-700">Observaciones del Auditor</label>
+                    <textarea wire:model="observacionesAuditor" id="observacionesAuditor" rows="3" class="block w-full px-3 py-2 border border-secondary-300 rounded-lg text-sm focus:ring-2 focus:ring-success-500 focus:border-success-500" placeholder="Observaciones adicionales..."></textarea>
+                    @error('observacionesAuditor') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
+                </div>
+            </div>
+            <div class="flex justify-end items-center mt-6 space-x-3">
+                <button wire:click="cancelarAprobacion" class="px-4 py-2 bg-secondary-200 text-secondary-800 rounded-lg hover:bg-secondary-300 transition-colors">
+                    Cancelar
+                </button>
+                <button wire:click="aprobarReintegro" class="px-4 py-2 bg-success-600 text-white rounded-lg hover:bg-success-700 transition-colors">
+                    Confirmar Aprobación
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para Marcar como Pagado -->
+    <div x-show="showPagoModal"
+         class="fixed inset-0 bg-gray-900 bg-opacity-60 z-50 flex justify-center items-center"
+         x-transition:enter="ease-out duration-300"
+         x-transition:enter-start="opacity-0"
+         x-transition:enter-end="opacity-100"
+         x-transition:leave="ease-in duration-200"
+         x-transition:leave-start="opacity-100"
+         x-transition:leave-end="opacity-0"
+         style="display: none;">
+        <div class="bg-white rounded-xl shadow-2xl w-full max-w-lg p-6 m-4" @click.away="showPagoModal = false">
+            <h3 class="text-xl font-semibold text-secondary-900 mb-4">Marcar Reintegro como Pagado</h3>
+            <p class="text-sm text-secondary-600 mb-4">
+                Confirma que el reintegro ha sido pagado e ingresa el número de transferencia.
+            </p>
+            <div class="space-y-4">
+                <div>
+                    <label for="numeroTransferencia" class="block text-sm font-medium text-secondary-700">Número de Transferencia <span class="text-danger-500">*</span></label>
+                    <input type="text" wire:model="numeroTransferencia" id="numeroTransferencia" class="block w-full px-3 py-2 border border-secondary-300 rounded-lg text-sm focus:ring-2 focus:ring-info-500 focus:border-info-500">
+                    @error('numeroTransferencia') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
+                </div>
+            </div>
+            <div class="flex justify-end items-center mt-6 space-x-3">
+                <button wire:click="cancelarPago" class="px-4 py-2 bg-secondary-200 text-secondary-800 rounded-lg hover:bg-secondary-300 transition-colors">
+                    Cancelar
+                </button>
+                <button wire:click="marcarComoPagado" class="px-4 py-2 bg-info-600 text-white rounded-lg hover:bg-info-700 transition-colors">
+                    Confirmar Pago
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

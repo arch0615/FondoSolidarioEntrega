@@ -63,16 +63,29 @@ MAIL_FROM_ADDRESS="hello@example.com"
 MAIL_FROM_NAME="Fondo Solidario JAEC"
 EOF
 
+# Exportar las variables de entorno correctas para forzarlas
+export DB_CONNECTION=mysql
+export DB_HOST=sql5.freesqldatabase.com
+export DB_PORT=3306
+export DB_DATABASE=sql5786391
+export DB_USERNAME=sql5786391
+export DB_PASSWORD=Ds1MD1Neh8
+
 # Verificar que .env fue creado
 if [ -f ".env" ]; then
     echo ".env creado exitosamente desde cero"
     echo "Configuración de base de datos HARDCODEADA:"
     grep "DB_" .env
     echo ""
-    echo "Variables de entorno limpiadas - Laravel usará SOLO este .env"
+    echo "Variables de entorno exportadas:"
+    echo "DB_HOST=$DB_HOST"
+    echo "DB_DATABASE=$DB_DATABASE"
+    echo "DB_USERNAME=$DB_USERNAME"
+    echo ""
+    echo "Variables de entorno limpiadas y reconfiguradas - Laravel usará SOLO este .env"
 else
     echo "Error: .env no fue creado"
     exit 1
 fi
 
-echo "Configuración de Railway completada con .env hardcodeado"
+echo "Configuración de Railway completada con .env hardcodeado y variables exportadas"
