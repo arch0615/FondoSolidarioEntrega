@@ -106,7 +106,7 @@
                         </div>
 
                         <!-- CUIL -->
-                        <div class="space-y-1">
+                        <div class="space-y-1" style="display: none;">
                             <label for="cuil" class="block text-sm font-medium text-secondary-700">CUIL</label>
                             <input wire:model="cuil" type="text" id="cuil" class="block w-full px-3 py-2 border border-secondary-300 rounded-lg text-sm placeholder-secondary-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 {{ $modo == 'show' ? 'bg-secondary-50' : 'bg-white' }}" placeholder="Ej: 23-45678912-4" {{ $modo == 'show' ? 'readonly' : '' }}>
                             @error('cuil') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
@@ -137,37 +137,88 @@
                     </div>
                 </div>
 
-                <!-- Información Académica -->
-                <div class="border-b border-secondary-200 pb-6">
-                    <h3 class="text-lg font-medium text-secondary-900 mb-4">Información Académica</h3>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <!-- Sala/Grado/Curso -->
-                        <div class="space-y-1">
-                            <label for="sala_grado_curso" class="block text-sm font-medium text-secondary-700">
-                                Sala/Grado/Curso <span class="text-danger-500">*</span>
-                            </label>
-                            <input wire:model="sala_grado_curso" type="text" id="sala_grado_curso" class="block w-full px-3 py-2 border border-secondary-300 rounded-lg text-sm placeholder-secondary-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 {{ $modo == 'show' ? 'bg-secondary-50' : 'bg-white' }}" placeholder="Ej: 7° Grado, 3° Año, Sala de 5" {{ $modo == 'show' ? 'readonly' : '' }}>
-                            @error('sala_grado_curso') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
-                        </div>
-                    </div>
-                </div>
-
                 <!-- Información de Contacto Familiar -->
                 <div class="border-b border-secondary-200 pb-6">
                     <h3 class="text-lg font-medium text-secondary-900 mb-4">Información de Contacto Familiar</h3>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <!-- Nombre del Padre/Madre -->
-                        <div class="space-y-1">
-                            <label for="nombre_padre_madre" class="block text-sm font-medium text-secondary-700">Nombre del Padre/Madre</label>
-                            <input wire:model="nombre_padre_madre" type="text" id="nombre_padre_madre" class="block w-full px-3 py-2 border border-secondary-300 rounded-lg text-sm placeholder-secondary-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 {{ $modo == 'show' ? 'bg-secondary-50' : 'bg-white' }}" placeholder="Ej: Carlos Martínez" {{ $modo == 'show' ? 'readonly' : '' }}>
-                            @error('nombre_padre_madre') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
-                        </div>
 
-                        <!-- Teléfono de Contacto -->
-                        <div class="space-y-1">
-                            <label for="telefono_contacto" class="block text-sm font-medium text-secondary-700">Teléfono de Contacto</label>
-                            <input wire:model="telefono_contacto" type="tel" id="telefono_contacto" class="block w-full px-3 py-2 border border-secondary-300 rounded-lg text-sm placeholder-secondary-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 {{ $modo == 'show' ? 'bg-secondary-50' : 'bg-white' }}" placeholder="Ej: (351) 555-1234" {{ $modo == 'show' ? 'readonly' : '' }}>
-                            @error('telefono_contacto') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
+                    <!-- Contacto Familiar 1 -->
+                    <div class="mb-6">
+                        <h4 class="text-md font-medium text-secondary-800 mb-3">Contacto Familiar 1</h4>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            <!-- Familiar 1 -->
+                            <div class="space-y-1">
+                                <label for="familiar1" class="block text-sm font-medium text-secondary-700">Nombre del Familiar</label>
+                                <input wire:model="familiar1" type="text" id="familiar1" class="block w-full px-3 py-2 border border-secondary-300 rounded-lg text-sm placeholder-secondary-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 {{ $modo == 'show' ? 'bg-secondary-50' : 'bg-white' }}" placeholder="Ej: Carlos Martínez" {{ $modo == 'show' ? 'readonly' : '' }}>
+                                @error('familiar1') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
+                            </div>
+
+                            <!-- Parentesco 1 -->
+                            <div class="space-y-1">
+                                <label for="parentesco1" class="block text-sm font-medium text-secondary-700">Parentesco</label>
+                                <input wire:model="parentesco1" type="text" id="parentesco1" class="block w-full px-3 py-2 border border-secondary-300 rounded-lg text-sm placeholder-secondary-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 {{ $modo == 'show' ? 'bg-secondary-50' : 'bg-white' }}" placeholder="Ej: Padre" {{ $modo == 'show' ? 'readonly' : '' }}>
+                                @error('parentesco1') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
+                            </div>
+
+                            <!-- Teléfono Contacto 1 -->
+                            <div class="space-y-1">
+                                <label for="telefono_contacto1" class="block text-sm font-medium text-secondary-700">Teléfono de Contacto</label>
+                                <input wire:model="telefono_contacto1" type="tel" id="telefono_contacto1" class="block w-full px-3 py-2 border border-secondary-300 rounded-lg text-sm placeholder-secondary-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 {{ $modo == 'show' ? 'bg-secondary-50' : 'bg-white' }}" placeholder="Ej: (351) 555-1234" {{ $modo == 'show' ? 'readonly' : '' }}>
+                                @error('telefono_contacto1') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Contacto Familiar 2 -->
+                    <div class="mb-6">
+                        <h4 class="text-md font-medium text-secondary-800 mb-3">Contacto Familiar 2</h4>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            <!-- Familiar 2 -->
+                            <div class="space-y-1">
+                                <label for="familiar2" class="block text-sm font-medium text-secondary-700">Nombre del Familiar</label>
+                                <input wire:model="familiar2" type="text" id="familiar2" class="block w-full px-3 py-2 border border-secondary-300 rounded-lg text-sm placeholder-secondary-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 {{ $modo == 'show' ? 'bg-secondary-50' : 'bg-white' }}" placeholder="Ej: María González" {{ $modo == 'show' ? 'readonly' : '' }}>
+                                @error('familiar2') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
+                            </div>
+
+                            <!-- Parentesco 2 -->
+                            <div class="space-y-1">
+                                <label for="parentesco2" class="block text-sm font-medium text-secondary-700">Parentesco</label>
+                                <input wire:model="parentesco2" type="text" id="parentesco2" class="block w-full px-3 py-2 border border-secondary-300 rounded-lg text-sm placeholder-secondary-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 {{ $modo == 'show' ? 'bg-secondary-50' : 'bg-white' }}" placeholder="Ej: Madre" {{ $modo == 'show' ? 'readonly' : '' }}>
+                                @error('parentesco2') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
+                            </div>
+
+                            <!-- Teléfono Contacto 2 -->
+                            <div class="space-y-1">
+                                <label for="telefono_contacto2" class="block text-sm font-medium text-secondary-700">Teléfono de Contacto</label>
+                                <input wire:model="telefono_contacto2" type="tel" id="telefono_contacto2" class="block w-full px-3 py-2 border border-secondary-300 rounded-lg text-sm placeholder-secondary-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 {{ $modo == 'show' ? 'bg-secondary-50' : 'bg-white' }}" placeholder="Ej: (351) 555-5678" {{ $modo == 'show' ? 'readonly' : '' }}>
+                                @error('telefono_contacto2') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Contacto Familiar 3 -->
+                    <div class="mb-6">
+                        <h4 class="text-md font-medium text-secondary-800 mb-3">Contacto Familiar 3</h4>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            <!-- Familiar 3 -->
+                            <div class="space-y-1">
+                                <label for="familiar3" class="block text-sm font-medium text-secondary-700">Nombre del Familiar</label>
+                                <input wire:model="familiar3" type="text" id="familiar3" class="block w-full px-3 py-2 border border-secondary-300 rounded-lg text-sm placeholder-secondary-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 {{ $modo == 'show' ? 'bg-secondary-50' : 'bg-white' }}" placeholder="Ej: Ana López" {{ $modo == 'show' ? 'readonly' : '' }}>
+                                @error('familiar3') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
+                            </div>
+
+                            <!-- Parentesco 3 -->
+                            <div class="space-y-1">
+                                <label for="parentesco3" class="block text-sm font-medium text-secondary-700">Parentesco</label>
+                                <input wire:model="parentesco3" type="text" id="parentesco3" class="block w-full px-3 py-2 border border-secondary-300 rounded-lg text-sm placeholder-secondary-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 {{ $modo == 'show' ? 'bg-secondary-50' : 'bg-white' }}" placeholder="Ej: Tía" {{ $modo == 'show' ? 'readonly' : '' }}>
+                                @error('parentesco3') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
+                            </div>
+
+                            <!-- Teléfono Contacto 3 -->
+                            <div class="space-y-1">
+                                <label for="telefono_contacto3" class="block text-sm font-medium text-secondary-700">Teléfono de Contacto</label>
+                                <input wire:model="telefono_contacto3" type="tel" id="telefono_contacto3" class="block w-full px-3 py-2 border border-secondary-300 rounded-lg text-sm placeholder-secondary-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 {{ $modo == 'show' ? 'bg-secondary-50' : 'bg-white' }}" placeholder="Ej: (351) 555-9012" {{ $modo == 'show' ? 'readonly' : '' }}>
+                                @error('telefono_contacto3') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -177,10 +228,28 @@
                     <h3 class="text-lg font-medium text-secondary-900 mb-4">Información Adicional</h3>
                     <div class="grid grid-cols-1 gap-6">
                         <!-- Obra Social -->
-                        <div class="space-y-1">
-                            <label for="obra_social" class="block text-sm font-medium text-secondary-700">¿Realiza alguna obra social?</label>
-                            <textarea wire:model="obra_social" id="obra_social" rows="3" class="block w-full px-3 py-2 border border-secondary-300 rounded-lg text-sm placeholder-secondary-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 {{ $modo == 'show' ? 'bg-secondary-50' : 'bg-white' }}" placeholder="Describa las actividades de obra social que realiza (opcional)" {{ $modo == 'show' ? 'readonly' : '' }}></textarea>
-                            @error('obra_social') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block text-sm font-medium text-secondary-700 mb-2">¿Posee alguna obra social?</label>
+                                <div class="flex space-x-6">
+                                    <label class="inline-flex items-center">
+                                        <input wire:model.live="posee_obra_social" type="radio" value="1" class="w-4 h-4 text-primary-600 bg-white border-secondary-300 focus:ring-primary-500 focus:ring-2" {{ $modo == 'show' ? 'disabled' : '' }}>
+                                        <span class="ml-2 text-sm text-secondary-700">Sí</span>
+                                    </label>
+                                    <label class="inline-flex items-center">
+                                        <input wire:model.live="posee_obra_social" type="radio" value="0" class="w-4 h-4 text-primary-600 bg-white border-secondary-300 focus:ring-primary-500 focus:ring-2" {{ $modo == 'show' ? 'disabled' : '' }}>
+                                        <span class="ml-2 text-sm text-secondary-700">No</span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            @if($posee_obra_social)
+                            <div class="space-y-1">
+                                <label for="obra_social" class="block text-sm font-medium text-secondary-700">Indicar cual</label>
+                                <textarea wire:model="obra_social" id="obra_social" rows="3" class="block w-full px-3 py-2 border border-secondary-300 rounded-lg text-sm placeholder-secondary-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 {{ $modo == 'show' ? 'bg-secondary-50' : 'bg-white' }}" placeholder="Indique cuál obra social posee" {{ $modo == 'show' ? 'readonly' : '' }}></textarea>
+                                @error('obra_social') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
+                            </div>
+                            @endif
                         </div>
 
                         <!-- Deportes -->
@@ -240,11 +309,10 @@
 <script>
     document.addEventListener('livewire:init', () => {
         Livewire.on('mostrar-mensaje', () => {
-            console.log('Mensaje mostrado - modo edición');
+            // Evento para modo edición
         });
 
         Livewire.on('mostrar-mensaje-y-redirigir', () => {
-            console.log('Mensaje mostrado - modo creación');
             setTimeout(() => {
                 @this.call('redirigirAlListado');
             }, 3000);

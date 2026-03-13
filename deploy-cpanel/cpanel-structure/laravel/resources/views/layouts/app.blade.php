@@ -28,7 +28,7 @@
             <div class="flex items-center justify-between">
                 <!-- Logo and Title -->
                 <div class="flex items-center gap-4">
-                    <img src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/LogoFondoBlanco-oKKkrA6edv1XnSs9HXshtlyWLdv9nx.png" alt="JAEC Logo" class="h-10 object-contain">
+                    <img src="{{ asset('images/LogoFondoBlanco.png') }}" alt="JAEC Logo" class="h-10 object-contain">
                     <div>
                         <h1 class="text-xl font-semibold text-primary-600">Fondo Solidario</h1>
                         <p class="text-sm text-gray-600">Sistema de Gestión JAEC</p>
@@ -123,13 +123,15 @@
         function toggleMenu(menuId) {
             const menu = document.getElementById(menuId + '-menu');
             const icon = document.getElementById(menuId + '-icon');
-            
-            if (menu.classList.contains('hidden')) {
-                menu.classList.remove('hidden');
-                icon.className = 'fas fa-chevron-down text-xs';
-            } else {
-                menu.classList.add('hidden');
-                icon.className = 'fas fa-chevron-right text-xs';
+
+            if (menu) {
+                if (menu.classList.contains('hidden')) {
+                    menu.classList.remove('hidden');
+                    if (icon) icon.className = 'fas fa-chevron-down text-xs';
+                } else {
+                    menu.classList.add('hidden');
+                    if (icon) icon.className = 'fas fa-chevron-right text-xs';
+                }
             }
         }
 

@@ -41,10 +41,16 @@
                                     <div class="text-sm font-bold text-secondary-900">$ {{ number_format($reintegro->monto_autorizado, 2) }}</div>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-center">
-                                    <button wire:click="iniciarPago({{ $reintegro->id_reintegro }})" class="inline-flex items-center px-4 py-2 bg-success-600 border border-transparent rounded-lg font-medium text-sm text-white hover:bg-success-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-success-500 transition-colors duration-200">
-                                        <i class="fas fa-check-circle mr-2"></i>
-                                        Marcar como Pagado
-                                    </button>
+                                    <div class="flex items-center justify-center gap-2">
+                                        <button wire:click="iniciarPago({{ $reintegro->id_reintegro }})" class="inline-flex items-center px-3 py-2 bg-success-600 border border-transparent rounded-lg font-medium text-xs text-white hover:bg-success-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-success-500 transition-colors duration-200">
+                                            <i class="fas fa-check-circle mr-1"></i>
+                                            Pagar
+                                        </button>
+                                        <button wire:click="enviarAseguradora({{ $reintegro->id_reintegro }})" wire:confirm="¿Enviar este reintegro a la aseguradora?" class="inline-flex items-center px-3 py-2 bg-blue-600 border border-transparent rounded-lg font-medium text-xs text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-200">
+                                            <i class="fas fa-paper-plane mr-1"></i>
+                                            Aseguradora
+                                        </button>
+                                    </div>
                                 </td>
                             </tr>
                             @empty
@@ -66,6 +72,57 @@
             </div>
         </div>
     
+        <!-- Sección de Enviados a Aseguradora -->
+        @if($enviadosAseguradora->count() > 0)
+        <div class="mb-12">
+            <h2 class="text-xl font-semibold text-secondary-800 mb-4">
+                <i class="fas fa-paper-plane text-blue-600 mr-2"></i>
+                Enviados a Aseguradora
+            </h2>
+            <div class="bg-white rounded-xl border border-blue-200 overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-secondary-200">
+                        <thead class="bg-blue-50">
+                            <tr>
+                                <th scope="col" class="px-6 py-4 text-left text-xs font-medium text-secondary-500 uppercase tracking-wider">ID Reintegro</th>
+                                <th scope="col" class="px-6 py-4 text-left text-xs font-medium text-secondary-500 uppercase tracking-wider">Alumno (Escuela)</th>
+                                <th scope="col" class="px-6 py-4 text-left text-xs font-medium text-secondary-500 uppercase tracking-wider">Fecha Autorización</th>
+                                <th scope="col" class="px-6 py-4 text-right text-xs font-medium text-secondary-500 uppercase tracking-wider">Monto</th>
+                                <th scope="col" class="px-6 py-4 text-center text-xs font-medium text-secondary-500 uppercase tracking-wider">Acción</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-secondary-200">
+                            @foreach ($enviadosAseguradora as $reintegro)
+                            <tr class="hover:bg-secondary-50 transition-colors duration-150">
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="text-sm font-medium text-secondary-900">{{ $reintegro->id_reintegro }}</div>
+                                    <div class="text-xs text-secondary-500">Accidente #{{ $reintegro->id_accidente }}</div>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="text-sm font-medium text-secondary-900">{{ $reintegro->alumno->nombre_completo }}</div>
+                                    <div class="text-sm text-secondary-500">{{ $reintegro->accidente->escuela->nombre }}</div>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="text-sm text-secondary-900">{{ $reintegro->fecha_autorizacion ? $reintegro->fecha_autorizacion->format('d/m/Y') : 'N/A' }}</div>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-right">
+                                    <div class="text-sm font-bold text-secondary-900">$ {{ number_format($reintegro->monto_autorizado, 2) }}</div>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-center">
+                                    <button wire:click="iniciarPago({{ $reintegro->id_reintegro }})" class="inline-flex items-center px-3 py-2 bg-success-600 border border-transparent rounded-lg font-medium text-xs text-white hover:bg-success-700 transition-colors duration-200">
+                                        <i class="fas fa-check-circle mr-1"></i>
+                                        Marcar como Pagado
+                                    </button>
+                                </td>
+                            </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        @endif
+
         <!-- Sección de Historial de Pagos -->
         <div>
             <h2 class="text-xl font-semibold text-secondary-800 mb-4">Historial de Pagos</h2>

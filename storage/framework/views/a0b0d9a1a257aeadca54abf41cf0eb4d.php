@@ -48,7 +48,7 @@
             <!-- Logo Section -->
             <div class="text-center mb-8">
                 <div class="flex justify-center items-center gap-4 mb-6">
-                    <img src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/LogoFondoBlanco-oKKkrA6edv1XnSs9HXshtlyWLdv9nx.png" alt="JAEC Logo" class="h-20 object-contain">
+                    <img src="<?php echo e(asset('images/LogoFondoBlanco.png')); ?>" alt="JAEC Logo" class="h-20 object-contain">
                 </div>
             </div>
 
@@ -182,8 +182,8 @@ unset($__errorArgs, $__bag); ?>
 
             <!-- Footer Logos -->
             <div class="flex justify-center items-center gap-8 mt-8 opacity-70">
-                <img src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/ArquidiocesisCordobaFondoBlanco-ZmRySIfLI0v5ZoSOU85SCxceAqop4c.png" alt="Arquidiócesis de Córdoba" class="h-10 object-contain">
-                <img src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/EducaresAmar-t3yKamJPDToIMZzgXzmnMYdL9IeY2Q.png" alt="Educar es Amar" class="h-12 object-contain">
+                <img src="<?php echo e(asset('images/ArquidiocesisCordobaFondoBlanco.png')); ?>" alt="Arquidiócesis de Córdoba" class="h-10 object-contain">
+                <img src="<?php echo e(asset('images/EducaresAmar.png')); ?>" alt="Educar es Amar" class="h-12 object-contain">
             </div>
         </div>
     </div>

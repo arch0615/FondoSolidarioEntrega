@@ -244,8 +244,8 @@
                         <select
                             wire:model="id_rol"
                             id="id_rol"
-                            class="block w-full px-3 py-2 border border-secondary-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 {{ $modo == 'show' ? 'bg-secondary-50' : 'bg-white' }}"
-                            {{ $modo == 'show' ? 'disabled' : '' }}
+                            class="block w-full px-3 py-2 border border-secondary-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 {{ $modo == 'show' || $esUsuarioGeneral ? 'bg-secondary-50' : 'bg-white' }}"
+                            {{ $modo == 'show' || $esUsuarioGeneral ? 'disabled' : '' }}
                             required
                         >
                             <option value="">Seleccione un rol</option>
@@ -253,6 +253,9 @@
                                 <option value="{{ $rol->id_rol }}">{{ $rol->nombre_rol }}</option>
                             @endforeach
                         </select>
+                        @if($esUsuarioGeneral)
+                            <p class="text-xs text-secondary-500">Solo puedes crear usuarios con rol "Usuario General"</p>
+                        @endif
                         @error('id_rol') <span class="text-danger-500 text-sm">{{ $message }}</span> @enderror
                     </div>
 
@@ -265,8 +268,8 @@
                         <select
                             wire:model="id_escuela"
                             id="id_escuela"
-                            class="block w-full px-3 py-2 border border-secondary-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 {{ $modo == 'show' ? 'bg-secondary-50' : 'bg-white' }}"
-                            {{ $modo == 'show' ? 'disabled' : '' }}
+                            class="block w-full px-3 py-2 border border-secondary-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 {{ $modo == 'show' || $esUsuarioGeneral ? 'bg-secondary-50' : 'bg-white' }}"
+                            {{ $modo == 'show' || $esUsuarioGeneral ? 'disabled' : '' }}
                         >
                             <option value="">Seleccione una escuela (opcional para Admin/Médico)</option>
                             @foreach($escuelas as $escuela)
@@ -274,7 +277,11 @@
                             @endforeach
                         </select>
                         @error('id_escuela') <span class="text-danger-500 text-sm">{{ $message }}</span> @enderror
-                        <p class="text-xs text-secondary-500">Los usuarios Administrador y Médico Auditor no requieren escuela asignada</p>
+                        @if($esUsuarioGeneral)
+                            <p class="text-xs text-secondary-500">Los usuarios serán asignados automáticamente a tu escuela</p>
+                        @else
+                            <p class="text-xs text-secondary-500">Los usuarios Administrador y Médico Auditor no requieren escuela asignada</p>
+                        @endif
                     </div>
 
                     @if($modo == 'show')

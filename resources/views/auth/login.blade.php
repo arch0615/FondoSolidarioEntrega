@@ -48,7 +48,7 @@
             <!-- Logo Section -->
             <div class="text-center mb-8">
                 <div class="flex justify-center items-center gap-4 mb-6">
-                    <img src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/LogoFondoBlanco-oKKkrA6edv1XnSs9HXshtlyWLdv9nx.png" alt="JAEC Logo" class="h-20 object-contain">
+                    <img src="{{ asset('images/LogoFondoBlanco.png') }}" alt="JAEC Logo" class="h-20 object-contain">
                 </div>
             </div>
 
@@ -59,30 +59,7 @@
                     <p class="text-secondary-600 font-medium">Sistema de Gestión JAEC</p>
                 </div>
 
-                <!-- Mensajes de error -->
-                @if ($errors->any())
-                    <div class="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
-                        <div class="flex items-center gap-2 text-red-800">
-                            <i class="fas fa-exclamation-circle"></i>
-                            <span class="font-medium">Error de autenticación</span>
-                        </div>
-                        <ul class="mt-2 text-sm text-red-700">
-                            @foreach ($errors->all() as $error)
-                                <li>{{ $error }}</li>
-                            @endforeach
-                        </ul>
-                    </div>
-                @endif
-
-                <!-- Mensaje de éxito -->
-                @if (session('status'))
-                    <div class="mb-6 p-4 bg-green-50 border border-green-200 rounded-lg">
-                        <div class="flex items-center gap-2 text-green-800">
-                            <i class="fas fa-check-circle"></i>
-                            <span class="text-sm">{{ session('status') }}</span>
-                        </div>
-                    </div>
-                @endif
+                {{-- Errors and status are shown as toasts (see script below) --}}
 
                 <form method="POST" action="{{ route('login') }}" class="space-y-6">
                     @csrf
@@ -152,10 +129,73 @@
                 </div>
             </div>
 
+            <!-- Test Credentials Panel -->
+            @if(config('app.env') === 'local')
+            <div class="mt-6 border border-dashed border-gray-300 rounded-lg p-4 bg-gray-50">
+                <div class="flex items-center gap-2 mb-3">
+                    <i class="fas fa-flask text-xs text-gray-400"></i>
+                    <span class="text-xs font-semibold text-gray-500 uppercase tracking-wide">Credenciales de prueba</span>
+                </div>
+                <div class="grid grid-cols-1 gap-2">
+                    <button type="button" onclick="fillCredentials('admin@prueba.com', 'password')"
+                        class="flex items-center gap-3 w-full p-2.5 rounded-lg border border-gray-200 bg-white hover:border-primary-400 hover:bg-primary-50 transition-colors text-left group">
+                        <span class="flex-shrink-0 w-8 h-8 rounded-full bg-purple-100 flex items-center justify-center">
+                            <i class="fas fa-user-shield text-xs text-purple-600"></i>
+                        </span>
+                        <div class="flex-1 min-w-0">
+                            <p class="text-xs font-semibold text-gray-800">Administrador</p>
+                            <p class="text-xs text-gray-500 truncate">admin@prueba.com</p>
+                        </div>
+                        <i class="fas fa-arrow-right text-xs text-gray-300 group-hover:text-primary-500 transition-colors"></i>
+                    </button>
+
+                    <button type="button" onclick="fillCredentials('medico@prueba.com', 'password')"
+                        class="flex items-center gap-3 w-full p-2.5 rounded-lg border border-gray-200 bg-white hover:border-blue-400 hover:bg-blue-50 transition-colors text-left group">
+                        <span class="flex-shrink-0 w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center">
+                            <i class="fas fa-user-md text-xs text-blue-600"></i>
+                        </span>
+                        <div class="flex-1 min-w-0">
+                            <p class="text-xs font-semibold text-gray-800">Médico Auditor</p>
+                            <p class="text-xs text-gray-500 truncate">medico@prueba.com</p>
+                        </div>
+                        <i class="fas fa-arrow-right text-xs text-gray-300 group-hover:text-blue-500 transition-colors"></i>
+                    </button>
+
+                    <button type="button" onclick="fillCredentials('user@prueba.com', 'password')"
+                        class="flex items-center gap-3 w-full p-2.5 rounded-lg border border-gray-200 bg-white hover:border-green-400 hover:bg-green-50 transition-colors text-left group">
+                        <span class="flex-shrink-0 w-8 h-8 rounded-full bg-green-100 flex items-center justify-center">
+                            <i class="fas fa-school text-xs text-green-600"></i>
+                        </span>
+                        <div class="flex-1 min-w-0">
+                            <p class="text-xs font-semibold text-gray-800">Usuario General — Escuela 1</p>
+                            <p class="text-xs text-gray-500 truncate">user@prueba.com</p>
+                        </div>
+                        <i class="fas fa-arrow-right text-xs text-gray-300 group-hover:text-green-500 transition-colors"></i>
+                    </button>
+
+                    <button type="button" onclick="fillCredentials('test@prueba.com', 'password')"
+                        class="flex items-center gap-3 w-full p-2.5 rounded-lg border border-gray-200 bg-white hover:border-green-400 hover:bg-green-50 transition-colors text-left group">
+                        <span class="flex-shrink-0 w-8 h-8 rounded-full bg-green-100 flex items-center justify-center">
+                            <i class="fas fa-school text-xs text-green-600"></i>
+                        </span>
+                        <div class="flex-1 min-w-0">
+                            <p class="text-xs font-semibold text-gray-800">Usuario General — Escuela 2</p>
+                            <p class="text-xs text-gray-500 truncate">test@prueba.com</p>
+                        </div>
+                        <i class="fas fa-arrow-right text-xs text-gray-300 group-hover:text-green-500 transition-colors"></i>
+                    </button>
+                </div>
+                <p class="text-xs text-gray-400 mt-3 text-center">
+                    <i class="fas fa-lock text-xs mr-1"></i>Contraseña: <span class="font-mono font-medium text-gray-600">password</span>
+                    &nbsp;·&nbsp; Solo visible en entorno local
+                </p>
+            </div>
+            @endif
+
             <!-- Footer Logos -->
             <div class="flex justify-center items-center gap-8 mt-8 opacity-70">
-                <img src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/ArquidiocesisCordobaFondoBlanco-ZmRySIfLI0v5ZoSOU85SCxceAqop4c.png" alt="Arquidiócesis de Córdoba" class="h-10 object-contain">
-                <img src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/EducaresAmar-t3yKamJPDToIMZzgXzmnMYdL9IeY2Q.png" alt="Educar es Amar" class="h-12 object-contain">
+                <img src="{{ asset('images/ArquidiocesisCordobaFondoBlanco.png') }}" alt="Arquidiócesis de Córdoba" class="h-10 object-contain">
+                <img src="{{ asset('images/EducaresAmar.png') }}" alt="Educar es Amar" class="h-12 object-contain">
             </div>
         </div>
     </div>
@@ -201,7 +241,57 @@
         </div>
     </div>
 
+    <!-- Toast Container -->
+    <div id="toast-container" class="fixed top-4 right-4 z-[9999] flex flex-col gap-2 w-80 pointer-events-none"></div>
+
     <script>
+        function showToast(message, type, duration) {
+            duration = duration || 5000;
+            var container = document.getElementById('toast-container');
+            var styles = { success: 'bg-green-500 text-white', error: 'bg-red-500 text-white', warning: 'bg-yellow-400 text-gray-900', info: 'bg-blue-500 text-white' };
+            var paths = {
+                success: '<path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>',
+                error:   '<path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>',
+                warning: '<path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>',
+                info:    '<path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>',
+            };
+            var toast = document.createElement('div');
+            toast.className = 'pointer-events-auto flex items-start gap-3 p-4 rounded-lg shadow-lg ' + (styles[type] || styles.info) + ' translate-x-full opacity-0 transition-all duration-300 ease-out';
+            toast.innerHTML = '<svg class="h-5 w-5 flex-shrink-0 mt-0.5" viewBox="0 0 20 20" fill="currentColor">' + (paths[type] || paths.info) + '</svg><p class="text-sm font-medium flex-1">' + message + '</p><button class="flex-shrink-0 opacity-75 hover:opacity-100 ml-1"><svg class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/></svg></button>';
+            var dismiss = function() {
+                toast.classList.add('translate-x-full', 'opacity-0');
+                toast.addEventListener('transitionend', function() { toast.remove(); }, { once: true });
+            };
+            toast.querySelector('button').addEventListener('click', dismiss);
+            container.appendChild(toast);
+            requestAnimationFrame(function() { requestAnimationFrame(function() { toast.classList.remove('translate-x-full', 'opacity-0'); }); });
+            var timer = setTimeout(dismiss, duration);
+            toast.addEventListener('mouseenter', function() { clearTimeout(timer); });
+            toast.addEventListener('mouseleave', function() { setTimeout(dismiss, 1500); });
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            @foreach ($errors->all() as $error)
+                showToast(@json($error), 'error');
+            @endforeach
+            @if (session('toast_error'))
+                showToast(@json(session('toast_error')), 'error');
+            @endif
+            @if (session('status'))
+                showToast(@json(session('status')), 'success');
+            @endif
+        });
+    </script>
+
+    <script>
+        function fillCredentials(email, password) {
+            document.getElementById('email').value = email;
+            document.getElementById('password').value = password;
+            document.getElementById('email').dispatchEvent(new Event('input'));
+            document.getElementById('password').dispatchEvent(new Event('input'));
+            showToast('Credenciales cargadas — haga clic en Iniciar Sesión', 'info', 3000);
+        }
+
         function togglePassword() {
             const passwordInput = document.getElementById('password');
             const passwordIcon = document.getElementById('passwordIcon');

@@ -36,13 +36,6 @@
             </div>
         </div>
 
-        <!-- Alumnos - Solo Usuario General -->
-        <div class="menu-item">
-            <a href="{{ route('alumnos.index') }}" class="w-full flex items-center gap-3 p-3 text-left font-medium text-gray-700 hover:bg-primary-50 hover:text-primary-700 rounded-lg transition-colors {{ request()->routeIs('alumnos.*') ? 'bg-primary-50 text-primary-700 font-semibold' : '' }}">
-                <i class="fas fa-graduation-cap text-primary-600"></i>
-                <span class="text-sm">Alumnos</span>
-            </a>
-        </div>
 
         <!-- Salidas Educativas - Solo Usuario General -->
         <div class="menu-item">
@@ -60,27 +53,35 @@
             </a>
         </div>
 
-        <!-- Personal - Solo Usuario General -->
+        <!-- Empleados - Solo Usuario General -->
         <div class="menu-item">
-            <button onclick="toggleMenu('personal')" class="w-full flex items-center justify-between p-3 text-left font-medium text-gray-700 hover:bg-primary-50 hover:text-primary-700 rounded-lg transition-colors">
-                <div class="flex items-center gap-3">
-                    <i class="fas fa-id-badge text-primary-500"></i>
-                    <span class="text-sm">Personal</span>
-                </div>
-                <i id="personal-icon" class="fas fa-chevron-right text-xs"></i>
-            </button>
-            <div id="personal-menu" class="ml-6 mt-1 space-y-1 hidden">
-                <a href="{{ route('empleados.index') }}" class="block px-3 py-2 text-sm text-gray-600 hover:text-primary-600 hover:bg-primary-50 rounded transition-colors">Empleados</a>
-                <a href="{{ route('beneficiarios_svo.index') }}" class="block px-3 py-2 text-sm text-gray-600 hover:text-primary-600 hover:bg-primary-50 rounded transition-colors">Beneficiarios SVO</a>
-            </div>
+            <a href="{{ route('empleados.index') }}" class="w-full flex items-center gap-3 p-3 text-left font-medium text-gray-700 hover:bg-primary-50 hover:text-primary-700 rounded-lg transition-colors {{ request()->routeIs('empleados.*') ? 'bg-primary-50 text-primary-700 font-semibold' : '' }}">
+                <i class="fas fa-id-badge text-primary-500"></i>
+                <span class="text-sm">Empleados</span>
+            </a>
         </div>
 
-        <!-- Documentos - Solo Usuario General (Modificado para ir directo al index) -->
+        <!-- Usuarios - Usuario General -->
         <div class="menu-item">
-            <a href="{{ route('documentos.index') }}" class="w-full flex items-center gap-3 p-3 text-left font-medium text-gray-700 hover:bg-primary-50 hover:text-primary-700 rounded-lg transition-colors {{ request()->routeIs('documentos.*') ? 'bg-primary-50 text-primary-700 font-semibold' : '' }}">
-                <i class="fas fa-folder-open text-gray-700"></i>
-                <span class="text-sm">Documentos</span>
+            <a href="{{ route('usuarios.index') }}" class="w-full flex items-center gap-3 p-3 text-left font-medium text-gray-700 hover:bg-primary-50 hover:text-primary-700 rounded-lg transition-colors {{ request()->routeIs('usuarios.*') ? 'bg-primary-50 text-primary-700 font-semibold' : '' }}">
+                <i class="fas fa-users-cog text-purple-600"></i>
+                <span class="text-sm">Usuarios</span>
             </a>
+        </div>
+
+        <!-- Documentos - Solo Usuario General -->
+        <div class="menu-item">
+            <button onclick="toggleMenu('documentos')" class="w-full flex items-center justify-between p-3 text-left font-medium text-gray-700 hover:bg-primary-50 hover:text-primary-700 rounded-lg transition-colors">
+                <div class="flex items-center gap-3">
+                    <i class="fas fa-folder-open text-gray-700"></i>
+                    <span class="text-sm">Documentos</span>
+                </div>
+                <i id="documentos-icon" class="fas fa-chevron-down text-xs"></i>
+            </button>
+            <div id="documentos-menu" class="ml-6 mt-1 space-y-1">
+                <a href="{{ route('repositorio') }}" class="block px-3 py-2 text-sm text-gray-600 hover:text-primary-600 hover:bg-primary-50 rounded transition-colors {{ request()->routeIs('repositorio') ? 'bg-primary-50 text-primary-700 font-semibold' : '' }}">Documentos JAEC</a>
+                <a href="{{ route('documentos-escuela.index') }}" class="block px-3 py-2 text-sm text-gray-600 hover:text-primary-600 hover:bg-primary-50 rounded transition-colors {{ request()->routeIs('documentos-escuela.*') ? 'bg-primary-50 text-primary-700 font-semibold' : '' }}">Documentos Escuela</a>
+            </div>
         </div>
 
     @endif
@@ -112,7 +113,8 @@
                 <a href="{{ route('pasantias.index') }}" class="block px-3 py-2 text-sm text-gray-600 hover:text-primary-600 hover:bg-primary-50 rounded transition-colors">Pasantías / Prácticas Profesionales</a>
                 <a href="{{ route('beneficiarios_svo.index') }}" class="block px-3 py-2 text-sm text-gray-600 hover:text-primary-600 hover:bg-primary-50 rounded transition-colors">Beneficiarios SVO</a>
                 <a href="{{ route('derivaciones.index') }}" class="block px-3 py-2 text-sm text-gray-600 hover:text-primary-600 hover:bg-primary-50 rounded transition-colors {{ request()->routeIs('derivaciones.*') ? 'bg-primary-50 text-primary-700 font-semibold' : '' }}">Derivaciones</a>
-                <a href="{{ route('documentos.index') }}" class="block px-3 py-2 text-sm text-gray-600 hover:text-primary-600 hover:bg-primary-50 rounded transition-colors">Documentos</a>
+                <a href="{{ route('documentos.index') }}" class="block px-3 py-2 text-sm text-gray-600 hover:text-primary-600 hover:bg-primary-50 rounded transition-colors">Documentos JAEC</a>
+                <a href="{{ route('documentos-escuela.index') }}" class="block px-3 py-2 text-sm text-gray-600 hover:text-primary-600 hover:bg-primary-50 rounded transition-colors">Documentos Escuelas</a>
             </div>
         </div>
 
@@ -169,6 +171,14 @@
         </div>
 
         @if($userRole === 'medico_auditor')
+            <!-- Accidentes - Médico Auditor (solo lectura) -->
+            <div class="menu-item">
+                <a href="{{ route('accidentes.index') }}" class="w-full flex items-center gap-3 p-3 text-left font-medium text-gray-700 hover:bg-primary-50 hover:text-primary-700 rounded-lg transition-colors {{ request()->routeIs('accidentes.*') ? 'bg-primary-50 text-primary-700 font-semibold' : '' }}">
+                    <i class="fas fa-shield-alt text-red-600"></i>
+                    <span class="text-sm">Accidentes</span>
+                </a>
+            </div>
+
             <!-- Reintegros Pendientes - Solo Médico -->
             <div class="menu-item">
                 <a href="{{ route('reintegros.pendientes') }}" class="w-full flex items-center gap-3 p-3 text-left font-medium text-gray-700 hover:bg-primary-50 hover:text-primary-700 rounded-lg transition-colors {{ request()->routeIs('reintegros.pendientes') ? 'bg-primary-50 text-primary-700 font-semibold' : '' }}">

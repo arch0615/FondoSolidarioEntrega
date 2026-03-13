@@ -4,7 +4,7 @@ use Illuminate\Http\Request;
 
 define('LARAVEL_START', microtime(true));
 
-// Las rutas ahora son relativas desde public dentro de fondosolidario
+// Ajustar las rutas para apuntar directamente a la carpeta padre (sin subcarpeta laravel)
 if (file_exists($maintenance = __DIR__.'/../storage/framework/maintenance.php')) {
     require $maintenance;
 }

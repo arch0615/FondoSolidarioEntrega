@@ -56,7 +56,11 @@
                 </div>
                 @if($modo == 'show')
                 <div class="flex space-x-3">
-                    <a href="{{ route('salidas_educativas.edit', $salida_id) }}" class="inline-flex items-center px-4 py-2 border border-secondary-300 rounded-lg text-sm font-medium text-secondary-700 bg-white hover:bg-secondary-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-colors duration-200">
+                    <a href="{{ route('salidas-educativas.print', $salida_id) }}" target="_blank" class="inline-flex items-center px-4 py-2 border border-secondary-300 rounded-lg text-sm font-medium text-secondary-700 bg-white hover:bg-secondary-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-colors duration-200">
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
+                        Imprimir
+                    </a>
+                    <a href="{{ route('salidas-educativas.edit', $salida_id) }}" class="inline-flex items-center px-4 py-2 border border-secondary-300 rounded-lg text-sm font-medium text-secondary-700 bg-white hover:bg-secondary-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-colors duration-200">
                         <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
                         Editar
                     </a>
@@ -77,7 +81,7 @@
                         <!-- Escuela -->
                         <div class="space-y-1">
                             <label for="id_escuela" class="block text-sm font-medium text-secondary-700">Escuela <span class="text-danger-500">*</span></label>
-                            <select wire:model="id_escuela" id="id_escuela" class="block w-full px-3 py-2 border border-secondary-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 {{ ($modo == 'show' || $esUsuarioGeneral) ? 'bg-secondary-50' : 'bg-white' }}" {{ ($modo == 'show' || $esUsuarioGeneral) ? 'disabled' : '' }}>
+                            <select wire:model.live="id_escuela" id="id_escuela" class="block w-full px-3 py-2 border border-secondary-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 {{ ($modo == 'show' || $esUsuarioGeneral) ? 'bg-secondary-50' : 'bg-white' }}" {{ ($modo == 'show' || $esUsuarioGeneral) ? 'disabled' : '' }}>
                                 <option value="">Seleccione una escuela</option>
                                 @foreach($escuelas as $escuela)
                                     <option value="{{ $escuela->id_escuela }}">{{ $escuela->nombre }}</option>
@@ -86,11 +90,19 @@
                             @error('id_escuela') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
                         </div>
 
-                        <!-- Fecha de Salida -->
+                        <!-- Fecha Desde -->
                         <div class="space-y-1">
-                            <label for="fecha_salida" class="block text-sm font-medium text-secondary-700">Fecha de Salida <span class="text-danger-500">*</span></label>
+                            <label for="fecha_salida" class="block text-sm font-medium text-secondary-700">Fecha Desde <span class="text-danger-500">*</span></label>
                             <input wire:model="fecha_salida" type="date" id="fecha_salida" class="block w-full px-3 py-2 border border-secondary-300 rounded-lg text-sm {{ $modo == 'show' ? 'bg-secondary-50' : 'bg-white' }}" {{ $modo == 'show' ? 'readonly' : '' }}>
                             @error('fecha_salida') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
+                        </div>
+
+                        <!-- Fecha Hasta -->
+                        <div class="space-y-1">
+                            <label for="fecha_hasta" class="block text-sm font-medium text-secondary-700">Fecha Hasta</label>
+                            <input wire:model="fecha_hasta" type="date" id="fecha_hasta" class="block w-full px-3 py-2 border border-secondary-300 rounded-lg text-sm {{ $modo == 'show' ? 'bg-secondary-50' : 'bg-white' }}" {{ $modo == 'show' ? 'readonly' : '' }}>
+                            <p class="text-xs text-secondary-400">Dejar vacío si la salida es de un solo día</p>
+                            @error('fecha_hasta') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
                         </div>
 
                         <!-- Hora de Salida -->
@@ -121,10 +133,11 @@
                             @error('proposito') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
                         </div>
 
+
                         <!-- Grado/Curso -->
                         <div class="space-y-1">
-                            <label for="grado_curso" class="block text-sm font-medium text-secondary-700">Grado/Curso <span class="text-danger-500">*</span></label>
-                            <input wire:model="grado_curso" type="text" id="grado_curso" class="block w-full px-3 py-2 border border-secondary-300 rounded-lg text-sm placeholder-secondary-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 {{ $modo == 'show' ? 'bg-secondary-50' : 'bg-white' }}" placeholder="Ej: 5to Grado" {{ $modo == 'show' ? 'readonly' : '' }}>
+                            <label for="grado_curso" class="block text-sm font-medium text-secondary-700">Grado/Curso</label>
+                            <input wire:model="grado_curso" type="text" id="grado_curso" class="block w-full px-3 py-2 border border-secondary-300 rounded-lg text-sm placeholder-secondary-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 {{ $modo == 'show' ? 'bg-secondary-50' : 'bg-white' }}" placeholder="Ej: 3er Año A" {{ $modo == 'show' ? 'readonly' : '' }}>
                             @error('grado_curso') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
                         </div>
 
@@ -138,7 +151,7 @@
                         <!-- Docentes Acompañantes -->
                         <div class="md:col-span-2 space-y-1">
                             <label for="docentes_acompanantes" class="block text-sm font-medium text-secondary-700">Docentes Acompañantes <span class="text-danger-500">*</span></label>
-                            <input wire:model="docentes_acompanantes" type="text" id="docentes_acompanantes" class="block w-full px-3 py-2 border border-secondary-300 rounded-lg text-sm placeholder-secondary-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 {{ $modo == 'show' ? 'bg-secondary-50' : 'bg-white' }}" placeholder="Ej: Prof. Ana Gómez, Prof. Carlos Ruiz" {{ $modo == 'show' ? 'readonly' : '' }}>
+                            <textarea wire:model="docentes_acompanantes" id="docentes_acompanantes" rows="3" class="block w-full px-3 py-2 border border-secondary-300 rounded-lg text-sm placeholder-secondary-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 {{ $modo == 'show' ? 'bg-secondary-50' : 'bg-white' }}" placeholder="Ej: Prof. Ana Gómez, Prof. Carlos Ruiz" {{ $modo == 'show' ? 'readonly' : '' }}></textarea>
                             @error('docentes_acompanantes') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
                         </div>
 
@@ -148,6 +161,60 @@
                             <input wire:model="transporte" type="text" id="transporte" class="block w-full px-3 py-2 border border-secondary-300 rounded-lg text-sm placeholder-secondary-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 {{ $modo == 'show' ? 'bg-secondary-50' : 'bg-white' }}" placeholder="Ej: Colectivo escolar" {{ $modo == 'show' ? 'readonly' : '' }}>
                             @error('transporte') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
                         </div>
+                    </div>
+                </div>
+
+                <!-- Archivos Adjuntos -->
+                <div class="border-b border-secondary-200 pb-6">
+                    <h3 class="text-lg font-medium text-secondary-900 mb-4">Archivos Adjuntos</h3>
+
+                    @if($modo != 'show')
+                    <div class="mb-6" x-data="{ isUploading: false, progress: 0 }" x-on:livewire-upload-start="isUploading = true" x-on:livewire-upload-finish="isUploading = false" x-on:livewire-upload-error="isUploading = false" x-on:livewire-upload-progress="progress = $event.detail.progress">
+                        <div class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-secondary-300 border-dashed rounded-lg">
+                            <div class="space-y-1 text-center">
+                                <svg class="mx-auto h-12 w-12 text-secondary-400" stroke="currentColor" fill="none" viewBox="0 0 48 48"><path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /></svg>
+                                <div class="flex text-sm text-secondary-600">
+                                    <label for="archivos_adjuntos" class="relative cursor-pointer bg-white rounded-md font-medium text-primary-600 hover:text-primary-500">
+                                        <span>Subir archivos</span>
+                                        <input wire:model="archivos_adjuntos" id="archivos_adjuntos" type="file" class="sr-only" multiple>
+                                    </label>
+                                    <p class="pl-1">o arrastrar y soltar</p>
+                                </div>
+                                <p class="text-xs text-secondary-500">PDF, JPG, PNG hasta 10MB</p>
+                            </div>
+                        </div>
+                        <div x-show="isUploading"><progress max="100" x-bind:value="progress" class="w-full"></progress></div>
+                        @error('archivos_adjuntos.*') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
+                    </div>
+                    @endif
+
+                    <div>
+                        @if (count($archivos_existentes) > 0)
+                            @foreach ($archivos_existentes as $archivo)
+                                <div class="flex items-center justify-between bg-white border border-secondary-200 rounded-lg p-3 mb-2">
+                                    <div class="flex items-center flex-1">
+                                        <a href="{{ Storage::url($archivo['ruta_archivo']) }}" target="_blank" class="font-medium text-secondary-900 truncate hover:text-primary-600">{{ $archivo['nombre_archivo'] }}</a>
+                                        <span class="text-sm text-secondary-600 ml-2">({{ number_format(($archivo['tamano'] ?? 0) / 1024, 1) }} KB)</span>
+                                    </div>
+                                    @if($modo != 'show')
+                                    <button wire:click.prevent="eliminarArchivoExistente({{ $archivo['id_archivo'] }})" type="button" class="text-red-600 hover:text-red-800 p-1 ml-2"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg></button>
+                                    @endif
+                                </div>
+                            @endforeach
+                        @endif
+                        @if (count($archivos_adjuntos) > 0)
+                            @foreach ($archivos_adjuntos as $archivo)
+                                <div class="flex items-center justify-between bg-blue-50 border border-blue-200 rounded-lg p-3 mb-2">
+                                    <div class="font-medium text-secondary-900 truncate">{{ $archivo->getClientOriginalName() }} <span class="text-xs text-blue-600">(nuevo)</span></div>
+                                    <button wire:click.prevent="$removeUpload('archivos_adjuntos', '{{ $archivo->getFilename() }}')" type="button" class="text-red-600 hover:text-red-800 p-1"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg></button>
+                                </div>
+                            @endforeach
+                        @endif
+                        @if (count($archivos_existentes) == 0 && count($archivos_adjuntos) == 0)
+                            <div class="text-center py-8 border-2 border-dashed border-secondary-200 rounded-lg">
+                                <p class="text-sm text-secondary-500">No hay archivos adjuntos</p>
+                            </div>
+                        @endif
                     </div>
                 </div>
 

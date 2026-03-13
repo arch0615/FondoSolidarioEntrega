@@ -27,6 +27,7 @@
                 <th>Escuela</th>
                 <th>Fecha Solicitud</th>
                 <th>Monto Solicitado</th>
+                <th>Tipos de Gasto</th>
                 <th>Estado</th>
             </tr>
         </thead>
@@ -34,16 +35,17 @@
             @forelse($reintegros as $reintegro)
                 <tr>
                     <td>{{ $reintegro->id_reintegro }}</td>
-                    <td>{{ $reintegro->accidente->id_accidente_entero ?? 'N/A' }}</td>
+                    <td>{{ $reintegro->accidente->numero_expediente ?? $reintegro->accidente->id_accidente_entero ?? 'N/A' }}</td>
                     <td>{{ export_clean($reintegro->alumno->nombre_completo ?? 'N/A') }}</td>
                     <td>{{ export_clean($reintegro->accidente->escuela->nombre ?? 'N/A') }}</td>
                     <td>{{ $reintegro->fecha_solicitud ? $reintegro->fecha_solicitud->format('d/m/Y') : '' }}</td>
                     <td>$ {{ number_format($reintegro->monto_solicitado, 2) }}</td>
+                    <td>{{ $reintegro->tiposGastos && $reintegro->tiposGastos->count() > 0 ? $reintegro->tiposGastos->pluck('descripcion')->join(', ') : 'Sin tipos de gasto' }}</td>
                     <td>{{ export_clean($reintegro->estadoReintegro->descripcion ?? 'Sin Estado') }}</td>
                 </tr>
             @empty
                 <tr>
-                    <td colspan="7" style="text-align: center;">No hay reintegros para mostrar.</td>
+                    <td colspan="8" style="text-align: center;">No hay reintegros para mostrar.</td>
                 </tr>
             @endforelse
         </tbody>

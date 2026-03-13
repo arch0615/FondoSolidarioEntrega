@@ -52,12 +52,14 @@
                     </div>
                 </div>
                 <!-- Botón Nuevo Accidente -->
+                @if(auth()->user()->id_rol != 3)
                 <a href="{{ route('accidentes.create') }}" class="inline-flex items-center px-4 py-2 bg-red-600 border border-transparent rounded-lg font-medium text-sm text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-colors duration-200">
                     <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
                     </svg>
                     Nuevo Accidente
                 </a>
+                @endif
             </div>
         </div>
 
@@ -76,12 +78,17 @@
                     </svg>
                 </summary>
                 <div class="px-6 pb-6">
-                    <div class="grid grid-cols-1 md:grid-cols-2 {{ $es_usuario_general ? 'lg:grid-cols-3' : 'lg:grid-cols-4' }} gap-4">
+                    <div class="grid grid-cols-1 md:grid-cols-2 {{ $es_usuario_general ? 'lg:grid-cols-4' : 'lg:grid-cols-5' }} gap-4">
                         <div class="space-y-1">
                             <label for="filtro_expediente" class="block text-sm font-medium text-secondary-700">N° Expediente</label>
                             <input wire:model.live="filtro_expediente" type="text" id="filtro_expediente" class="block w-full px-3 py-2 border border-secondary-300 rounded-lg text-sm placeholder-secondary-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500" placeholder="Ej: EXP-2024-001">
                         </div>
-                        
+
+                        <div class="space-y-1">
+                            <label for="filtro_alumno" class="block text-sm font-medium text-secondary-700">Alumno (Nombre/DNI)</label>
+                            <input wire:model.live="filtro_alumno" type="text" id="filtro_alumno" class="block w-full px-3 py-2 border border-secondary-300 rounded-lg text-sm placeholder-secondary-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500" placeholder="Nombre, apellido o DNI">
+                        </div>
+
                         @if(!$es_usuario_general)
                         <div class="space-y-1">
                             <label for="filtro_escuela" class="block text-sm font-medium text-secondary-700">Escuela</label>
@@ -115,7 +122,7 @@
                 <div class="p-6 flex-grow">
                     <div class="flex justify-between items-start mb-4">
                         <div class="flex-1 min-w-0 pr-3">
-                            <h2 class="text-xl font-semibold text-red-700 truncate">{{ $accidente->numero_expediente }}</h2>
+                            <h2 class="text-xl font-semibold text-red-700 break-words">{{ $accidente->numero_expediente ?? 'Sin número de expediente' }}</h2>
                             <div class="mt-1">
                                 @if($accidente->alumnos->count() === 0)
                                     <p class="text-sm text-secondary-500 italic">Sin alumnos asociados</p>
@@ -165,14 +172,26 @@
                                         <i class="fas fa-eye fa-fw text-secondary-400"></i>
                                         Consultar
                                     </a>
+                                    @if(auth()->user()->id_rol != 3)
                                     <a href="{{ route('accidentes.edit', $accidente->id_accidente) }}" class="flex items-center gap-2 px-4 py-2 text-sm text-secondary-700 hover:bg-secondary-100 hover:text-secondary-900 w-full text-left">
                                         <i class="fas fa-pencil-alt fa-fw text-secondary-400"></i>
                                         Editar
                                     </a>
+                                    @endif
+                                    <a href="{{ route('accidentes.print', $accidente->id_accidente) }}" target="_blank" class="flex items-center gap-2 px-4 py-2 text-sm text-secondary-700 hover:bg-secondary-100 hover:text-secondary-900 w-full text-left">
+                                        <i class="fas fa-print fa-fw text-secondary-400"></i>
+                                        Imprimir
+                                    </a>
+                                    <a href="{{ route('accidentes.dossier', $accidente->id_accidente) }}" target="_blank" class="flex items-center gap-2 px-4 py-2 text-sm text-secondary-700 hover:bg-secondary-100 hover:text-secondary-900 w-full text-left">
+                                        <i class="fas fa-folder-open fa-fw text-secondary-400"></i>
+                                        Expediente Completo
+                                    </a>
+                                    @if(auth()->user()->id_rol != 3)
                                     <button wire:click="eliminar({{ $accidente->id_accidente }})" wire:confirm="¿Estás seguro de que deseas eliminar este accidente?" class="flex items-center gap-2 px-4 py-2 text-sm text-red-600 hover:bg-red-50 w-full text-left">
                                         <i class="fas fa-trash-alt fa-fw text-red-400"></i>
                                         Eliminar
                                     </button>
+                                    @endif
                                 </div>
                             </div>
                         </div>
@@ -193,6 +212,7 @@
                     </div>
 
                     <!-- Botones de Acción en el Card -->
+                    @if(auth()->user()->id_rol != 3)
                     <div class="flex gap-2 mt-4">
                         <a href="{{ route('derivaciones.create', ['id_accidente' => $accidente->id_accidente]) }}" class="flex-1 inline-flex items-center justify-center px-3 py-2 bg-blue-600 border border-transparent rounded-lg font-medium text-xs text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-200">
                             <i class="fas fa-file-medical mr-1"></i>
@@ -203,6 +223,7 @@
                             Solicitar Reintegro
                         </a>
                     </div>
+                    @endif
                 </div>
             </div>
             @empty
@@ -453,8 +474,13 @@
                                             <p style="
                                                 font-size: 12px !important;
                                                 color: #6b7280 !important;
+                                                margin: 0 0 2px 0 !important;
+                                            ">DNI: ${alumno.dni}</p>
+                                            <p style="
+                                                font-size: 12px !important;
+                                                color: #6b7280 !important;
                                                 margin: 0 !important;
-                                            ">DNI: ${alumno.dni} - ${alumno.sala_grado_curso}</p>
+                                            ">Grado/Sección: ${alumno.grado_seccion}</p>
                                         </div>
                                     </div>
                                 `).join('')}

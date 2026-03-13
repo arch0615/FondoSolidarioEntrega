@@ -7,6 +7,7 @@ use Livewire\WithPagination;
 use App\Models\DocumentoInstitucional;
 use App\Models\CatTipoDocumento;
 use App\Services\AuditoriaService;
+use Illuminate\Support\Facades\Auth;
 
 class Index extends Component
 {
@@ -17,6 +18,10 @@ class Index extends Component
     public $filtro_fecha_desde;
     public $filtro_fecha_hasta;
     public $filtro_escuela = '';
+
+    // Propiedades para modal de escuelas
+    public $mostrarModal = false;
+    public $escuelasModal = [];
 
     public $sortField = 'nombre_documento';
     public $sortDirection = 'asc';
@@ -44,15 +49,23 @@ class Index extends Component
     public function getDocumentos()
     {
         $query = DocumentoInstitucional::query()
-            ->with(['escuela', 'tipoDocumento', 'usuarioCarga']);
+            ->with(['escuelas', 'tipoDocumento', 'usuarioCarga']);
 
-        $user = auth()->user();
+        $user = Auth::user();
+
+        // Para pantalla Documentos, solo mostrar documentos donde id_escuela sea NULL
+        $query->whereNull('id_escuela');
 
         if ($user->id_rol == 1) {
-            $query->where('id_escuela', $user->id_escuela);
+            // Para usuarios generales, filtrar documentos que pertenezcan a su escuela
+            $query->whereHas('escuelas', function ($query) use ($user) {
+                $query->where('escuelas.id_escuela', $user->id_escuela);
+            });
         } else {
             $query->when($this->filtro_escuela, function ($query) {
-                $query->where('id_escuela', $this->filtro_escuela);
+                $query->whereHas('escuelas', function ($subQuery) {
+                    $subQuery->where('escuelas.id_escuela', $this->filtro_escuela);
+                });
             });
         }
 
@@ -107,4 +120,17 @@ class Index extends Component
     public function updatingFiltroFechaDesde() { $this->resetPage(); }
     public function updatingFiltroFechaHasta() { $this->resetPage(); }
     public function updatingFiltroEscuela() { $this->resetPage(); }
+
+    public function mostrarEscuelasModal($documentoId)
+    {
+        $documento = DocumentoInstitucional::with('escuelas')->findOrFail($documentoId);
+        $this->escuelasModal = $documento->escuelas;
+        $this->mostrarModal = true;
+    }
+
+    public function cerrarModal()
+    {
+        $this->mostrarModal = false;
+        $this->escuelasModal = [];
+    }
 }

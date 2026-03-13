@@ -4,7 +4,9 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use App\Models\HistorialReintegro;
 
 class Reintegro extends Model
 {
@@ -54,6 +56,11 @@ class Reintegro extends Model
     public function tipoGasto(): BelongsTo
     {
         return $this->belongsTo(CatTipoGasto::class, 'id_tipo_gasto', 'id_tipo_gasto');
+    }
+
+    public function tiposGastos(): BelongsToMany
+    {
+        return $this->belongsToMany(CatTipoGasto::class, 'reintegro_tipos_gastos', 'id_reintegro', 'id_tipo_gasto');
     }
 
     public function estadoReintegro(): BelongsTo
@@ -110,5 +117,22 @@ class Reintegro extends Model
                 $archivo->delete();
             });
         });
+    }
+
+    /**
+     * Historial de acciones del reintegro
+     */
+    public function historial(): HasMany
+    {
+        return $this->hasMany(HistorialReintegro::class, 'id_reintegro', 'id_reintegro')
+                    ->orderBy('fecha_hora', 'desc');
+    }
+
+    /**
+     * Obtener el historial más reciente
+     */
+    public function historialReciente(): HasMany
+    {
+        return $this->historial()->limit(10);
     }
 }

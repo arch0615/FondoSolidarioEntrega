@@ -1,9 +1,11 @@
+
 <div class="mx-auto px-4" x-data="{ 
-    showDetail: @entangle('showDetailPanel'),
+    showDetail: @entangle('showDetailModal'),
     showInfoModal: @entangle('solicitandoInformacion'),
     showRechazoModal: @entangle('rechazandoReintegro'),
     showAprobacionModal: @entangle('aprobandoReintegro'),
-    showPagoModal: @entangle('pagandoReintegro')
+    showPagoModal: @entangle('pagandoReintegro'),
+    showMensajeModal: @entangle('enviandoMensaje')
 }">
     @if (session()->has('message'))
         <div class="mb-6 bg-success-50 border border-success-200 text-success-700 px-4 py-3 rounded-lg relative">
@@ -168,10 +170,10 @@
         </div>
     </div>
 
-    <!-- Modal/Side Panel para Detalles del Reintegro -->
+    <!-- Modal de Pantalla Completa para Detalles del Reintegro -->
     <div x-show="showDetail" 
          class="fixed inset-0 bg-black bg-opacity-50 z-40 transition-opacity" 
-         @click="showDetail = null"
+         @click="showDetail = false"
          x-transition:enter="ease-out duration-300"
          x-transition:enter-start="opacity-0"
          x-transition:enter-end="opacity-100"
@@ -181,101 +183,224 @@
          style="display: none;"></div>
 
     <div x-show="showDetail" 
-         class="fixed inset-y-0 right-0 w-full max-w-2xl bg-white z-50 shadow-xl transform"
+         class="fixed inset-4 bg-white z-50 shadow-xl rounded-xl transform overflow-hidden"
          x-transition:enter="transition ease-out duration-300"
-         x-transition:enter-start="translate-x-full"
-         x-transition:enter-end="translate-x-0"
+         x-transition:enter-start="opacity-0 scale-95"
+         x-transition:enter-end="opacity-100 scale-100"
          x-transition:leave="transition ease-in duration-200"
-         x-transition:leave-start="translate-x-0"
-         x-transition:leave-end="translate-x-full"
+         x-transition:leave-start="opacity-100 scale-100"
+         x-transition:leave-end="opacity-0 scale-95"
          style="display: none;">
-        
+         
         @if ($reintegroSeleccionado)
             <div class="h-full flex flex-col">
-                <div class="flex justify-between items-center px-6 py-4 bg-secondary-50 border-b border-secondary-200">
-                    <h2 class="text-lg font-semibold text-secondary-900">Detalle del Reintegro: REI-{{ str_pad($reintegroSeleccionado->id_reintegro, 3, '0', STR_PAD_LEFT) }}</h2>
-                    <button @click="showDetail = null" wire:click="cerrarDetalle" class="p-2 text-secondary-400 hover:text-secondary-600 hover:bg-secondary-100 rounded-full transition-colors duration-200">
+                <!-- Header del Modal -->
+                <div class="flex justify-between items-center px-6 py-4 bg-secondary-50 border-b border-secondary-200 rounded-t-xl">
+                    <h2 class="text-xl font-semibold text-secondary-900">Detalle del Reintegro: REI-{{ str_pad($reintegroSeleccionado->id_reintegro, 3, '0', STR_PAD_LEFT) }}</h2>
+                    <button @click="showDetail = false" wire:click="cerrarDetalle" class="p-2 text-secondary-400 hover:text-secondary-600 hover:bg-secondary-100 rounded-full transition-colors duration-200">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                     </button>
                 </div>
 
-                <div class="flex-grow p-6 overflow-y-auto">
-                    <!-- Información del Accidente -->
-                    <div class="mb-6">
-                        <h3 class="text-base font-semibold text-secondary-800 border-b border-secondary-200 pb-2 mb-4">Información del Accidente</h3>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-                            <div><span class="font-medium text-secondary-600">ID Accidente:</span> <span class="text-secondary-900">{{ $reintegroSeleccionado->accidente->id_accidente_entero ?? 'N/A' }}</span></div>
-                            <div><span class="font-medium text-secondary-600">Alumno:</span> <span class="text-secondary-900">{{ $reintegroSeleccionado->alumno->nombre_completo ?? 'N/A' }}</span></div>
-                            <div><span class="font-medium text-secondary-600">Escuela:</span> <span class="text-secondary-900">{{ $reintegroSeleccionado->accidente->escuela->nombre ?? 'N/A' }}</span></div>
-                            <div><span class="font-medium text-secondary-600">Fecha Solicitud:</span> <span class="text-secondary-900">{{ $reintegroSeleccionado->fecha_solicitud ? $reintegroSeleccionado->fecha_solicitud->format('d/m/Y') : 'N/A' }}</span></div>
-                            <div><span class="font-medium text-secondary-600">Tipo de Gasto:</span> <span class="text-secondary-900">{{ $reintegroSeleccionado->tipoGasto->descripcion ?? 'N/A' }}</span></div>
-                            <div class="md:col-span-2"><span class="font-medium text-secondary-600">Descripción del Gasto:</span> <span class="text-secondary-900">{{ $reintegroSeleccionado->descripcion_gasto }}</span></div>
-                            <div class="md:col-span-2"><span class="font-medium text-secondary-600">Monto Solicitado:</span> <span class="text-secondary-900 font-bold text-lg">$ {{ number_format($reintegroSeleccionado->monto_solicitado, 2) }}</span></div>
-                            <div><span class="font-medium text-secondary-600">Estado Actual:</span> 
-                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {{ $reintegroSeleccionado->estadoReintegro->color_clase ?? 'bg-secondary-100 text-secondary-800' }}">
-                                    {{ $reintegroSeleccionado->estadoReintegro->descripcion ?? 'Sin Estado' }}
-                                </span>
+                <!-- Contenido del Modal en dos columnas -->
+                <div class="flex-grow flex overflow-hidden">
+                    <!-- Columna Izquierda: Información del Reintegro -->
+                    <div class="w-2/3 p-3 border-r border-secondary-200">
+                        <div class="space-y-3">
+                            <!-- Información del Accidente -->
+                            <div>
+                                <h3 class="text-sm font-semibold text-secondary-800 border-b border-secondary-200 pb-1 mb-2">Información del Accidente</h3>
+                                <div class="grid grid-cols-2 gap-3 text-xs">
+                                    <div><span class="font-medium text-secondary-600">ID:</span> <span class="text-secondary-900">{{ $reintegroSeleccionado->accidente->numero_expediente ?? $reintegroSeleccionado->accidente->id_accidente_entero ?? 'N/A' }}</span></div>
+                                    <div><span class="font-medium text-secondary-600">Escuela:</span> <span class="text-secondary-900">{{ $reintegroSeleccionado->accidente->escuela->nombre ?? 'N/A' }}</span></div>
+                                    <div><span class="font-medium text-secondary-600">Fecha:</span> <span class="text-secondary-900">{{ $reintegroSeleccionado->fecha_solicitud ? $reintegroSeleccionado->fecha_solicitud->format('d/m/Y') : 'N/A' }}</span></div>
+                                    <div><span class="font-medium text-secondary-600">Estado:</span>
+                                        <span class="inline-flex items-center px-1.5 py-0.5 rounded-full text-xs font-medium {{ $reintegroSeleccionado->estadoReintegro->color_clase ?? 'bg-secondary-100 text-secondary-800' }}">
+                                            {{ $reintegroSeleccionado->estadoReintegro->descripcion ?? 'Sin Estado' }}
+                                        </span>
+                                    </div>
+                                </div>
                             </div>
-                            @if($reintegroSeleccionado->observaciones_auditor)
-                                <div class="md:col-span-2"><span class="font-medium text-secondary-600">Observaciones Auditor:</span> <span class="text-secondary-900">{{ $reintegroSeleccionado->observaciones_auditor }}</span></div>
-                            @endif
-                            @if($reintegroSeleccionado->monto_autorizado)
-                                <div><span class="font-medium text-secondary-600">Monto Autorizado:</span> <span class="text-secondary-900 font-bold text-lg">$ {{ number_format($reintegroSeleccionado->monto_autorizado, 2) }}</span></div>
-                            @endif
-                            @if($reintegroSeleccionado->fecha_autorizacion)
-                                <div><span class="font-medium text-secondary-600">Fecha Autorización:</span> <span class="text-secondary-900">{{ $reintegroSeleccionado->fecha_autorizacion->format('d/m/Y') }}</span></div>
-                            @endif
-                            @if($reintegroSeleccionado->fecha_pago)
-                                <div><span class="font-medium text-secondary-600">Fecha Pago:</span> <span class="text-secondary-900">{{ $reintegroSeleccionado->fecha_pago->format('d/m/Y') }}</span></div>
-                            @endif
-                            @if($reintegroSeleccionado->numero_transferencia)
-                                <div><span class="font-medium text-secondary-600">No. Transferencia:</span> <span class="text-secondary-900">{{ $reintegroSeleccionado->numero_transferencia }}</span></div>
-                            @endif
+
+                            <!-- Detalles del Reintegro -->
+                            <div>
+                                <h3 class="text-sm font-semibold text-secondary-800 border-b border-secondary-200 pb-1 mb-2">Detalles del Reintegro</h3>
+                                <div class="space-y-1 text-xs">
+                                    <div><span class="font-medium text-secondary-600">Descripción:</span></div>
+                                    <div class="text-secondary-900 text-xs bg-secondary-50 p-2 rounded">{{ $reintegroSeleccionado->descripcion_gasto }}</div>
+                                    <div class="grid grid-cols-2 gap-3">
+                                        <div><span class="font-medium text-secondary-600">Monto Solicitado:</span> <span class="text-secondary-900 font-bold">$ {{ number_format($reintegroSeleccionado->monto_solicitado, 2) }}</span></div>
+                                        @if($reintegroSeleccionado->monto_autorizado)
+                                            <div><span class="font-medium text-secondary-600">Monto Autorizado:</span> <span class="text-success-600 font-bold">$ {{ number_format($reintegroSeleccionado->monto_autorizado, 2) }}</span></div>
+                                        @endif
+                                    </div>
+                                    @if($reintegroSeleccionado->fecha_autorizacion || $reintegroSeleccionado->fecha_pago || $reintegroSeleccionado->numero_transferencia)
+                                        <div class="grid grid-cols-2 gap-3">
+                                            @if($reintegroSeleccionado->fecha_autorizacion)
+                                                <div><span class="font-medium text-secondary-600">Fecha Autorización:</span> <span class="text-secondary-900">{{ $reintegroSeleccionado->fecha_autorizacion->format('d/m/Y') }}</span></div>
+                                            @endif
+                                            @if($reintegroSeleccionado->fecha_pago)
+                                                <div><span class="font-medium text-secondary-600">Fecha Pago:</span> <span class="text-secondary-900">{{ $reintegroSeleccionado->fecha_pago->format('d/m/Y') }}</span></div>
+                                            @endif
+                                            @if($reintegroSeleccionado->numero_transferencia)
+                                                <div class="col-span-2"><span class="font-medium text-secondary-600">No. Transferencia:</span> <span class="text-secondary-900">{{ $reintegroSeleccionado->numero_transferencia }}</span></div>
+                                            @endif
+                                        </div>
+                                    @endif
+                                </div>
+                            </div>
+
+                            <!-- Alumnos Afectados y Tipos de Gastos en el mismo row -->
+                            <div class="grid grid-cols-2 gap-3">
+                                <!-- Alumnos Afectados -->
+                                <div>
+                                    <h3 class="text-sm font-semibold text-secondary-800 border-b border-secondary-200 pb-1 mb-2">Alumnos Afectados</h3>
+                                    @if($reintegroSeleccionado->accidente->alumnos && $reintegroSeleccionado->accidente->alumnos->count() > 0)
+                                        <div class="space-y-1">
+                                            @foreach($reintegroSeleccionado->accidente->alumnos as $accidenteAlumno)
+                                                <div class="text-xs">
+                                                    <span class="font-medium text-secondary-900">{{ $accidenteAlumno->alumno->nombre_completo ?? 'N/A' }}</span>
+                                                    <span class="text-secondary-600">({{ $accidenteAlumno->grado_seccion ?? 'N/A' }})</span>
+                                                </div>
+                                            @endforeach
+                                        </div>
+                                    @else
+                                        <p class="text-xs text-secondary-500">No hay información disponible.</p>
+                                    @endif
+                                </div>
+
+                                <!-- Tipos de Gastos -->
+                                <div>
+                                    <h3 class="text-sm font-semibold text-secondary-800 border-b border-secondary-200 pb-1 mb-2">Tipos de Gastos</h3>
+                                    @if($reintegroSeleccionado->tiposGastos && $reintegroSeleccionado->tiposGastos->count() > 0)
+                                        <div class="flex flex-wrap gap-1">
+                                            @foreach($reintegroSeleccionado->tiposGastos as $tipoGasto)
+                                                <span class="inline-flex items-center px-1.5 py-0.5 rounded-full text-xs font-medium bg-primary-100 text-primary-800">
+                                                    {{ $tipoGasto->descripcion }}
+                                                </span>
+                                            @endforeach
+                                        </div>
+                                    @else
+                                        <p class="text-xs text-secondary-500">No especificados.</p>
+                                    @endif
+                                </div>
+                            </div>
+
+                            <!-- Documentos Adjuntos - Con scroll y fecha de carga -->
+                            <div>
+                                <h3 class="text-sm font-semibold text-secondary-800 border-b border-secondary-200 pb-1 mb-2">Documentos Adjuntos</h3>
+                                <div class="max-h-40 overflow-y-auto space-y-1">
+                                    @forelse ($reintegroSeleccionado->archivos as $doc)
+                                        <div class="bg-white border border-secondary-200 rounded-md p-2 shadow-sm hover:shadow-md transition-shadow duration-200">
+                                            <div class="flex items-center justify-between">
+                                                <div class="flex items-center space-x-2 flex-1 min-w-0">
+                                                    <div class="flex-shrink-0">
+                                                        <svg class="w-4 h-4 text-primary-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                                                        </svg>
+                                                    </div>
+                                                    <div class="flex-1 min-w-0">
+                                                        <p class="text-xs font-medium text-secondary-900 truncate">{{ $doc->nombre_archivo }}</p>
+                                                        <p class="text-xs text-secondary-500">{{ $doc->fecha_carga ? \Carbon\Carbon::parse($doc->fecha_carga)->format('d/m/Y H:i') : 'N/A' }}</p>
+                                                    </div>
+                                                </div>
+                                                <div class="flex-shrink-0">
+                                                    <a href="{{ Storage::url($doc->ruta_archivo) }}" target="_blank" class="inline-flex items-center px-2 py-1 bg-primary-600 text-white text-xs font-medium rounded hover:bg-primary-700 transition-colors duration-200">
+                                                        Ver
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    @empty
+                                        <div class="bg-secondary-50 border-2 border-dashed border-secondary-300 rounded-md p-3 text-center">
+                                            <svg class="w-6 h-6 text-secondary-400 mx-auto mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                                            </svg>
+                                            <p class="text-xs text-secondary-500">No hay documentos adjuntos</p>
+                                        </div>
+                                    @endforelse
+                                </div>
+                            </div>
                         </div>
                     </div>
 
-                    <!-- Documentos Adjuntos -->
-                    <div>
-                        <h3 class="text-base font-semibold text-secondary-800 border-b border-secondary-200 pb-2 mb-4">Documentos Adjuntos</h3>
-                        <ul class="space-y-3">
-                            @forelse ($reintegroSeleccionado->archivos as $doc)
-                                <li class="flex items-center justify-between p-3 bg-secondary-50 rounded-lg border border-secondary-200">
-                                    <div class="flex items-center">
-                                        <svg class="w-6 h-6 text-primary-500 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
-                                        <span class="text-sm font-medium text-secondary-800">{{ $doc->nombre_archivo }}</span>
+                    <!-- Columna Derecha: Historial -->
+                    <div class="w-1/3 p-6 bg-secondary-25">
+                        <h3 class="text-lg font-semibold text-secondary-800 border-b border-secondary-200 pb-2 mb-4">Historial de Reintegro</h3>
+                        
+                        <!-- Área de historial con scroll -->
+                        <div class="h-96 overflow-y-auto space-y-4 mb-4">
+                            @forelse($historialReintegro as $entrada)
+                                <div class="bg-white rounded-lg p-4 border border-secondary-200 shadow-sm">
+                                    <div class="flex items-start justify-between mb-2">
+                                        <div class="flex items-center space-x-2">
+                                            @php
+                                                $claseColor = match($entrada['accion']) {
+                                                    'aceptar' => 'bg-success-100 text-success-800',
+                                                    'rechazar' => 'bg-danger-100 text-danger-800',
+                                                    'solicitar_informacion' => 'bg-warning-100 text-warning-800',
+                                                    default => 'bg-info-100 text-info-800'
+                                                };
+                                                $textoAccion = match($entrada['accion']) {
+                                                    'aceptar' => 'Aprobado',
+                                                    'rechazar' => 'Rechazado',
+                                                    'solicitar_informacion' => 'Info Solicitada',
+                                                    'mensaje' => 'Mensaje',
+                                                    default => 'Acción'
+                                                };
+                                            @endphp
+                                            <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium {{ $claseColor }}">
+                                                {{ $textoAccion }}
+                                            </span>
+                                        </div>
+                                        <span class="text-xs text-secondary-500">{{ \Carbon\Carbon::parse($entrada['fecha_hora'])->format('d/m/Y H:i') }}</span>
                                     </div>
-                                    <a href="{{ Storage::url($doc->ruta_archivo) }}" target="_blank" class="inline-flex items-center px-3 py-1.5 bg-white border border-secondary-300 rounded-md text-xs font-medium text-secondary-700 hover:bg-secondary-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
-                                        Ver
-                                    </a>
-                                </li>
+                                    <p class="text-sm text-secondary-700 mb-2">{{ $entrada['mensaje'] }}</p>
+                                    <p class="text-xs text-secondary-500">Por: {{ $entrada['usuario']['nombre'] ?? $entrada['usuario']['name'] ?? 'Usuario' }}</p>
+                                </div>
                             @empty
-                                <li class="text-sm text-secondary-500">No hay documentos adjuntos.</li>
+                                <div class="text-center py-8">
+                                    <svg class="w-12 h-12 text-secondary-300 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-3.582 8-8 8a8.959 8.959 0 01-4.906-1.436L3 21l2.436-5.094A8.959 8.959 0 013 12c0-4.418 3.582-8 8-8s8 3.582 8 8z"></path>
+                                    </svg>
+                                    <p class="text-sm text-secondary-500">No hay historial disponible</p>
+                                </div>
                             @endforelse
-                        </ul>
+                        </div>
                     </div>
                 </div>
 
-                <div class="px-6 py-4 bg-secondary-50 border-t border-secondary-200 flex justify-end items-center space-x-3">
-                    @if(optional($reintegroSeleccionado)->id_estado_reintegro == $estadoAutorizadoId)
-                        <button wire:click="mostrarModalPago" class="inline-flex items-center px-4 py-2 bg-info-600 border border-transparent rounded-lg font-medium text-sm text-white hover:bg-info-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-info-500">
-                            <i class="fas fa-money-bill-wave mr-2"></i>
-                            Marcar como Pagado
+                <!-- Footer del Modal con Botones de Acción -->
+                <div class="px-6 py-4 bg-secondary-50 border-t border-secondary-200 rounded-b-xl">
+                    <div class="flex justify-end items-center space-x-3 flex-wrap gap-2">
+                        @if(optional($reintegroSeleccionado)->id_estado_reintegro == $estadoAutorizadoId)
+                            <button wire:click="mostrarModalPago" class="inline-flex items-center px-4 py-2 bg-info-600 border border-transparent rounded-lg font-medium text-sm text-white hover:bg-info-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-info-500">
+                                <i class="fas fa-money-bill-wave mr-2"></i>
+                                Marcar como Pagado
+                            </button>
+                        @endif
+                        @if(optional($reintegroSeleccionado)->id_estado_reintegro == $estadoNuevoId || optional($reintegroSeleccionado)->id_estado_reintegro == $estadoPendienteInfoId)
+                            <button wire:click="mostrarModalAprobacion" class="inline-flex items-center px-4 py-2 bg-success-600 border border-transparent rounded-lg font-medium text-sm text-white hover:bg-success-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-success-500">
+                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                                Aprobar
+                            </button>
+                            <button wire:click="mostrarModalRechazo" class="inline-flex items-center px-4 py-2 bg-danger-600 border border-transparent rounded-lg font-medium text-sm text-white hover:bg-danger-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-danger-500">
+                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                                Rechazar
+                            </button>
+                            <button wire:click="mostrarModalSolicitudInfo" class="inline-flex items-center px-4 py-2 bg-warning-500 border border-transparent rounded-lg font-medium text-sm text-white hover:bg-warning-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-warning-500">
+                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.546-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                Solicitar Información
+                            </button>
+                            <button wire:click="mostrarModalMensaje" class="inline-flex items-center px-4 py-2 bg-primary-600 border border-transparent rounded-lg font-medium text-sm text-white hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
+                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-3.582 8-8 8a8.959 8.959 0 01-4.906-1.436L3 21l2.436-5.094A8.959 8.959 0 013 12c0-4.418 3.582-8 8-8s8 3.582 8 8z"></path></svg>
+                                Enviar Mensaje
+                            </button>
+                        @endif
+                        <button @click="showDetail = false" wire:click="cerrarDetalle" class="inline-flex items-center px-4 py-2 bg-secondary-200 border border-transparent rounded-lg font-medium text-sm text-secondary-700 hover:bg-secondary-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-secondary-500">
+                            Cerrar
                         </button>
-                    @endif
-                    @if(optional($reintegroSeleccionado)->id_estado_reintegro == $estadoNuevoId || optional($reintegroSeleccionado)->id_estado_reintegro == $estadoPendienteInfoId)
-                        <button wire:click="mostrarModalAprobacion" class="inline-flex items-center px-4 py-2 bg-success-600 border border-transparent rounded-lg font-medium text-sm text-white hover:bg-success-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-success-500">
-                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
-                            Aprobar
-                        </button>
-                        <button wire:click="mostrarModalRechazo" class="inline-flex items-center px-4 py-2 bg-danger-600 border border-transparent rounded-lg font-medium text-sm text-white hover:bg-danger-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-danger-500">
-                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-                            Rechazar
-                        </button>
-                        <button wire:click="mostrarModalSolicitudInfo" class="inline-flex items-center px-4 py-2 bg-warning-500 border border-transparent rounded-lg font-medium text-sm text-white hover:bg-warning-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-warning-500">
-                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.546-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                            Solicitar Información
-                        </button>
-                    @endif
+                    </div>
                 </div>
             </div>
         @endif
@@ -411,6 +536,38 @@
                 </button>
                 <button wire:click="marcarComoPagado" class="px-4 py-2 bg-info-600 text-white rounded-lg hover:bg-info-700 transition-colors">
                     Confirmar Pago
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para Enviar Mensaje -->
+    <div x-show="showMensajeModal"
+         class="fixed inset-0 bg-gray-900 bg-opacity-60 z-50 flex justify-center items-center"
+         x-transition:enter="ease-out duration-300"
+         x-transition:enter-start="opacity-0"
+         x-transition:enter-end="opacity-100"
+         x-transition:leave="ease-in duration-200"
+         x-transition:leave-start="opacity-100"
+         x-transition:leave-end="opacity-0"
+         style="display: none;">
+        <div class="bg-white rounded-xl shadow-2xl w-full max-w-lg p-6 m-4" @click.away="showMensajeModal = false">
+            <h3 class="text-xl font-semibold text-secondary-900 mb-4">Enviar Mensaje</h3>
+            <p class="text-sm text-secondary-600 mb-4">
+                Envía un mensaje a la escuela sobre este reintegro. El mensaje será registrado en el historial y la escuela recibirá una notificación.
+            </p>
+            <div>
+                <textarea wire:model="textoMensaje"
+                          class="w-full h-32 p-3 border border-secondary-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition"
+                          placeholder="Escribe tu mensaje aquí..."></textarea>
+                @error('textoMensaje') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
+            </div>
+            <div class="flex justify-end items-center mt-6 space-x-3">
+                <button wire:click="cancelarMensaje" class="px-4 py-2 bg-secondary-200 text-secondary-800 rounded-lg hover:bg-secondary-300 transition-colors">
+                    Cancelar
+                </button>
+                <button wire:click="enviarMensaje" class="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors">
+                    Enviar Mensaje
                 </button>
             </div>
         </div>

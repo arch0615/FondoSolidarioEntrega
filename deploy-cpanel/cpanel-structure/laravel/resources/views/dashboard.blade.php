@@ -23,15 +23,15 @@
                     </div>
                 </div>
 
-                <div class="bg-white rounded-lg border border-primary-200 p-6 shadow-sm hover:shadow-md transition-shadow">
+                <div class="bg-white rounded-lg border border-blue-200 p-6 shadow-sm hover:shadow-md transition-shadow">
                     <div class="flex items-center justify-between">
                         <div>
-                            <p class="text-sm font-medium text-gray-600">Alumnos Registrados</p>
-                            <p class="text-3xl font-bold text-primary-700 mt-2">450</p>
-                            <p class="text-xs text-primary-600 mt-1">↑ 15 este mes</p>
+                            <p class="text-sm font-medium text-gray-600">Derivaciones Generadas</p>
+                            <p class="text-3xl font-bold text-blue-700 mt-2">25</p>
+                            <p class="text-xs text-blue-600 mt-1">↑ 5 este mes</p>
                         </div>
-                        <div class="p-3 rounded-lg bg-primary-50 border border-primary-200">
-                            <i class="fas fa-graduation-cap text-primary-600 text-xl"></i>
+                        <div class="p-3 rounded-lg bg-blue-50 border border-blue-200">
+                            <i class="fas fa-file-medical text-blue-600 text-xl"></i>
                         </div>
                     </div>
                 </div>
@@ -49,15 +49,15 @@
                     </div>
                 </div>
 
-                <div class="bg-white rounded-lg border border-primary-300 p-6 shadow-sm hover:shadow-md transition-shadow">
+                <div class="bg-white rounded-lg border border-green-200 p-6 shadow-sm hover:shadow-md transition-shadow">
                     <div class="flex items-center justify-between">
                         <div>
-                            <p class="text-sm font-medium text-gray-600">Documentos Subidos</p>
-                            <p class="text-3xl font-bold text-primary-800 mt-2">28</p>
-                            <p class="text-xs text-primary-700 mt-1">↑ 8 esta semana</p>
+                            <p class="text-sm font-medium text-gray-600">Salidas Educativas</p>
+                            <p class="text-3xl font-bold text-green-700 mt-2">8</p>
+                            <p class="text-xs text-green-600 mt-1">↑ 3 esta semana</p>
                         </div>
-                        <div class="p-3 rounded-lg bg-primary-100 border border-primary-300">
-                            <i class="fas fa-folder-open text-primary-700 text-xl"></i>
+                        <div class="p-3 rounded-lg bg-green-50 border border-green-200">
+                            <i class="fas fa-route text-green-600 text-xl"></i>
                         </div>
                     </div>
                 </div>
@@ -121,10 +121,10 @@
                             <span>Reportar Accidente</span>
                         </button>
                         
-                        <button class="w-full flex items-center gap-3 p-3 bg-primary-600 hover:bg-primary-700 text-white rounded-lg transition-all duration-200 hover:shadow-md">
-                            <i class="fas fa-graduation-cap"></i>
-                            <span>Registrar Alumno</span>
-                        </button>
+                        <a href="{{ route('salidas-educativas.create') }}" class="w-full flex items-center gap-3 p-3 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-all duration-200 hover:shadow-md">
+                            <i class="fas fa-route"></i>
+                            <span>Registrar Salida Educativa</span>
+                        </a>
                         
                         <button class="w-full flex items-center gap-3 p-3 border-2 border-primary-300 text-primary-700 hover:bg-primary-50 hover:border-primary-400 rounded-lg transition-all duration-200">
                             <i class="fas fa-file-medical"></i>

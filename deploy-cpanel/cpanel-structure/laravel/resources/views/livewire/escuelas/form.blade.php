@@ -48,7 +48,7 @@
                 <h3 class="text-lg font-medium text-secondary-900 mb-4">Información Básica</h3>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
-                        <label for="codigo_escuela" class="block text-sm font-medium text-secondary-700">Código de Escuela <span class="text-red-500">*</span></label>
+                        <label for="codigo_escuela" class="block text-sm font-medium text-secondary-700">CUIT <span class="text-red-500">*</span></label>
                         <input wire:model="codigo_escuela" type="text" id="codigo_escuela" class="block w-full mt-1" :disabled="$modo == 'show'">
                         @error('codigo_escuela') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
                     </div>
@@ -84,15 +84,25 @@
             <div class="border-b border-secondary-200 pb-6">
                 <h3 class="text-lg font-medium text-secondary-900 mb-4">Configuración</h3>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div>
+                    <div style="display: none;">
                         <label for="aporte_por_alumno" class="block text-sm font-medium text-secondary-700">Aporte por Alumno (ARS) <span class="text-red-500">*</span></label>
                         <input wire:model="aporte_por_alumno" type="number" step="0.01" id="aporte_por_alumno" class="block w-full mt-1" :disabled="$modo == 'show'">
                         @error('aporte_por_alumno') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
                     </div>
-                    <div>
+                    <div style="display: none;">
                         <label for="fecha_alta" class="block text-sm font-medium text-secondary-700">Fecha de Alta <span class="text-red-500">*</span></label>
                         <input wire:model="fecha_alta" type="date" id="fecha_alta" class="block w-full mt-1" :disabled="$modo == 'show'">
                         @error('fecha_alta') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
+                    </div>
+                    <div>
+                        <label for="cantidad_empleados" class="block text-sm font-medium text-secondary-700">Cantidad de Empleados</label>
+                        <input wire:model="cantidad_empleados" type="number" id="cantidad_empleados" class="block w-full mt-1" :disabled="$modo == 'show'" min="0">
+                        @error('cantidad_empleados') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
+                    </div>
+                    <div>
+                        <label for="cantidad_alumnos" class="block text-sm font-medium text-secondary-700">Cantidad de Alumnos</label>
+                        <input wire:model="cantidad_alumnos" type="number" id="cantidad_alumnos" class="block w-full mt-1" :disabled="$modo == 'show'" min="0">
+                        @error('cantidad_alumnos') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
                     </div>
                     <div class="md:col-span-2 flex items-center">
                         <input wire:model="activo" type="checkbox" id="activo" class="w-4 h-4 text-primary-600 rounded" :disabled="$modo == 'show'">

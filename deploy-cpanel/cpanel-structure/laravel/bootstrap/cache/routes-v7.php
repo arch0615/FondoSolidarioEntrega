@@ -52,7 +52,7 @@ app('router')->setCompiledRoutes(
         array (
           0 => 
           array (
-            '_route' => 'generated::2nbyf9hH5tQZTBDZ',
+            '_route' => 'generated::HEWnae5dBj2pI1ny',
           ),
           1 => NULL,
           2 => 
@@ -72,7 +72,7 @@ app('router')->setCompiledRoutes(
         array (
           0 => 
           array (
-            '_route' => 'generated::MezILdQtvcvH9Bqp',
+            '_route' => 'generated::wPSJt9wOIxZPsPnu',
           ),
           1 => NULL,
           2 => 
@@ -111,7 +111,7 @@ app('router')->setCompiledRoutes(
         array (
           0 => 
           array (
-            '_route' => 'generated::9FxjygaTVBfxz2bB',
+            '_route' => 'generated::UeHg6smNr6WEvkzO',
           ),
           1 => NULL,
           2 => 
@@ -131,7 +131,7 @@ app('router')->setCompiledRoutes(
         array (
           0 => 
           array (
-            '_route' => 'generated::p6SLigRymHapEgF6',
+            '_route' => 'generated::Ysy8yEqJxseVDPof',
           ),
           1 => NULL,
           2 => 
@@ -151,7 +151,7 @@ app('router')->setCompiledRoutes(
         array (
           0 => 
           array (
-            '_route' => 'generated::Mbd045MGEfTiIXK8',
+            '_route' => 'generated::hcXhSLRM7e0hWBsc',
           ),
           1 => NULL,
           2 => 
@@ -171,7 +171,7 @@ app('router')->setCompiledRoutes(
         array (
           0 => 
           array (
-            '_route' => 'generated::gJddP0MGMkGEV1K4',
+            '_route' => 'generated::vmREu0eBBYxntzhE',
           ),
           1 => NULL,
           2 => 
@@ -208,7 +208,7 @@ app('router')->setCompiledRoutes(
         array (
           0 => 
           array (
-            '_route' => 'generated::r1dPEWJenl07jhEq',
+            '_route' => 'generated::DSxnthWYI2Sw4HRs',
           ),
           1 => NULL,
           2 => 
@@ -244,7 +244,7 @@ app('router')->setCompiledRoutes(
         array (
           0 => 
           array (
-            '_route' => 'generated::oWzB3NUcAqsNuqUe',
+            '_route' => 'generated::zNp0SQCBm4QHYDqc',
           ),
           1 => NULL,
           2 => 
@@ -1457,6 +1457,126 @@ app('router')->setCompiledRoutes(
           6 => NULL,
         ),
       ),
+      '/documentos-escuela' => 
+      array (
+        0 => 
+        array (
+          0 => 
+          array (
+            '_route' => 'documentos-escuela.index',
+          ),
+          1 => NULL,
+          2 => 
+          array (
+            'GET' => 0,
+            'HEAD' => 1,
+          ),
+          3 => NULL,
+          4 => false,
+          5 => false,
+          6 => NULL,
+        ),
+      ),
+      '/documentos-escuela/create' => 
+      array (
+        0 => 
+        array (
+          0 => 
+          array (
+            '_route' => 'documentos-escuela.create',
+          ),
+          1 => NULL,
+          2 => 
+          array (
+            'GET' => 0,
+            'HEAD' => 1,
+          ),
+          3 => NULL,
+          4 => false,
+          5 => false,
+          6 => NULL,
+        ),
+      ),
+      '/documentos-escuela/export/csv' => 
+      array (
+        0 => 
+        array (
+          0 => 
+          array (
+            '_route' => 'documentos-escuela.export.csv',
+          ),
+          1 => NULL,
+          2 => 
+          array (
+            'GET' => 0,
+            'HEAD' => 1,
+          ),
+          3 => NULL,
+          4 => false,
+          5 => false,
+          6 => NULL,
+        ),
+      ),
+      '/documentos-escuela/export/excel' => 
+      array (
+        0 => 
+        array (
+          0 => 
+          array (
+            '_route' => 'documentos-escuela.export.excel',
+          ),
+          1 => NULL,
+          2 => 
+          array (
+            'GET' => 0,
+            'HEAD' => 1,
+          ),
+          3 => NULL,
+          4 => false,
+          5 => false,
+          6 => NULL,
+        ),
+      ),
+      '/documentos-escuela/export/pdf' => 
+      array (
+        0 => 
+        array (
+          0 => 
+          array (
+            '_route' => 'documentos-escuela.export.pdf',
+          ),
+          1 => NULL,
+          2 => 
+          array (
+            'GET' => 0,
+            'HEAD' => 1,
+          ),
+          3 => NULL,
+          4 => false,
+          5 => false,
+          6 => NULL,
+        ),
+      ),
+      '/repositorio' => 
+      array (
+        0 => 
+        array (
+          0 => 
+          array (
+            '_route' => 'repositorio',
+          ),
+          1 => NULL,
+          2 => 
+          array (
+            'GET' => 0,
+            'HEAD' => 1,
+          ),
+          3 => NULL,
+          4 => false,
+          5 => false,
+          6 => NULL,
+        ),
+      ),
       '/auditoria/accesos' => 
       array (
         0 => 
@@ -1739,7 +1859,7 @@ app('router')->setCompiledRoutes(
     ),
     2 => 
     array (
-      0 => '{^(?|/livewire/preview\\-file/([^/]++)(*:39)|/e(?|scuelas/([^/]++)(?|/edit(*:75)|(*:82))|mpleados/([^/]++)(?|/edit(*:115)|(*:123)))|/p(?|restadores/([^/]++)(?|/edit(*:165)|(*:173))|asantias/([^/]++)(?|/edit(*:207)|(*:215)))|/usuarios/([^/]++)(?|/edit(*:251)|(*:259))|/a(?|lumnos/([^/]++)(?|/edit(*:296)|(*:304))|ccidentes/([^/]++)(?|/edit(*:339)|(*:347))|uditoria/detalle/([^/]++)/([^/]++)(*:390))|/salidas\\-educativas/([^/]++)(?|/edit(*:436)|(*:444))|/beneficiarios\\-svo/([^/]++)(?|/edit(*:489)|(*:497))|/d(?|erivaciones/(?|create(?:/([^/]++))?(*:546)|([^/]++)(?|/(?|edit(*:573)|print(*:586))|(*:595)))|ocumentos/([^/]++)(?|/edit(*:631)|(*:639)))|/reintegros/([^/]++)(?|/edit(*:677)|(*:685)))/?$}sDu',
+      0 => '{^(?|/livewire/preview\\-file/([^/]++)(*:39)|/e(?|scuelas/([^/]++)(?|/edit(*:75)|(*:82))|mpleados/([^/]++)(?|/edit(*:115)|(*:123)))|/p(?|restadores/([^/]++)(?|/edit(*:165)|(*:173))|asantias/([^/]++)(?|/edit(*:207)|(*:215)))|/usuarios/([^/]++)(?|/edit(*:251)|(*:259))|/a(?|lumnos/([^/]++)(?|/edit(*:296)|(*:304))|ccidentes/([^/]++)(?|/edit(*:339)|(*:347))|uditoria/detalle/([^/]++)/([^/]++)(*:390))|/salidas\\-educativas/([^/]++)(?|/edit(*:436)|(*:444))|/beneficiarios\\-svo/([^/]++)(?|/edit(*:489)|(*:497))|/d(?|erivaciones/(?|create(?:/([^/]++))?(*:546)|([^/]++)(?|/(?|edit(*:573)|print(*:586))|(*:595)))|ocumentos(?|/(?|([^/]++)(?|/(?|edit(*:640)|download(*:656))|(*:665))|archivo/([^/]++)/download(*:699))|\\-escuela/([^/]++)(?|/(?|edit(*:737)|download(*:753))|(*:762))))|/reintegros/([^/]++)(?|/edit(*:801)|(*:809)))/?$}sDu',
     ),
     3 => 
     array (
@@ -2006,7 +2126,7 @@ app('router')->setCompiledRoutes(
           ),
           1 => 
           array (
-            0 => 'id',
+            0 => 'alumno_id',
           ),
           2 => 
           array (
@@ -2029,7 +2149,7 @@ app('router')->setCompiledRoutes(
           ),
           1 => 
           array (
-            0 => 'id',
+            0 => 'alumno_id',
           ),
           2 => 
           array (
@@ -2297,7 +2417,7 @@ app('router')->setCompiledRoutes(
           6 => NULL,
         ),
       ),
-      631 => 
+      640 => 
       array (
         0 => 
         array (
@@ -2320,7 +2440,30 @@ app('router')->setCompiledRoutes(
           6 => NULL,
         ),
       ),
-      639 => 
+      656 => 
+      array (
+        0 => 
+        array (
+          0 => 
+          array (
+            '_route' => 'documentos.download',
+          ),
+          1 => 
+          array (
+            0 => 'id',
+          ),
+          2 => 
+          array (
+            'GET' => 0,
+            'HEAD' => 1,
+          ),
+          3 => NULL,
+          4 => false,
+          5 => false,
+          6 => NULL,
+        ),
+      ),
+      665 => 
       array (
         0 => 
         array (
@@ -2343,7 +2486,99 @@ app('router')->setCompiledRoutes(
           6 => NULL,
         ),
       ),
-      677 => 
+      699 => 
+      array (
+        0 => 
+        array (
+          0 => 
+          array (
+            '_route' => 'documentos.archivo.download',
+          ),
+          1 => 
+          array (
+            0 => 'archivoId',
+          ),
+          2 => 
+          array (
+            'GET' => 0,
+            'HEAD' => 1,
+          ),
+          3 => NULL,
+          4 => false,
+          5 => false,
+          6 => NULL,
+        ),
+      ),
+      737 => 
+      array (
+        0 => 
+        array (
+          0 => 
+          array (
+            '_route' => 'documentos-escuela.edit',
+          ),
+          1 => 
+          array (
+            0 => 'id',
+          ),
+          2 => 
+          array (
+            'GET' => 0,
+            'HEAD' => 1,
+          ),
+          3 => NULL,
+          4 => false,
+          5 => false,
+          6 => NULL,
+        ),
+      ),
+      753 => 
+      array (
+        0 => 
+        array (
+          0 => 
+          array (
+            '_route' => 'documentos-escuela.download',
+          ),
+          1 => 
+          array (
+            0 => 'id',
+          ),
+          2 => 
+          array (
+            'GET' => 0,
+            'HEAD' => 1,
+          ),
+          3 => NULL,
+          4 => false,
+          5 => false,
+          6 => NULL,
+        ),
+      ),
+      762 => 
+      array (
+        0 => 
+        array (
+          0 => 
+          array (
+            '_route' => 'documentos-escuela.show',
+          ),
+          1 => 
+          array (
+            0 => 'id',
+          ),
+          2 => 
+          array (
+            'GET' => 0,
+            'HEAD' => 1,
+          ),
+          3 => NULL,
+          4 => false,
+          5 => true,
+          6 => NULL,
+        ),
+      ),
+      801 => 
       array (
         0 => 
         array (
@@ -2366,7 +2601,7 @@ app('router')->setCompiledRoutes(
           6 => NULL,
         ),
       ),
-      685 => 
+      809 => 
       array (
         0 => 
         array (
@@ -2472,7 +2707,7 @@ app('router')->setCompiledRoutes(
       'waitSeconds' => NULL,
       'withTrashed' => false,
     ),
-    'generated::2nbyf9hH5tQZTBDZ' => 
+    'generated::HEWnae5dBj2pI1ny' => 
     array (
       'methods' => 
       array (
@@ -2484,7 +2719,7 @@ app('router')->setCompiledRoutes(
       array (
         'uses' => 'Livewire\\Mechanisms\\FrontendAssets\\FrontendAssets@returnJavaScriptAsFile',
         'controller' => 'Livewire\\Mechanisms\\FrontendAssets\\FrontendAssets@returnJavaScriptAsFile',
-        'as' => 'generated::2nbyf9hH5tQZTBDZ',
+        'as' => 'generated::HEWnae5dBj2pI1ny',
       ),
       'fallback' => false,
       'defaults' => 
@@ -2500,7 +2735,7 @@ app('router')->setCompiledRoutes(
       'waitSeconds' => NULL,
       'withTrashed' => false,
     ),
-    'generated::MezILdQtvcvH9Bqp' => 
+    'generated::wPSJt9wOIxZPsPnu' => 
     array (
       'methods' => 
       array (
@@ -2512,7 +2747,7 @@ app('router')->setCompiledRoutes(
       array (
         'uses' => 'Livewire\\Mechanisms\\FrontendAssets\\FrontendAssets@maps',
         'controller' => 'Livewire\\Mechanisms\\FrontendAssets\\FrontendAssets@maps',
-        'as' => 'generated::MezILdQtvcvH9Bqp',
+        'as' => 'generated::wPSJt9wOIxZPsPnu',
       ),
       'fallback' => false,
       'defaults' => 
@@ -2583,7 +2818,7 @@ app('router')->setCompiledRoutes(
       'waitSeconds' => NULL,
       'withTrashed' => false,
     ),
-    'generated::9FxjygaTVBfxz2bB' => 
+    'generated::UeHg6smNr6WEvkzO' => 
     array (
       'methods' => 
       array (
@@ -2600,13 +2835,13 @@ app('router')->setCompiledRoutes(
         ),
         'uses' => 'O:55:"Laravel\\SerializableClosure\\UnsignedSerializableClosure":1:{s:12:"serializable";O:46:"Laravel\\SerializableClosure\\Serializers\\Native":5:{s:3:"use";a:0:{}s:8:"function";s:77:"function (\\Illuminate\\Http\\Request $request) {
     return $request->user();
-}";s:5:"scope";s:37:"Illuminate\\Routing\\RouteFileRegistrar";s:4:"this";N;s:4:"self";s:32:"00000000000008900000000000000000";}}',
+}";s:5:"scope";s:37:"Illuminate\\Routing\\RouteFileRegistrar";s:4:"this";N;s:4:"self";s:32:"00000000000008a10000000000000000";}}',
         'namespace' => NULL,
         'prefix' => 'api',
         'where' => 
         array (
         ),
-        'as' => 'generated::9FxjygaTVBfxz2bB',
+        'as' => 'generated::UeHg6smNr6WEvkzO',
       ),
       'fallback' => false,
       'defaults' => 
@@ -2622,7 +2857,7 @@ app('router')->setCompiledRoutes(
       'waitSeconds' => NULL,
       'withTrashed' => false,
     ),
-    'generated::p6SLigRymHapEgF6' => 
+    'generated::Ysy8yEqJxseVDPof' => 
     array (
       'methods' => 
       array (
@@ -2642,13 +2877,13 @@ app('router')->setCompiledRoutes(
             \'message\' => \'API funcionando correctamente\',
             \'timestamp\' => \\now()
         ]);
-    }";s:5:"scope";s:37:"Illuminate\\Routing\\RouteFileRegistrar";s:4:"this";N;s:4:"self";s:32:"00000000000008960000000000000000";}}',
+    }";s:5:"scope";s:37:"Illuminate\\Routing\\RouteFileRegistrar";s:4:"this";N;s:4:"self";s:32:"00000000000008a70000000000000000";}}',
         'namespace' => NULL,
         'prefix' => 'api/v1',
         'where' => 
         array (
         ),
-        'as' => 'generated::p6SLigRymHapEgF6',
+        'as' => 'generated::Ysy8yEqJxseVDPof',
       ),
       'fallback' => false,
       'defaults' => 
@@ -2664,7 +2899,7 @@ app('router')->setCompiledRoutes(
       'waitSeconds' => NULL,
       'withTrashed' => false,
     ),
-    'generated::Mbd045MGEfTiIXK8' => 
+    'generated::hcXhSLRM7e0hWBsc' => 
     array (
       'methods' => 
       array (
@@ -2692,8 +2927,8 @@ app('router')->setCompiledRoutes(
                     return response(\\Illuminate\\Support\\Facades\\View::file(\'C:\\\\Users\\\\rican\\\\OneDrive\\\\Documentos\\\\workana\\\\Fondo Solidario\\\\vendor\\\\laravel\\\\framework\\\\src\\\\Illuminate\\\\Foundation\\\\Configuration\'.\'/../resources/health-up.blade.php\', [
                         \'exception\' => $exception,
                     ]), status: $exception ? 500 : 200);
-                }";s:5:"scope";s:54:"Illuminate\\Foundation\\Configuration\\ApplicationBuilder";s:4:"this";N;s:4:"self";s:32:"00000000000007fb0000000000000000";}}',
-        'as' => 'generated::Mbd045MGEfTiIXK8',
+                }";s:5:"scope";s:54:"Illuminate\\Foundation\\Configuration\\ApplicationBuilder";s:4:"this";N;s:4:"self";s:32:"00000000000008110000000000000000";}}',
+        'as' => 'generated::hcXhSLRM7e0hWBsc',
       ),
       'fallback' => false,
       'defaults' => 
@@ -2709,7 +2944,7 @@ app('router')->setCompiledRoutes(
       'waitSeconds' => NULL,
       'withTrashed' => false,
     ),
-    'generated::gJddP0MGMkGEV1K4' => 
+    'generated::vmREu0eBBYxntzhE' => 
     array (
       'methods' => 
       array (
@@ -2725,13 +2960,13 @@ app('router')->setCompiledRoutes(
         ),
         'uses' => 'O:55:"Laravel\\SerializableClosure\\UnsignedSerializableClosure":1:{s:12:"serializable";O:46:"Laravel\\SerializableClosure\\Serializers\\Native":5:{s:3:"use";a:0:{}s:8:"function";s:55:"function () {
     return \\redirect()->route(\'login\');
-}";s:5:"scope";s:37:"Illuminate\\Routing\\RouteFileRegistrar";s:4:"this";N;s:4:"self";s:32:"00000000000008970000000000000000";}}',
+}";s:5:"scope";s:37:"Illuminate\\Routing\\RouteFileRegistrar";s:4:"this";N;s:4:"self";s:32:"00000000000008a80000000000000000";}}',
         'namespace' => NULL,
         'prefix' => '',
         'where' => 
         array (
         ),
-        'as' => 'generated::gJddP0MGMkGEV1K4',
+        'as' => 'generated::vmREu0eBBYxntzhE',
       ),
       'fallback' => false,
       'defaults' => 
@@ -2785,7 +3020,7 @@ app('router')->setCompiledRoutes(
       'waitSeconds' => NULL,
       'withTrashed' => false,
     ),
-    'generated::r1dPEWJenl07jhEq' => 
+    'generated::DSxnthWYI2Sw4HRs' => 
     array (
       'methods' => 
       array (
@@ -2806,7 +3041,7 @@ app('router')->setCompiledRoutes(
         'where' => 
         array (
         ),
-        'as' => 'generated::r1dPEWJenl07jhEq',
+        'as' => 'generated::DSxnthWYI2Sw4HRs',
       ),
       'fallback' => false,
       'defaults' => 
@@ -2860,7 +3095,7 @@ app('router')->setCompiledRoutes(
       'waitSeconds' => NULL,
       'withTrashed' => false,
     ),
-    'generated::oWzB3NUcAqsNuqUe' => 
+    'generated::zNp0SQCBm4QHYDqc' => 
     array (
       'methods' => 
       array (
@@ -2881,7 +3116,7 @@ app('router')->setCompiledRoutes(
         'where' => 
         array (
         ),
-        'as' => 'generated::oWzB3NUcAqsNuqUe',
+        'as' => 'generated::zNp0SQCBm4QHYDqc',
       ),
       'fallback' => false,
       'defaults' => 
@@ -2992,7 +3227,7 @@ app('router')->setCompiledRoutes(
         ),
         'uses' => 'O:55:"Laravel\\SerializableClosure\\UnsignedSerializableClosure":1:{s:12:"serializable";O:46:"Laravel\\SerializableClosure\\Serializers\\Native":5:{s:3:"use";a:0:{}s:8:"function";s:88:"function () {
             return \\view(\'escuelas.form\', [\'modo\' => \'create\']);
-        }";s:5:"scope";s:37:"Illuminate\\Routing\\RouteFileRegistrar";s:4:"this";N;s:4:"self";s:32:"00000000000008990000000000000000";}}',
+        }";s:5:"scope";s:37:"Illuminate\\Routing\\RouteFileRegistrar";s:4:"this";N;s:4:"self";s:32:"00000000000008aa0000000000000000";}}',
         'as' => 'escuelas.create',
         'namespace' => NULL,
         'prefix' => '/escuelas',
@@ -3032,7 +3267,7 @@ app('router')->setCompiledRoutes(
         ),
         'uses' => 'O:55:"Laravel\\SerializableClosure\\UnsignedSerializableClosure":1:{s:12:"serializable";O:46:"Laravel\\SerializableClosure\\Serializers\\Native":5:{s:3:"use";a:0:{}s:8:"function";s:110:"function ($id) {
             return \\view(\'escuelas.form\', [\'modo\' => \'edit\', \'escuela_id\' => $id]);
-        }";s:5:"scope";s:37:"Illuminate\\Routing\\RouteFileRegistrar";s:4:"this";N;s:4:"self";s:32:"000000000000089a0000000000000000";}}',
+        }";s:5:"scope";s:37:"Illuminate\\Routing\\RouteFileRegistrar";s:4:"this";N;s:4:"self";s:32:"00000000000008ab0000000000000000";}}',
         'as' => 'escuelas.edit',
         'namespace' => NULL,
         'prefix' => '/escuelas',
@@ -3072,7 +3307,7 @@ app('router')->setCompiledRoutes(
         ),
         'uses' => 'O:55:"Laravel\\SerializableClosure\\UnsignedSerializableClosure":1:{s:12:"serializable";O:46:"Laravel\\SerializableClosure\\Serializers\\Native":5:{s:3:"use";a:0:{}s:8:"function";s:110:"function ($id) {
             return \\view(\'escuelas.form\', [\'modo\' => \'show\', \'escuela_id\' => $id]);
-        }";s:5:"scope";s:37:"Illuminate\\Routing\\RouteFileRegistrar";s:4:"this";N;s:4:"self";s:32:"000000000000080f0000000000000000";}}',
+        }";s:5:"scope";s:37:"Illuminate\\Routing\\RouteFileRegistrar";s:4:"this";N;s:4:"self";s:32:"00000000000008140000000000000000";}}',
         'as' => 'escuelas.show',
         'namespace' => NULL,
         'prefix' => '/escuelas',
@@ -3268,7 +3503,7 @@ app('router')->setCompiledRoutes(
         ),
         'uses' => 'O:55:"Laravel\\SerializableClosure\\UnsignedSerializableClosure":1:{s:12:"serializable";O:46:"Laravel\\SerializableClosure\\Serializers\\Native":5:{s:3:"use";a:0:{}s:8:"function";s:89:"function () {
             return \\view(\'empleados.form\', [\'modo\' => \'create\']);
-        }";s:5:"scope";s:37:"Illuminate\\Routing\\RouteFileRegistrar";s:4:"this";N;s:4:"self";s:32:"00000000000008170000000000000000";}}',
+        }";s:5:"scope";s:37:"Illuminate\\Routing\\RouteFileRegistrar";s:4:"this";N;s:4:"self";s:32:"000000000000081c0000000000000000";}}',
         'as' => 'empleados.create',
         'namespace' => NULL,
         'prefix' => '/empleados',
@@ -3308,7 +3543,7 @@ app('router')->setCompiledRoutes(
         ),
         'uses' => 'O:55:"Laravel\\SerializableClosure\\UnsignedSerializableClosure":1:{s:12:"serializable";O:46:"Laravel\\SerializableClosure\\Serializers\\Native":5:{s:3:"use";a:0:{}s:8:"function";s:112:"function ($id) {
             return \\view(\'empleados.form\', [\'modo\' => \'edit\', \'empleado_id\' => $id]);
-        }";s:5:"scope";s:37:"Illuminate\\Routing\\RouteFileRegistrar";s:4:"this";N;s:4:"self";s:32:"00000000000008130000000000000000";}}',
+        }";s:5:"scope";s:37:"Illuminate\\Routing\\RouteFileRegistrar";s:4:"this";N;s:4:"self";s:32:"00000000000008180000000000000000";}}',
         'as' => 'empleados.edit',
         'namespace' => NULL,
         'prefix' => '/empleados',
@@ -3348,7 +3583,7 @@ app('router')->setCompiledRoutes(
         ),
         'uses' => 'O:55:"Laravel\\SerializableClosure\\UnsignedSerializableClosure":1:{s:12:"serializable";O:46:"Laravel\\SerializableClosure\\Serializers\\Native":5:{s:3:"use";a:0:{}s:8:"function";s:112:"function ($id) {
             return \\view(\'empleados.form\', [\'modo\' => \'show\', \'empleado_id\' => $id]);
-        }";s:5:"scope";s:37:"Illuminate\\Routing\\RouteFileRegistrar";s:4:"this";N;s:4:"self";s:32:"00000000000008190000000000000000";}}',
+        }";s:5:"scope";s:37:"Illuminate\\Routing\\RouteFileRegistrar";s:4:"this";N;s:4:"self";s:32:"000000000000081e0000000000000000";}}',
         'as' => 'empleados.show',
         'namespace' => NULL,
         'prefix' => '/empleados',
@@ -3544,7 +3779,7 @@ app('router')->setCompiledRoutes(
         ),
         'uses' => 'O:55:"Laravel\\SerializableClosure\\UnsignedSerializableClosure":1:{s:12:"serializable";O:46:"Laravel\\SerializableClosure\\Serializers\\Native":5:{s:3:"use";a:0:{}s:8:"function";s:91:"function () {
             return \\view(\'prestadores.form\', [\'modo\' => \'create\']);
-        }";s:5:"scope";s:37:"Illuminate\\Routing\\RouteFileRegistrar";s:4:"this";N;s:4:"self";s:32:"00000000000008210000000000000000";}}',
+        }";s:5:"scope";s:37:"Illuminate\\Routing\\RouteFileRegistrar";s:4:"this";N;s:4:"self";s:32:"00000000000008260000000000000000";}}',
         'as' => 'prestadores.create',
         'namespace' => NULL,
         'prefix' => '/prestadores',
@@ -3584,7 +3819,7 @@ app('router')->setCompiledRoutes(
         ),
         'uses' => 'O:55:"Laravel\\SerializableClosure\\UnsignedSerializableClosure":1:{s:12:"serializable";O:46:"Laravel\\SerializableClosure\\Serializers\\Native":5:{s:3:"use";a:0:{}s:8:"function";s:115:"function ($id) {
             return \\view(\'prestadores.form\', [\'modo\' => \'edit\', \'prestador_id\' => $id]);
-        }";s:5:"scope";s:37:"Illuminate\\Routing\\RouteFileRegistrar";s:4:"this";N;s:4:"self";s:32:"000000000000081d0000000000000000";}}',
+        }";s:5:"scope";s:37:"Illuminate\\Routing\\RouteFileRegistrar";s:4:"this";N;s:4:"self";s:32:"00000000000008220000000000000000";}}',
         'as' => 'prestadores.edit',
         'namespace' => NULL,
         'prefix' => '/prestadores',
@@ -3624,7 +3859,7 @@ app('router')->setCompiledRoutes(
         ),
         'uses' => 'O:55:"Laravel\\SerializableClosure\\UnsignedSerializableClosure":1:{s:12:"serializable";O:46:"Laravel\\SerializableClosure\\Serializers\\Native":5:{s:3:"use";a:0:{}s:8:"function";s:115:"function ($id) {
             return \\view(\'prestadores.form\', [\'modo\' => \'show\', \'prestador_id\' => $id]);
-        }";s:5:"scope";s:37:"Illuminate\\Routing\\RouteFileRegistrar";s:4:"this";N;s:4:"self";s:32:"00000000000008230000000000000000";}}',
+        }";s:5:"scope";s:37:"Illuminate\\Routing\\RouteFileRegistrar";s:4:"this";N;s:4:"self";s:32:"00000000000008280000000000000000";}}',
         'as' => 'prestadores.show',
         'namespace' => NULL,
         'prefix' => '/prestadores',
@@ -3778,7 +4013,7 @@ app('router')->setCompiledRoutes(
           0 => 'web',
           1 => 'auth',
           2 => 'auth',
-          3 => 'role:admin',
+          3 => 'role:admin,usuario_general',
         ),
         'uses' => 'App\\Livewire\\Usuarios\\Index@__invoke',
         'controller' => 'App\\Livewire\\Usuarios\\Index',
@@ -3818,11 +4053,11 @@ app('router')->setCompiledRoutes(
           0 => 'web',
           1 => 'auth',
           2 => 'auth',
-          3 => 'role:admin',
+          3 => 'role:admin,usuario_general',
         ),
         'uses' => 'O:55:"Laravel\\SerializableClosure\\UnsignedSerializableClosure":1:{s:12:"serializable";O:46:"Laravel\\SerializableClosure\\Serializers\\Native":5:{s:3:"use";a:0:{}s:8:"function";s:88:"function () {
             return \\view(\'usuarios.form\', [\'modo\' => \'create\']);
-        }";s:5:"scope";s:37:"Illuminate\\Routing\\RouteFileRegistrar";s:4:"this";N;s:4:"self";s:32:"000000000000082b0000000000000000";}}',
+        }";s:5:"scope";s:37:"Illuminate\\Routing\\RouteFileRegistrar";s:4:"this";N;s:4:"self";s:32:"00000000000008300000000000000000";}}',
         'as' => 'usuarios.create',
         'namespace' => NULL,
         'prefix' => '/usuarios',
@@ -3859,11 +4094,11 @@ app('router')->setCompiledRoutes(
           0 => 'web',
           1 => 'auth',
           2 => 'auth',
-          3 => 'role:admin',
+          3 => 'role:admin,usuario_general',
         ),
         'uses' => 'O:55:"Laravel\\SerializableClosure\\UnsignedSerializableClosure":1:{s:12:"serializable";O:46:"Laravel\\SerializableClosure\\Serializers\\Native":5:{s:3:"use";a:0:{}s:8:"function";s:110:"function ($id) {
             return \\view(\'usuarios.form\', [\'modo\' => \'edit\', \'usuario_id\' => $id]);
-        }";s:5:"scope";s:37:"Illuminate\\Routing\\RouteFileRegistrar";s:4:"this";N;s:4:"self";s:32:"00000000000008270000000000000000";}}',
+        }";s:5:"scope";s:37:"Illuminate\\Routing\\RouteFileRegistrar";s:4:"this";N;s:4:"self";s:32:"000000000000082c0000000000000000";}}',
         'as' => 'usuarios.edit',
         'namespace' => NULL,
         'prefix' => '/usuarios',
@@ -3900,11 +4135,11 @@ app('router')->setCompiledRoutes(
           0 => 'web',
           1 => 'auth',
           2 => 'auth',
-          3 => 'role:admin',
+          3 => 'role:admin,usuario_general',
         ),
         'uses' => 'O:55:"Laravel\\SerializableClosure\\UnsignedSerializableClosure":1:{s:12:"serializable";O:46:"Laravel\\SerializableClosure\\Serializers\\Native":5:{s:3:"use";a:0:{}s:8:"function";s:110:"function ($id) {
             return \\view(\'usuarios.form\', [\'modo\' => \'show\', \'usuario_id\' => $id]);
-        }";s:5:"scope";s:37:"Illuminate\\Routing\\RouteFileRegistrar";s:4:"this";N;s:4:"self";s:32:"000000000000082d0000000000000000";}}',
+        }";s:5:"scope";s:37:"Illuminate\\Routing\\RouteFileRegistrar";s:4:"this";N;s:4:"self";s:32:"00000000000008320000000000000000";}}',
         'as' => 'usuarios.show',
         'namespace' => NULL,
         'prefix' => '/usuarios',
@@ -3941,7 +4176,7 @@ app('router')->setCompiledRoutes(
           0 => 'web',
           1 => 'auth',
           2 => 'auth',
-          3 => 'role:admin',
+          3 => 'role:admin,usuario_general',
         ),
         'uses' => 'App\\Http\\Controllers\\UsuariosExportController@exportarCSV',
         'controller' => 'App\\Http\\Controllers\\UsuariosExportController@exportarCSV',
@@ -3981,7 +4216,7 @@ app('router')->setCompiledRoutes(
           0 => 'web',
           1 => 'auth',
           2 => 'auth',
-          3 => 'role:admin',
+          3 => 'role:admin,usuario_general',
         ),
         'uses' => 'App\\Http\\Controllers\\UsuariosExportController@exportarExcel',
         'controller' => 'App\\Http\\Controllers\\UsuariosExportController@exportarExcel',
@@ -4061,9 +4296,8 @@ app('router')->setCompiledRoutes(
           1 => 'auth',
           2 => 'auth',
         ),
-        'uses' => 'O:55:"Laravel\\SerializableClosure\\UnsignedSerializableClosure":1:{s:12:"serializable";O:46:"Laravel\\SerializableClosure\\Serializers\\Native":5:{s:3:"use";a:0:{}s:8:"function";s:87:"function () {
-            return \\view(\'alumnos.form\', [\'modo\' => \'create\']);
-        }";s:5:"scope";s:37:"Illuminate\\Routing\\RouteFileRegistrar";s:4:"this";N;s:4:"self";s:32:"00000000000008340000000000000000";}}',
+        'uses' => 'App\\Livewire\\Alumnos\\Form@__invoke',
+        'controller' => 'App\\Livewire\\Alumnos\\Form',
         'as' => 'alumnos.create',
         'namespace' => NULL,
         'prefix' => '/alumnos',
@@ -4092,7 +4326,7 @@ app('router')->setCompiledRoutes(
         0 => 'GET',
         1 => 'HEAD',
       ),
-      'uri' => 'alumnos/{id}/edit',
+      'uri' => 'alumnos/{alumno_id}/edit',
       'action' => 
       array (
         'middleware' => 
@@ -4101,9 +4335,8 @@ app('router')->setCompiledRoutes(
           1 => 'auth',
           2 => 'auth',
         ),
-        'uses' => 'O:55:"Laravel\\SerializableClosure\\UnsignedSerializableClosure":1:{s:12:"serializable";O:46:"Laravel\\SerializableClosure\\Serializers\\Native":5:{s:3:"use";a:0:{}s:8:"function";s:108:"function ($id) {
-            return \\view(\'alumnos.form\', [\'modo\' => \'edit\', \'alumno_id\' => $id]);
-        }";s:5:"scope";s:37:"Illuminate\\Routing\\RouteFileRegistrar";s:4:"this";N;s:4:"self";s:32:"00000000000008310000000000000000";}}',
+        'uses' => 'App\\Livewire\\Alumnos\\Form@__invoke',
+        'controller' => 'App\\Livewire\\Alumnos\\Form',
         'as' => 'alumnos.edit',
         'namespace' => NULL,
         'prefix' => '/alumnos',
@@ -4132,7 +4365,7 @@ app('router')->setCompiledRoutes(
         0 => 'GET',
         1 => 'HEAD',
       ),
-      'uri' => 'alumnos/{id}',
+      'uri' => 'alumnos/{alumno_id}',
       'action' => 
       array (
         'middleware' => 
@@ -4141,9 +4374,8 @@ app('router')->setCompiledRoutes(
           1 => 'auth',
           2 => 'auth',
         ),
-        'uses' => 'O:55:"Laravel\\SerializableClosure\\UnsignedSerializableClosure":1:{s:12:"serializable";O:46:"Laravel\\SerializableClosure\\Serializers\\Native":5:{s:3:"use";a:0:{}s:8:"function";s:108:"function ($id) {
-            return \\view(\'alumnos.form\', [\'modo\' => \'show\', \'alumno_id\' => $id]);
-        }";s:5:"scope";s:37:"Illuminate\\Routing\\RouteFileRegistrar";s:4:"this";N;s:4:"self";s:32:"00000000000008360000000000000000";}}',
+        'uses' => 'App\\Livewire\\Alumnos\\Form@__invoke',
+        'controller' => 'App\\Livewire\\Alumnos\\Form',
         'as' => 'alumnos.show',
         'namespace' => NULL,
         'prefix' => '/alumnos',
@@ -4339,7 +4571,7 @@ app('router')->setCompiledRoutes(
         ),
         'uses' => 'O:55:"Laravel\\SerializableClosure\\UnsignedSerializableClosure":1:{s:12:"serializable";O:46:"Laravel\\SerializableClosure\\Serializers\\Native":5:{s:3:"use";a:0:{}s:8:"function";s:90:"function () {
             return \\view(\'accidentes.form\', [\'modo\' => \'create\']);
-        }";s:5:"scope";s:37:"Illuminate\\Routing\\RouteFileRegistrar";s:4:"this";N;s:4:"self";s:32:"000000000000083e0000000000000000";}}',
+        }";s:5:"scope";s:37:"Illuminate\\Routing\\RouteFileRegistrar";s:4:"this";N;s:4:"self";s:32:"00000000000008400000000000000000";}}',
         'as' => 'accidentes.create',
         'namespace' => NULL,
         'prefix' => '/accidentes',
@@ -4379,7 +4611,7 @@ app('router')->setCompiledRoutes(
         ),
         'uses' => 'O:55:"Laravel\\SerializableClosure\\UnsignedSerializableClosure":1:{s:12:"serializable";O:46:"Laravel\\SerializableClosure\\Serializers\\Native":5:{s:3:"use";a:0:{}s:8:"function";s:114:"function ($id) {
             return \\view(\'accidentes.form\', [\'modo\' => \'edit\', \'accidente_id\' => $id]);
-        }";s:5:"scope";s:37:"Illuminate\\Routing\\RouteFileRegistrar";s:4:"this";N;s:4:"self";s:32:"000000000000083a0000000000000000";}}',
+        }";s:5:"scope";s:37:"Illuminate\\Routing\\RouteFileRegistrar";s:4:"this";N;s:4:"self";s:32:"00000000000008360000000000000000";}}',
         'as' => 'accidentes.edit',
         'namespace' => NULL,
         'prefix' => '/accidentes',
@@ -4419,7 +4651,7 @@ app('router')->setCompiledRoutes(
         ),
         'uses' => 'O:55:"Laravel\\SerializableClosure\\UnsignedSerializableClosure":1:{s:12:"serializable";O:46:"Laravel\\SerializableClosure\\Serializers\\Native":5:{s:3:"use";a:0:{}s:8:"function";s:114:"function ($id) {
             return \\view(\'accidentes.form\', [\'modo\' => \'show\', \'accidente_id\' => $id]);
-        }";s:5:"scope";s:37:"Illuminate\\Routing\\RouteFileRegistrar";s:4:"this";N;s:4:"self";s:32:"00000000000008400000000000000000";}}',
+        }";s:5:"scope";s:37:"Illuminate\\Routing\\RouteFileRegistrar";s:4:"this";N;s:4:"self";s:32:"00000000000008420000000000000000";}}',
         'as' => 'accidentes.show',
         'namespace' => NULL,
         'prefix' => '/accidentes',
@@ -4615,7 +4847,7 @@ app('router')->setCompiledRoutes(
         ),
         'uses' => 'O:55:"Laravel\\SerializableClosure\\UnsignedSerializableClosure":1:{s:12:"serializable";O:46:"Laravel\\SerializableClosure\\Serializers\\Native":5:{s:3:"use";a:0:{}s:8:"function";s:98:"function () {
             return \\view(\'salidas_educativas.form\', [\'modo\' => \'create\']);
-        }";s:5:"scope";s:37:"Illuminate\\Routing\\RouteFileRegistrar";s:4:"this";N;s:4:"self";s:32:"00000000000008480000000000000000";}}',
+        }";s:5:"scope";s:37:"Illuminate\\Routing\\RouteFileRegistrar";s:4:"this";N;s:4:"self";s:32:"000000000000084a0000000000000000";}}',
         'as' => 'salidas-educativas.create',
         'namespace' => NULL,
         'prefix' => '/salidas-educativas',
@@ -4655,7 +4887,7 @@ app('router')->setCompiledRoutes(
         ),
         'uses' => 'O:55:"Laravel\\SerializableClosure\\UnsignedSerializableClosure":1:{s:12:"serializable";O:46:"Laravel\\SerializableClosure\\Serializers\\Native":5:{s:3:"use";a:0:{}s:8:"function";s:119:"function ($id) {
             return \\view(\'salidas_educativas.form\', [\'modo\' => \'edit\', \'salida_id\' => $id]);
-        }";s:5:"scope";s:37:"Illuminate\\Routing\\RouteFileRegistrar";s:4:"this";N;s:4:"self";s:32:"00000000000008440000000000000000";}}',
+        }";s:5:"scope";s:37:"Illuminate\\Routing\\RouteFileRegistrar";s:4:"this";N;s:4:"self";s:32:"00000000000008460000000000000000";}}',
         'as' => 'salidas-educativas.edit',
         'namespace' => NULL,
         'prefix' => '/salidas-educativas',
@@ -4695,7 +4927,7 @@ app('router')->setCompiledRoutes(
         ),
         'uses' => 'O:55:"Laravel\\SerializableClosure\\UnsignedSerializableClosure":1:{s:12:"serializable";O:46:"Laravel\\SerializableClosure\\Serializers\\Native":5:{s:3:"use";a:0:{}s:8:"function";s:119:"function ($id) {
             return \\view(\'salidas_educativas.form\', [\'modo\' => \'show\', \'salida_id\' => $id]);
-        }";s:5:"scope";s:37:"Illuminate\\Routing\\RouteFileRegistrar";s:4:"this";N;s:4:"self";s:32:"000000000000084a0000000000000000";}}',
+        }";s:5:"scope";s:37:"Illuminate\\Routing\\RouteFileRegistrar";s:4:"this";N;s:4:"self";s:32:"000000000000084c0000000000000000";}}',
         'as' => 'salidas-educativas.show',
         'namespace' => NULL,
         'prefix' => '/salidas-educativas',
@@ -4891,7 +5123,7 @@ app('router')->setCompiledRoutes(
         ),
         'uses' => 'O:55:"Laravel\\SerializableClosure\\UnsignedSerializableClosure":1:{s:12:"serializable";O:46:"Laravel\\SerializableClosure\\Serializers\\Native":5:{s:3:"use";a:0:{}s:8:"function";s:89:"function () {
             return \\view(\'pasantias.form\', [\'modo\' => \'create\']);
-        }";s:5:"scope";s:37:"Illuminate\\Routing\\RouteFileRegistrar";s:4:"this";N;s:4:"self";s:32:"00000000000008520000000000000000";}}',
+        }";s:5:"scope";s:37:"Illuminate\\Routing\\RouteFileRegistrar";s:4:"this";N;s:4:"self";s:32:"00000000000008540000000000000000";}}',
         'as' => 'pasantias.create',
         'namespace' => NULL,
         'prefix' => '/pasantias',
@@ -4931,7 +5163,7 @@ app('router')->setCompiledRoutes(
         ),
         'uses' => 'O:55:"Laravel\\SerializableClosure\\UnsignedSerializableClosure":1:{s:12:"serializable";O:46:"Laravel\\SerializableClosure\\Serializers\\Native":5:{s:3:"use";a:0:{}s:8:"function";s:112:"function ($id) {
             return \\view(\'pasantias.form\', [\'modo\' => \'edit\', \'pasantia_id\' => $id]);
-        }";s:5:"scope";s:37:"Illuminate\\Routing\\RouteFileRegistrar";s:4:"this";N;s:4:"self";s:32:"000000000000084e0000000000000000";}}',
+        }";s:5:"scope";s:37:"Illuminate\\Routing\\RouteFileRegistrar";s:4:"this";N;s:4:"self";s:32:"00000000000008500000000000000000";}}',
         'as' => 'pasantias.edit',
         'namespace' => NULL,
         'prefix' => '/pasantias',
@@ -4971,7 +5203,7 @@ app('router')->setCompiledRoutes(
         ),
         'uses' => 'O:55:"Laravel\\SerializableClosure\\UnsignedSerializableClosure":1:{s:12:"serializable";O:46:"Laravel\\SerializableClosure\\Serializers\\Native":5:{s:3:"use";a:0:{}s:8:"function";s:112:"function ($id) {
             return \\view(\'pasantias.form\', [\'modo\' => \'show\', \'pasantia_id\' => $id]);
-        }";s:5:"scope";s:37:"Illuminate\\Routing\\RouteFileRegistrar";s:4:"this";N;s:4:"self";s:32:"00000000000008540000000000000000";}}',
+        }";s:5:"scope";s:37:"Illuminate\\Routing\\RouteFileRegistrar";s:4:"this";N;s:4:"self";s:32:"00000000000008560000000000000000";}}',
         'as' => 'pasantias.show',
         'namespace' => NULL,
         'prefix' => '/pasantias',
@@ -5167,7 +5399,7 @@ app('router')->setCompiledRoutes(
         ),
         'uses' => 'O:55:"Laravel\\SerializableClosure\\UnsignedSerializableClosure":1:{s:12:"serializable";O:46:"Laravel\\SerializableClosure\\Serializers\\Native":5:{s:3:"use";a:0:{}s:8:"function";s:97:"function () {
             return \\view(\'beneficiarios_svo.form\', [\'modo\' => \'create\']);
-        }";s:5:"scope";s:37:"Illuminate\\Routing\\RouteFileRegistrar";s:4:"this";N;s:4:"self";s:32:"000000000000085c0000000000000000";}}',
+        }";s:5:"scope";s:37:"Illuminate\\Routing\\RouteFileRegistrar";s:4:"this";N;s:4:"self";s:32:"000000000000085e0000000000000000";}}',
         'as' => 'beneficiarios_svo.create',
         'namespace' => NULL,
         'prefix' => '/beneficiarios-svo',
@@ -5207,7 +5439,7 @@ app('router')->setCompiledRoutes(
         ),
         'uses' => 'O:55:"Laravel\\SerializableClosure\\UnsignedSerializableClosure":1:{s:12:"serializable";O:46:"Laravel\\SerializableClosure\\Serializers\\Native":5:{s:3:"use";a:0:{}s:8:"function";s:124:"function ($id) {
             return \\view(\'beneficiarios_svo.form\', [\'modo\' => \'edit\', \'beneficiario_id\' => $id]);
-        }";s:5:"scope";s:37:"Illuminate\\Routing\\RouteFileRegistrar";s:4:"this";N;s:4:"self";s:32:"00000000000008580000000000000000";}}',
+        }";s:5:"scope";s:37:"Illuminate\\Routing\\RouteFileRegistrar";s:4:"this";N;s:4:"self";s:32:"000000000000085a0000000000000000";}}',
         'as' => 'beneficiarios_svo.edit',
         'namespace' => NULL,
         'prefix' => '/beneficiarios-svo',
@@ -5247,7 +5479,7 @@ app('router')->setCompiledRoutes(
         ),
         'uses' => 'O:55:"Laravel\\SerializableClosure\\UnsignedSerializableClosure":1:{s:12:"serializable";O:46:"Laravel\\SerializableClosure\\Serializers\\Native":5:{s:3:"use";a:0:{}s:8:"function";s:124:"function ($id) {
             return \\view(\'beneficiarios_svo.form\', [\'modo\' => \'show\', \'beneficiario_id\' => $id]);
-        }";s:5:"scope";s:37:"Illuminate\\Routing\\RouteFileRegistrar";s:4:"this";N;s:4:"self";s:32:"000000000000085e0000000000000000";}}',
+        }";s:5:"scope";s:37:"Illuminate\\Routing\\RouteFileRegistrar";s:4:"this";N;s:4:"self";s:32:"00000000000008600000000000000000";}}',
         'as' => 'beneficiarios_svo.show',
         'namespace' => NULL,
         'prefix' => '/beneficiarios-svo',
@@ -5443,7 +5675,7 @@ app('router')->setCompiledRoutes(
         ),
         'uses' => 'O:55:"Laravel\\SerializableClosure\\UnsignedSerializableClosure":1:{s:12:"serializable";O:46:"Laravel\\SerializableClosure\\Serializers\\Native":5:{s:3:"use";a:0:{}s:8:"function";s:145:"function ($id_accidente = null) {
             return \\view(\'derivaciones.form\', [\'modo\' => \'create\', \'accidente_id\' => $id_accidente]);
-        }";s:5:"scope";s:37:"Illuminate\\Routing\\RouteFileRegistrar";s:4:"this";N;s:4:"self";s:32:"00000000000008660000000000000000";}}',
+        }";s:5:"scope";s:37:"Illuminate\\Routing\\RouteFileRegistrar";s:4:"this";N;s:4:"self";s:32:"00000000000008680000000000000000";}}',
         'as' => 'derivaciones.create',
         'namespace' => NULL,
         'prefix' => '/derivaciones',
@@ -5483,7 +5715,7 @@ app('router')->setCompiledRoutes(
         ),
         'uses' => 'O:55:"Laravel\\SerializableClosure\\UnsignedSerializableClosure":1:{s:12:"serializable";O:46:"Laravel\\SerializableClosure\\Serializers\\Native":5:{s:3:"use";a:0:{}s:8:"function";s:117:"function ($id) {
             return \\view(\'derivaciones.form\', [\'modo\' => \'edit\', \'derivacion_id\' => $id]);
-        }";s:5:"scope";s:37:"Illuminate\\Routing\\RouteFileRegistrar";s:4:"this";N;s:4:"self";s:32:"00000000000008620000000000000000";}}',
+        }";s:5:"scope";s:37:"Illuminate\\Routing\\RouteFileRegistrar";s:4:"this";N;s:4:"self";s:32:"00000000000008640000000000000000";}}',
         'as' => 'derivaciones.edit',
         'namespace' => NULL,
         'prefix' => '/derivaciones',
@@ -5523,7 +5755,7 @@ app('router')->setCompiledRoutes(
         ),
         'uses' => 'O:55:"Laravel\\SerializableClosure\\UnsignedSerializableClosure":1:{s:12:"serializable";O:46:"Laravel\\SerializableClosure\\Serializers\\Native":5:{s:3:"use";a:0:{}s:8:"function";s:117:"function ($id) {
             return \\view(\'derivaciones.form\', [\'modo\' => \'show\', \'derivacion_id\' => $id]);
-        }";s:5:"scope";s:37:"Illuminate\\Routing\\RouteFileRegistrar";s:4:"this";N;s:4:"self";s:32:"00000000000008680000000000000000";}}',
+        }";s:5:"scope";s:37:"Illuminate\\Routing\\RouteFileRegistrar";s:4:"this";N;s:4:"self";s:32:"000000000000086a0000000000000000";}}',
         'as' => 'derivaciones.show',
         'namespace' => NULL,
         'prefix' => '/derivaciones',
@@ -5798,7 +6030,7 @@ app('router')->setCompiledRoutes(
         'uses' => 'O:55:"Laravel\\SerializableClosure\\UnsignedSerializableClosure":1:{s:12:"serializable";O:46:"Laravel\\SerializableClosure\\Serializers\\Native":5:{s:3:"use";a:0:{}s:8:"function";s:186:"function () {
             $id_accidente = \\request()->query(\'id_accidente\');
             return \\view(\'reintegros.form\', [\'modo\' => \'create\', \'id_accidente\' => $id_accidente]);
-        }";s:5:"scope";s:37:"Illuminate\\Routing\\RouteFileRegistrar";s:4:"this";N;s:4:"self";s:32:"00000000000008720000000000000000";}}',
+        }";s:5:"scope";s:37:"Illuminate\\Routing\\RouteFileRegistrar";s:4:"this";N;s:4:"self";s:32:"00000000000008740000000000000000";}}',
         'as' => 'reintegros.create',
         'namespace' => NULL,
         'prefix' => '/reintegros',
@@ -5838,7 +6070,7 @@ app('router')->setCompiledRoutes(
         ),
         'uses' => 'O:55:"Laravel\\SerializableClosure\\UnsignedSerializableClosure":1:{s:12:"serializable";O:46:"Laravel\\SerializableClosure\\Serializers\\Native":5:{s:3:"use";a:0:{}s:8:"function";s:114:"function ($id) {
             return \\view(\'reintegros.form\', [\'modo\' => \'edit\', \'reintegro_id\' => $id]);
-        }";s:5:"scope";s:37:"Illuminate\\Routing\\RouteFileRegistrar";s:4:"this";N;s:4:"self";s:32:"000000000000086c0000000000000000";}}',
+        }";s:5:"scope";s:37:"Illuminate\\Routing\\RouteFileRegistrar";s:4:"this";N;s:4:"self";s:32:"000000000000086e0000000000000000";}}',
         'as' => 'reintegros.edit',
         'namespace' => NULL,
         'prefix' => '/reintegros',
@@ -5878,7 +6110,7 @@ app('router')->setCompiledRoutes(
         ),
         'uses' => 'O:55:"Laravel\\SerializableClosure\\UnsignedSerializableClosure":1:{s:12:"serializable";O:46:"Laravel\\SerializableClosure\\Serializers\\Native":5:{s:3:"use";a:0:{}s:8:"function";s:114:"function ($id) {
             return \\view(\'reintegros.form\', [\'modo\' => \'show\', \'reintegro_id\' => $id]);
-        }";s:5:"scope";s:37:"Illuminate\\Routing\\RouteFileRegistrar";s:4:"this";N;s:4:"self";s:32:"00000000000008740000000000000000";}}',
+        }";s:5:"scope";s:37:"Illuminate\\Routing\\RouteFileRegistrar";s:4:"this";N;s:4:"self";s:32:"00000000000008760000000000000000";}}',
         'as' => 'reintegros.show',
         'namespace' => NULL,
         'prefix' => '/reintegros',
@@ -6074,7 +6306,7 @@ app('router')->setCompiledRoutes(
         ),
         'uses' => 'O:55:"Laravel\\SerializableClosure\\UnsignedSerializableClosure":1:{s:12:"serializable";O:46:"Laravel\\SerializableClosure\\Serializers\\Native":5:{s:3:"use";a:0:{}s:8:"function";s:90:"function () {
             return \\view(\'documentos.form\', [\'modo\' => \'create\']);
-        }";s:5:"scope";s:37:"Illuminate\\Routing\\RouteFileRegistrar";s:4:"this";N;s:4:"self";s:32:"000000000000087c0000000000000000";}}',
+        }";s:5:"scope";s:37:"Illuminate\\Routing\\RouteFileRegistrar";s:4:"this";N;s:4:"self";s:32:"000000000000087e0000000000000000";}}',
         'as' => 'documentos.create',
         'namespace' => NULL,
         'prefix' => '/documentos',
@@ -6114,7 +6346,7 @@ app('router')->setCompiledRoutes(
         ),
         'uses' => 'O:55:"Laravel\\SerializableClosure\\UnsignedSerializableClosure":1:{s:12:"serializable";O:46:"Laravel\\SerializableClosure\\Serializers\\Native":5:{s:3:"use";a:0:{}s:8:"function";s:114:"function ($id) {
             return \\view(\'documentos.form\', [\'modo\' => \'edit\', \'documento_id\' => $id]);
-        }";s:5:"scope";s:37:"Illuminate\\Routing\\RouteFileRegistrar";s:4:"this";N;s:4:"self";s:32:"00000000000008780000000000000000";}}',
+        }";s:5:"scope";s:37:"Illuminate\\Routing\\RouteFileRegistrar";s:4:"this";N;s:4:"self";s:32:"000000000000087a0000000000000000";}}',
         'as' => 'documentos.edit',
         'namespace' => NULL,
         'prefix' => '/documentos',
@@ -6154,7 +6386,7 @@ app('router')->setCompiledRoutes(
         ),
         'uses' => 'O:55:"Laravel\\SerializableClosure\\UnsignedSerializableClosure":1:{s:12:"serializable";O:46:"Laravel\\SerializableClosure\\Serializers\\Native":5:{s:3:"use";a:0:{}s:8:"function";s:114:"function ($id) {
             return \\view(\'documentos.form\', [\'modo\' => \'show\', \'documento_id\' => $id]);
-        }";s:5:"scope";s:37:"Illuminate\\Routing\\RouteFileRegistrar";s:4:"this";N;s:4:"self";s:32:"000000000000087e0000000000000000";}}',
+        }";s:5:"scope";s:37:"Illuminate\\Routing\\RouteFileRegistrar";s:4:"this";N;s:4:"self";s:32:"00000000000008800000000000000000";}}',
         'as' => 'documentos.show',
         'namespace' => NULL,
         'prefix' => '/documentos',
@@ -6278,6 +6510,440 @@ app('router')->setCompiledRoutes(
         'where' => 
         array (
         ),
+      ),
+      'fallback' => false,
+      'defaults' => 
+      array (
+      ),
+      'wheres' => 
+      array (
+      ),
+      'bindingFields' => 
+      array (
+      ),
+      'lockSeconds' => NULL,
+      'waitSeconds' => NULL,
+      'withTrashed' => false,
+    ),
+    'documentos.download' => 
+    array (
+      'methods' => 
+      array (
+        0 => 'GET',
+        1 => 'HEAD',
+      ),
+      'uri' => 'documentos/{id}/download',
+      'action' => 
+      array (
+        'middleware' => 
+        array (
+          0 => 'web',
+          1 => 'auth',
+          2 => 'auth',
+        ),
+        'uses' => 'App\\Http\\Controllers\\DocumentoController@descargarArchivo',
+        'controller' => 'App\\Http\\Controllers\\DocumentoController@descargarArchivo',
+        'as' => 'documentos.download',
+        'namespace' => NULL,
+        'prefix' => '/documentos',
+        'where' => 
+        array (
+        ),
+      ),
+      'fallback' => false,
+      'defaults' => 
+      array (
+      ),
+      'wheres' => 
+      array (
+      ),
+      'bindingFields' => 
+      array (
+      ),
+      'lockSeconds' => NULL,
+      'waitSeconds' => NULL,
+      'withTrashed' => false,
+    ),
+    'documentos.archivo.download' => 
+    array (
+      'methods' => 
+      array (
+        0 => 'GET',
+        1 => 'HEAD',
+      ),
+      'uri' => 'documentos/archivo/{archivoId}/download',
+      'action' => 
+      array (
+        'middleware' => 
+        array (
+          0 => 'web',
+          1 => 'auth',
+          2 => 'auth',
+        ),
+        'uses' => 'App\\Http\\Controllers\\DocumentoController@descargarArchivoIndividual',
+        'controller' => 'App\\Http\\Controllers\\DocumentoController@descargarArchivoIndividual',
+        'as' => 'documentos.archivo.download',
+        'namespace' => NULL,
+        'prefix' => '/documentos',
+        'where' => 
+        array (
+        ),
+      ),
+      'fallback' => false,
+      'defaults' => 
+      array (
+      ),
+      'wheres' => 
+      array (
+      ),
+      'bindingFields' => 
+      array (
+      ),
+      'lockSeconds' => NULL,
+      'waitSeconds' => NULL,
+      'withTrashed' => false,
+    ),
+    'documentos-escuela.index' => 
+    array (
+      'methods' => 
+      array (
+        0 => 'GET',
+        1 => 'HEAD',
+      ),
+      'uri' => 'documentos-escuela',
+      'action' => 
+      array (
+        'middleware' => 
+        array (
+          0 => 'web',
+          1 => 'auth',
+          2 => 'auth',
+        ),
+        'uses' => 'App\\Livewire\\DocumentosEscuela\\Index@__invoke',
+        'controller' => 'App\\Livewire\\DocumentosEscuela\\Index',
+        'as' => 'documentos-escuela.index',
+        'namespace' => NULL,
+        'prefix' => '/documentos-escuela',
+        'where' => 
+        array (
+        ),
+      ),
+      'fallback' => false,
+      'defaults' => 
+      array (
+      ),
+      'wheres' => 
+      array (
+      ),
+      'bindingFields' => 
+      array (
+      ),
+      'lockSeconds' => NULL,
+      'waitSeconds' => NULL,
+      'withTrashed' => false,
+    ),
+    'documentos-escuela.create' => 
+    array (
+      'methods' => 
+      array (
+        0 => 'GET',
+        1 => 'HEAD',
+      ),
+      'uri' => 'documentos-escuela/create',
+      'action' => 
+      array (
+        'middleware' => 
+        array (
+          0 => 'web',
+          1 => 'auth',
+          2 => 'auth',
+        ),
+        'uses' => 'O:55:"Laravel\\SerializableClosure\\UnsignedSerializableClosure":1:{s:12:"serializable";O:46:"Laravel\\SerializableClosure\\Serializers\\Native":5:{s:3:"use";a:0:{}s:8:"function";s:98:"function () {
+            return \\view(\'documentos-escuela.form\', [\'modo\' => \'create\']);
+        }";s:5:"scope";s:37:"Illuminate\\Routing\\RouteFileRegistrar";s:4:"this";N;s:4:"self";s:32:"000000000000088a0000000000000000";}}',
+        'as' => 'documentos-escuela.create',
+        'namespace' => NULL,
+        'prefix' => '/documentos-escuela',
+        'where' => 
+        array (
+        ),
+      ),
+      'fallback' => false,
+      'defaults' => 
+      array (
+      ),
+      'wheres' => 
+      array (
+      ),
+      'bindingFields' => 
+      array (
+      ),
+      'lockSeconds' => NULL,
+      'waitSeconds' => NULL,
+      'withTrashed' => false,
+    ),
+    'documentos-escuela.edit' => 
+    array (
+      'methods' => 
+      array (
+        0 => 'GET',
+        1 => 'HEAD',
+      ),
+      'uri' => 'documentos-escuela/{id}/edit',
+      'action' => 
+      array (
+        'middleware' => 
+        array (
+          0 => 'web',
+          1 => 'auth',
+          2 => 'auth',
+        ),
+        'uses' => 'O:55:"Laravel\\SerializableClosure\\UnsignedSerializableClosure":1:{s:12:"serializable";O:46:"Laravel\\SerializableClosure\\Serializers\\Native":5:{s:3:"use";a:0:{}s:8:"function";s:122:"function ($id) {
+            return \\view(\'documentos-escuela.form\', [\'modo\' => \'edit\', \'documento_id\' => $id]);
+        }";s:5:"scope";s:37:"Illuminate\\Routing\\RouteFileRegistrar";s:4:"this";N;s:4:"self";s:32:"00000000000008840000000000000000";}}',
+        'as' => 'documentos-escuela.edit',
+        'namespace' => NULL,
+        'prefix' => '/documentos-escuela',
+        'where' => 
+        array (
+        ),
+      ),
+      'fallback' => false,
+      'defaults' => 
+      array (
+      ),
+      'wheres' => 
+      array (
+      ),
+      'bindingFields' => 
+      array (
+      ),
+      'lockSeconds' => NULL,
+      'waitSeconds' => NULL,
+      'withTrashed' => false,
+    ),
+    'documentos-escuela.show' => 
+    array (
+      'methods' => 
+      array (
+        0 => 'GET',
+        1 => 'HEAD',
+      ),
+      'uri' => 'documentos-escuela/{id}',
+      'action' => 
+      array (
+        'middleware' => 
+        array (
+          0 => 'web',
+          1 => 'auth',
+          2 => 'auth',
+        ),
+        'uses' => 'O:55:"Laravel\\SerializableClosure\\UnsignedSerializableClosure":1:{s:12:"serializable";O:46:"Laravel\\SerializableClosure\\Serializers\\Native":5:{s:3:"use";a:0:{}s:8:"function";s:122:"function ($id) {
+            return \\view(\'documentos-escuela.form\', [\'modo\' => \'show\', \'documento_id\' => $id]);
+        }";s:5:"scope";s:37:"Illuminate\\Routing\\RouteFileRegistrar";s:4:"this";N;s:4:"self";s:32:"000000000000088c0000000000000000";}}',
+        'as' => 'documentos-escuela.show',
+        'namespace' => NULL,
+        'prefix' => '/documentos-escuela',
+        'where' => 
+        array (
+        ),
+      ),
+      'fallback' => false,
+      'defaults' => 
+      array (
+      ),
+      'wheres' => 
+      array (
+      ),
+      'bindingFields' => 
+      array (
+      ),
+      'lockSeconds' => NULL,
+      'waitSeconds' => NULL,
+      'withTrashed' => false,
+    ),
+    'documentos-escuela.export.csv' => 
+    array (
+      'methods' => 
+      array (
+        0 => 'GET',
+        1 => 'HEAD',
+      ),
+      'uri' => 'documentos-escuela/export/csv',
+      'action' => 
+      array (
+        'middleware' => 
+        array (
+          0 => 'web',
+          1 => 'auth',
+          2 => 'auth',
+        ),
+        'uses' => 'App\\Http\\Controllers\\DocumentosExportController@exportarCSV',
+        'controller' => 'App\\Http\\Controllers\\DocumentosExportController@exportarCSV',
+        'as' => 'documentos-escuela.export.csv',
+        'namespace' => NULL,
+        'prefix' => '/documentos-escuela',
+        'where' => 
+        array (
+        ),
+      ),
+      'fallback' => false,
+      'defaults' => 
+      array (
+      ),
+      'wheres' => 
+      array (
+      ),
+      'bindingFields' => 
+      array (
+      ),
+      'lockSeconds' => NULL,
+      'waitSeconds' => NULL,
+      'withTrashed' => false,
+    ),
+    'documentos-escuela.export.excel' => 
+    array (
+      'methods' => 
+      array (
+        0 => 'GET',
+        1 => 'HEAD',
+      ),
+      'uri' => 'documentos-escuela/export/excel',
+      'action' => 
+      array (
+        'middleware' => 
+        array (
+          0 => 'web',
+          1 => 'auth',
+          2 => 'auth',
+        ),
+        'uses' => 'App\\Http\\Controllers\\DocumentosExportController@exportarExcel',
+        'controller' => 'App\\Http\\Controllers\\DocumentosExportController@exportarExcel',
+        'as' => 'documentos-escuela.export.excel',
+        'namespace' => NULL,
+        'prefix' => '/documentos-escuela',
+        'where' => 
+        array (
+        ),
+      ),
+      'fallback' => false,
+      'defaults' => 
+      array (
+      ),
+      'wheres' => 
+      array (
+      ),
+      'bindingFields' => 
+      array (
+      ),
+      'lockSeconds' => NULL,
+      'waitSeconds' => NULL,
+      'withTrashed' => false,
+    ),
+    'documentos-escuela.export.pdf' => 
+    array (
+      'methods' => 
+      array (
+        0 => 'GET',
+        1 => 'HEAD',
+      ),
+      'uri' => 'documentos-escuela/export/pdf',
+      'action' => 
+      array (
+        'middleware' => 
+        array (
+          0 => 'web',
+          1 => 'auth',
+          2 => 'auth',
+        ),
+        'uses' => 'App\\Http\\Controllers\\DocumentosExportController@exportarPDF',
+        'controller' => 'App\\Http\\Controllers\\DocumentosExportController@exportarPDF',
+        'as' => 'documentos-escuela.export.pdf',
+        'namespace' => NULL,
+        'prefix' => '/documentos-escuela',
+        'where' => 
+        array (
+        ),
+      ),
+      'fallback' => false,
+      'defaults' => 
+      array (
+      ),
+      'wheres' => 
+      array (
+      ),
+      'bindingFields' => 
+      array (
+      ),
+      'lockSeconds' => NULL,
+      'waitSeconds' => NULL,
+      'withTrashed' => false,
+    ),
+    'documentos-escuela.download' => 
+    array (
+      'methods' => 
+      array (
+        0 => 'GET',
+        1 => 'HEAD',
+      ),
+      'uri' => 'documentos-escuela/{id}/download',
+      'action' => 
+      array (
+        'middleware' => 
+        array (
+          0 => 'web',
+          1 => 'auth',
+          2 => 'auth',
+        ),
+        'uses' => 'App\\Http\\Controllers\\DocumentoController@descargarArchivo',
+        'controller' => 'App\\Http\\Controllers\\DocumentoController@descargarArchivo',
+        'as' => 'documentos-escuela.download',
+        'namespace' => NULL,
+        'prefix' => '/documentos-escuela',
+        'where' => 
+        array (
+        ),
+      ),
+      'fallback' => false,
+      'defaults' => 
+      array (
+      ),
+      'wheres' => 
+      array (
+      ),
+      'bindingFields' => 
+      array (
+      ),
+      'lockSeconds' => NULL,
+      'waitSeconds' => NULL,
+      'withTrashed' => false,
+    ),
+    'repositorio' => 
+    array (
+      'methods' => 
+      array (
+        0 => 'GET',
+        1 => 'HEAD',
+      ),
+      'uri' => 'repositorio',
+      'action' => 
+      array (
+        'middleware' => 
+        array (
+          0 => 'web',
+          1 => 'auth',
+          2 => 'auth',
+          3 => 'role:usuario_general',
+        ),
+        'uses' => 'O:55:"Laravel\\SerializableClosure\\UnsignedSerializableClosure":1:{s:12:"serializable";O:46:"Laravel\\SerializableClosure\\Serializers\\Native":5:{s:3:"use";a:0:{}s:8:"function";s:67:"function () {
+        return \\view(\'documentos.repositorio\');
+    }";s:5:"scope";s:37:"Illuminate\\Routing\\RouteFileRegistrar";s:4:"this";N;s:4:"self";s:32:"000000000000080f0000000000000000";}}',
+        'namespace' => NULL,
+        'prefix' => '',
+        'where' => 
+        array (
+        ),
+        'as' => 'repositorio',
       ),
       'fallback' => false,
       'defaults' => 
@@ -6680,7 +7346,7 @@ app('router')->setCompiledRoutes(
                 \\abort(404);
             }
             return \\view(\'auditoria.detalle\', [\'item\' => $item, \'itemType\' => $type]);
-        }";s:5:"scope";s:37:"Illuminate\\Routing\\RouteFileRegistrar";s:4:"this";N;s:4:"self";s:32:"00000000000008880000000000000000";}}',
+        }";s:5:"scope";s:37:"Illuminate\\Routing\\RouteFileRegistrar";s:4:"this";N;s:4:"self";s:32:"00000000000008990000000000000000";}}',
         'as' => 'auditoria.detalle',
         'namespace' => NULL,
         'prefix' => '/auditoria',
@@ -6874,7 +7540,7 @@ app('router')->setCompiledRoutes(
         ),
         'uses' => 'O:55:"Laravel\\SerializableClosure\\UnsignedSerializableClosure":1:{s:12:"serializable";O:46:"Laravel\\SerializableClosure\\Serializers\\Native":5:{s:3:"use";a:0:{}s:8:"function";s:44:"function () {
     return \\view(\'welcome\');
-}";s:5:"scope";s:37:"Illuminate\\Routing\\RouteFileRegistrar";s:4:"this";N;s:4:"self";s:32:"00000000000008010000000000000000";}}',
+}";s:5:"scope";s:37:"Illuminate\\Routing\\RouteFileRegistrar";s:4:"this";N;s:4:"self";s:32:"00000000000008060000000000000000";}}',
         'namespace' => NULL,
         'prefix' => '',
         'where' => 

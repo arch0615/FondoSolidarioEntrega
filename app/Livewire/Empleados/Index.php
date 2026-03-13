@@ -96,7 +96,13 @@ class Index extends Component
     {
         $empleado = Empleado::findOrFail($empleadoId);
         $estadoAnterior = $empleado->activo;
-        
+
+        // Si se intenta desactivar, verificar si tiene cuenta de usuario en el sistema
+        if ($empleado->activo && \App\Models\User::where('email', $empleado->email)->exists()) {
+            $this->dispatch('toast', message: 'No se puede desactivar el empleado porque tiene una cuenta de usuario en el sistema. Debe darse de baja primero desde la gestión de usuarios.', type: 'error');
+            return;
+        }
+
         $empleado->activo = !$empleado->activo;
         $empleado->save();
 
@@ -114,6 +120,24 @@ class Index extends Component
     public function eliminar($empleadoId)
     {
         $empleado = Empleado::findOrFail($empleadoId);
+
+        // Check for linked beneficiarios_svo or fallecimientos
+        if (\App\Models\BeneficiarioSvo::where('id_empleado', $empleadoId)->exists()) {
+            $this->dispatch('toast', message: 'No se puede eliminar el empleado porque tiene beneficiarios SVO asociados. Puede desactivarlo en su lugar.', type: 'error');
+            return;
+        }
+
+        if (\Illuminate\Support\Facades\DB::table('fallecimientos')->where('id_empleado', $empleadoId)->exists()) {
+            $this->dispatch('toast', message: 'No se puede eliminar el empleado porque tiene registros de fallecimiento asociados. Puede desactivarlo en su lugar.', type: 'error');
+            return;
+        }
+
+        // Check if employee has a linked system user account
+        if (\App\Models\User::where('email', $empleado->email)->exists()) {
+            $this->dispatch('toast', message: 'No se puede eliminar el empleado porque tiene una cuenta de usuario en el sistema. Desactívelo en su lugar.', type: 'error');
+            return;
+        }
+
         $datosEmpleado = $empleado->toArray();
         $empleado->delete();
 
@@ -126,4 +150,10 @@ class Index extends Component
     public function updatingFiltroDni() { $this->resetPage(); }
     public function updatingFiltroEscuela() { $this->resetPage(); }
     public function updatingFiltroEstado() { $this->resetPage(); }
+
+    public function imprimirBeneficiarios($empleadoId)
+    {
+        // Lógica para abrir la vista de impresión de beneficiarios SVO en una nueva pestaña
+        $this->dispatch('imprimir-beneficiarios', id: $empleadoId);
+    }
 }

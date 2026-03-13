@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Escuela extends Model
 {
@@ -21,6 +22,8 @@ class Escuela extends Model
         'email',
         'aporte_por_alumno',
         'fecha_alta',
+        'cantidad_empleados',
+        'cantidad_alumnos',
         'activo',
     ];
 
@@ -28,6 +31,8 @@ class Escuela extends Model
         'activo' => 'boolean',
         'fecha_alta' => 'date',
         'aporte_por_alumno' => 'decimal:2',
+        'cantidad_empleados' => 'integer',
+        'cantidad_alumnos' => 'integer',
     ];
 
     public function usuarios()
@@ -63,5 +68,10 @@ class Escuela extends Model
     public function beneficiariosSvo()
     {
         return $this->hasMany(BeneficiarioSvo::class, 'id_escuela', 'id_escuela');
+    }
+
+    public function documentosInstitucionales(): BelongsToMany
+    {
+        return $this->belongsToMany(DocumentoInstitucional::class, 'documento_escuelas', 'id_escuela', 'id_documento');
     }
 }

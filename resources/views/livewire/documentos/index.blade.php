@@ -3,7 +3,7 @@
         <!-- Header Section -->
         <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 mb-8">
             <div>
-                <h1 class="text-2xl font-semibold text-secondary-900">Gestión de Documentos</h1>
+                <h1 class="text-2xl font-semibold text-secondary-900">Gestión de Documentos JAEC</h1>
                 <p class="mt-1 text-sm text-secondary-600">Administra los documentos institucionales de la escuela</p>
             </div>
             <div class="flex items-center space-x-3">
@@ -149,7 +149,14 @@
                                     <div class="text-sm font-medium text-secondary-900">{{ $documento->nombre_documento }}</div>
                                     <div class="text-sm text-secondary-500">{{ Str::limit($documento->descripcion, 50) }}</div>
                                 </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-secondary-800">{{ $documento->escuela->nombre ?? 'N/A' }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <button wire:click="mostrarEscuelasModal({{ $documento->id_documento }})" class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-primary-100 text-primary-800 hover:bg-primary-200 transition-colors duration-200 cursor-pointer">
+                                        <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+                                        </svg>
+                                        {{ $documento->cantidad_escuelas }} escuela{{ $documento->cantidad_escuelas !== 1 ? 's' : '' }}
+                                    </button>
+                                </td>
                                 {{-- <td class="px-6 py-4 whitespace-nowrap text-sm text-secondary-800">{{ $documento->tipoDocumento->nombre_tipo_documento ?? 'N/A' }}</td> --}}
                                 <td class="px-6 py-4 whitespace-nowrap text-center">
                                     @if($documento->cantidad_archivos > 0)
@@ -246,4 +253,64 @@
         }
     </script>
     @endpush
+
+    <!-- Modal de Escuelas -->
+    <div x-data="{ show: @entangle('mostrarModal') }" x-show="show" x-cloak class="fixed inset-0 z-50 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+        <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+            <!-- Background overlay -->
+            <div x-show="show" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="ease-in duration-200" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0" class="fixed inset-0 bg-secondary-500 bg-opacity-75 transition-opacity" aria-hidden="true"></div>
+
+            <!-- Modal panel -->
+            <div x-show="show" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100" x-transition:leave="ease-in duration-200" x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100" x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+                <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                    <div class="sm:flex sm:items-start">
+                        <div class="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-primary-100 sm:mx-0 sm:h-10 sm:w-10">
+                            <svg class="h-6 w-6 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+                            </svg>
+                        </div>
+                        <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left w-full">
+                            <h3 class="text-lg leading-6 font-medium text-secondary-900" id="modal-title">
+                                Escuelas del Documento
+                            </h3>
+                            <div class="mt-4">
+                                <div class="max-h-60 overflow-y-auto">
+                                    @if($escuelasModal && $escuelasModal->count() > 0)
+                                        <div class="space-y-2">
+                                            @foreach($escuelasModal as $escuela)
+                                                <div class="flex items-center p-3 bg-secondary-50 rounded-lg">
+                                                    <div class="flex-shrink-0">
+                                                        <svg class="h-5 w-5 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+                                                        </svg>
+                                                    </div>
+                                                    <div class="ml-3">
+                                                        <p class="text-sm font-medium text-secondary-900">{{ $escuela->nombre }}</p>
+                                                        <p class="text-xs text-secondary-500">{{ $escuela->direccion ?? 'Sin dirección' }}</p>
+                                                    </div>
+                                                </div>
+                                            @endforeach
+                                        </div>
+                                    @else
+                                        <div class="text-center py-8">
+                                            <svg class="mx-auto h-12 w-12 text-secondary-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 12h6m-6-4h6m2 5.291A7.962 7.962 0 0112 15c-2.34 0-4.29-.98-5.625-2.508M12 7v8"></path>
+                                            </svg>
+                                            <h3 class="mt-2 text-sm font-medium text-secondary-900">No hay escuelas asignadas</h3>
+                                            <p class="mt-1 text-sm text-secondary-500">Este documento no tiene escuelas asignadas.</p>
+                                        </div>
+                                    @endif
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-secondary-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+                    <button wire:click="cerrarModal" type="button" class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-primary-600 text-base font-medium text-white hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 sm:ml-3 sm:w-auto sm:text-sm">
+                        Cerrar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>

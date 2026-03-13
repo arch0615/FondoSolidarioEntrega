@@ -126,4 +126,10 @@ class Index extends Component
     public function updatingFiltroDni() { $this->resetPage(); }
     public function updatingFiltroEscuela() { $this->resetPage(); }
     public function updatingFiltroEstado() { $this->resetPage(); }
+
+    public function imprimirBeneficiarios($empleadoId)
+    {
+        // Lógica para abrir la vista de impresión de beneficiarios SVO en una nueva pestaña
+        $this->dispatch('imprimir-beneficiarios', id: $empleadoId);
+    }
 }

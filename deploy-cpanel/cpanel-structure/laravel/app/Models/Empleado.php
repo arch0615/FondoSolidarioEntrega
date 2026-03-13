@@ -10,6 +10,8 @@ class Empleado extends Model
 {
     protected $table = 'empleados';
     protected $primaryKey = 'id_empleado';
+    protected $keyType = 'string';
+    public $incrementing = false;
     public $timestamps = false;
 
     protected $fillable = [

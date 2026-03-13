@@ -6,15 +6,15 @@
                     Anterior
                 </span>
             @else
-                <a href="{{ $paginator->previousPageUrl() }}" class="relative inline-flex items-center px-4 py-2 text-sm font-medium text-secondary-700 bg-white border border-secondary-300 leading-5 rounded-md hover:text-secondary-500 focus:outline-none focus:ring ring-secondary-300 focus:border-primary-300 active:bg-secondary-100 active:text-secondary-700 transition ease-in-out duration-150">
+                <button type="button" wire:click="previousPage('{{ $paginator->getPageName() }}')" class="relative inline-flex items-center px-4 py-2 text-sm font-medium text-secondary-700 bg-white border border-secondary-300 leading-5 rounded-md hover:text-secondary-500 focus:outline-none focus:ring ring-secondary-300 focus:border-primary-300 active:bg-secondary-100 active:text-secondary-700 transition ease-in-out duration-150">
                     Anterior
-                </a>
+                </button>
             @endif
 
             @if ($paginator->hasMorePages())
-                <a href="{{ $paginator->nextPageUrl() }}" class="relative inline-flex items-center px-4 py-2 ml-3 text-sm font-medium text-secondary-700 bg-white border border-secondary-300 leading-5 rounded-md hover:text-secondary-500 focus:outline-none focus:ring ring-secondary-300 focus:border-primary-300 active:bg-secondary-100 active:text-secondary-700 transition ease-in-out duration-150">
+                <button type="button" wire:click="nextPage('{{ $paginator->getPageName() }}')" class="relative inline-flex items-center px-4 py-2 ml-3 text-sm font-medium text-secondary-700 bg-white border border-secondary-300 leading-5 rounded-md hover:text-secondary-500 focus:outline-none focus:ring ring-secondary-300 focus:border-primary-300 active:bg-secondary-100 active:text-secondary-700 transition ease-in-out duration-150">
                     Siguiente
-                </a>
+                </button>
             @else
                 <span class="relative inline-flex items-center px-4 py-2 ml-3 text-sm font-medium text-secondary-500 bg-white border border-secondary-300 cursor-default leading-5 rounded-md">
                     Siguiente
@@ -35,11 +35,11 @@
                         </span>
                     </span>
                 @else
-                    <a href="{{ $paginator->previousPageUrl() }}" rel="prev" class="relative inline-flex items-center px-2 py-2 text-sm font-medium text-secondary-500 bg-white border border-secondary-300 rounded-l-md leading-5 hover:text-secondary-400 focus:z-10 focus:outline-none focus:ring ring-secondary-300 focus:border-primary-300 active:bg-secondary-100 active:text-secondary-500 transition ease-in-out duration-150" aria-label="Anterior">
+                    <button type="button" wire:click="previousPage('{{ $paginator->getPageName() }}')" rel="prev" class="relative inline-flex items-center px-2 py-2 text-sm font-medium text-secondary-500 bg-white border border-secondary-300 rounded-l-md leading-5 hover:text-secondary-400 focus:z-10 focus:outline-none focus:ring ring-secondary-300 focus:border-primary-300 active:bg-secondary-100 active:text-secondary-500 transition ease-in-out duration-150" aria-label="Anterior">
                         <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
                             <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" />
                         </svg>
-                    </a>
+                    </button>
                 @endif
 
                 {{-- Pagination Elements --}}
@@ -59,9 +59,9 @@
                                     <span class="relative inline-flex items-center px-4 py-2 -ml-px text-sm font-medium text-white bg-primary-600 border border-primary-600 cursor-default leading-5">{{ $page }}</span>
                                 </span>
                             @else
-                                <a href="{{ $url }}" class="relative inline-flex items-center px-4 py-2 -ml-px text-sm font-medium text-secondary-700 bg-white border border-secondary-300 leading-5 hover:text-secondary-500 focus:z-10 focus:outline-none focus:ring ring-secondary-300 focus:border-primary-300 active:bg-secondary-100 active:text-secondary-700 transition ease-in-out duration-150" aria-label="Ir a la página {{ $page }}">
+                                <button type="button" wire:click="gotoPage({{ $page }}, '{{ $paginator->getPageName() }}')" class="relative inline-flex items-center px-4 py-2 -ml-px text-sm font-medium text-secondary-700 bg-white border border-secondary-300 leading-5 hover:text-secondary-500 focus:z-10 focus:outline-none focus:ring ring-secondary-300 focus:border-primary-300 active:bg-secondary-100 active:text-secondary-700 transition ease-in-out duration-150" aria-label="Ir a la página {{ $page }}">
                                     {{ $page }}
-                                </a>
+                                </button>
                             @endif
                         @endforeach
                     @endif
@@ -69,11 +69,11 @@
 
                 {{-- Next Page Link --}}
                 @if ($paginator->hasMorePages())
-                    <a href="{{ $paginator->nextPageUrl() }}" rel="next" class="relative inline-flex items-center px-2 py-2 -ml-px text-sm font-medium text-secondary-500 bg-white border border-secondary-300 rounded-r-md leading-5 hover:text-secondary-400 focus:z-10 focus:outline-none focus:ring ring-secondary-300 focus:border-primary-300 active:bg-secondary-100 active:text-secondary-500 transition ease-in-out duration-150" aria-label="Siguiente">
+                    <button type="button" wire:click="nextPage('{{ $paginator->getPageName() }}')" rel="next" class="relative inline-flex items-center px-2 py-2 -ml-px text-sm font-medium text-secondary-500 bg-white border border-secondary-300 rounded-r-md leading-5 hover:text-secondary-400 focus:z-10 focus:outline-none focus:ring ring-secondary-300 focus:border-primary-300 active:bg-secondary-100 active:text-secondary-500 transition ease-in-out duration-150" aria-label="Siguiente">
                         <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
                             <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
                         </svg>
-                    </a>
+                    </button>
                 @else
                     <span aria-disabled="true" aria-label="Siguiente">
                         <span class="relative inline-flex items-center px-2 py-2 -ml-px text-sm font-medium text-secondary-500 bg-white border border-secondary-300 cursor-default rounded-r-md leading-5" aria-hidden="true">

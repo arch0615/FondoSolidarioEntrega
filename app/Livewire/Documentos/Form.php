@@ -20,7 +20,7 @@ class Form extends Component
     public $documento_id;
 
     // Propiedades del modelo
-    public $id_escuela;
+    public $escuelas_seleccionadas = [];
     public $nombre_documento;
     public $descripcion;
     public $fecha_documento;
@@ -39,7 +39,8 @@ class Form extends Component
     protected function rules()
     {
         return [
-            'id_escuela' => 'required|integer|exists:escuelas,id_escuela',
+            'escuelas_seleccionadas' => 'required|array|min:1',
+            'escuelas_seleccionadas.*' => 'integer|exists:escuelas,id_escuela',
             'nombre_documento' => 'required|string|max:200',
             'descripcion' => 'nullable|string|max:500',
             'fecha_documento' => 'nullable|date',
@@ -52,7 +53,9 @@ class Form extends Component
     protected function messages()
     {
         return [
-            'id_escuela.required' => 'La escuela es obligatoria.',
+            'escuelas_seleccionadas.required' => 'Debe seleccionar al menos una escuela.',
+            'escuelas_seleccionadas.min' => 'Debe seleccionar al menos una escuela.',
+            'escuelas_seleccionadas.*.exists' => 'Una o más escuelas seleccionadas no son válidas.',
             'nombre_documento.required' => 'El nombre del documento es obligatorio.',
             'fecha_vencimiento.after_or_equal' => 'La fecha de vencimiento debe ser posterior o igual a la fecha del documento.',
             'archivos_adjuntos.*.max' => 'Cada archivo no puede superar los 10MB.',
@@ -63,22 +66,23 @@ class Form extends Component
     public function mount($modo = 'create', $documento_id = null)
     {
         $this->modo = $modo;
-        $user = auth()->user();
+        $user = Auth::user();
 
         if ($documento_id) {
             $this->documento_id = $documento_id;
-            $documento = DocumentoInstitucional::with('archivos')->findOrFail($documento_id);
-            
-            $this->id_escuela = $documento->id_escuela;
+            $documento = DocumentoInstitucional::with(['archivos', 'escuelas'])->findOrFail($documento_id);
+
+            $this->escuelas_seleccionadas = $documento->escuelas->pluck('id_escuela')->toArray();
             $this->nombre_documento = $documento->nombre_documento;
             $this->descripcion = $documento->descripcion;
             $this->fecha_documento = $documento->fecha_documento ? $documento->fecha_documento->format('Y-m-d') : null;
             $this->fecha_vencimiento = $documento->fecha_vencimiento ? $documento->fecha_vencimiento->format('Y-m-d') : null;
             $this->id_tipo_documento = $documento->id_tipo_documento;
-            
+
             $this->archivos_existentes = $documento->archivos;
         } elseif ($modo === 'create' && $user->id_rol == 1) {
-            $this->id_escuela = $user->id_escuela;
+            // Para usuarios generales, preseleccionar su escuela
+            $this->escuelas_seleccionadas = [$user->id_escuela];
         }
     }
 
@@ -93,8 +97,13 @@ class Form extends Component
     {
         $this->validate();
 
+        // Validación adicional: asegurar que al menos una escuela esté seleccionada
+        if (empty($this->escuelas_seleccionadas) || count($this->escuelas_seleccionadas) < 1) {
+            $this->addError('escuelas_seleccionadas', 'Debe seleccionar al menos una escuela para guardar el documento.');
+            return;
+        }
+
         $data = [
-            'id_escuela' => $this->id_escuela,
             'nombre_documento' => $this->nombre_documento,
             'descripcion' => $this->descripcion,
             'fecha_documento' => $this->fecha_documento,
@@ -106,10 +115,11 @@ class Form extends Component
 
         if ($this->modo == 'create') {
             $documento = DocumentoInstitucional::create($data);
+            $documento->escuelas()->sync($this->escuelas_seleccionadas);
             $this->guardarArchivos($documento->id_documento);
-            
+
             AuditoriaService::registrarCreacion('documentos_institucionales', $documento->id_documento, $data);
-            
+
             $this->mensaje = 'Documento creado exitosamente.';
             $this->tipoMensaje = 'success';
             $this->dispatch('mostrar-mensaje-y-redirigir');
@@ -118,11 +128,12 @@ class Form extends Component
             $documento = DocumentoInstitucional::findOrFail($this->documento_id);
             $datosAnteriores = $documento->getOriginal();
             $documento->update($data);
-            
+            $documento->escuelas()->sync($this->escuelas_seleccionadas);
+
             $this->guardarArchivos($documento->id_documento);
-            
+
             AuditoriaService::registrarActualizacion('documentos_institucionales', $documento->id_documento, $datosAnteriores, $data);
-            
+
             $this->mensaje = 'Documento actualizado exitosamente.';
             $this->tipoMensaje = 'success';
             $this->dispatch('mostrar-mensaje');
@@ -176,5 +187,25 @@ class Form extends Component
     public function redirigirAlListado()
     {
         return redirect()->route('documentos.index');
+    }
+
+    public function seleccionarTodasEscuelas()
+    {
+        $todasEscuelas = Escuela::where('activo', 1)->pluck('id_escuela')->toArray();
+        $this->escuelas_seleccionadas = $todasEscuelas;
+    }
+
+    public function toggleEscuela($idEscuela)
+    {
+        if (in_array($idEscuela, $this->escuelas_seleccionadas)) {
+            $this->escuelas_seleccionadas = array_diff($this->escuelas_seleccionadas, [$idEscuela]);
+        } else {
+            $this->escuelas_seleccionadas[] = $idEscuela;
+        }
+    }
+
+    public function limpiarSeleccion()
+    {
+        $this->escuelas_seleccionadas = [];
     }
 }

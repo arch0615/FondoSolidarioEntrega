@@ -41,6 +41,39 @@ class NotificationBell extends Component
         }
     }
 
+    public function redirectToNotification($notificationId)
+    {
+        $notification = Notificacion::findOrFail($notificationId);
+
+        // Marcar como leída si no lo está
+        if (!$notification->leida) {
+            $notification->update(['leida' => true, 'fecha_lectura' => now()]);
+            $this->unreadNotificationsCount = max(0, $this->unreadNotificationsCount - 1);
+        }
+
+        // Redirigir según el tipo de entidad
+        if ($notification->tipo_entidad === 'reintegro') {
+            // Verificar el rol del usuario actual
+            $user = Auth::user();
+
+            // Si el rol es usuario general (escuela), redirigir a reintegros
+            if ($user && $user->id_rol == 1) {
+                return redirect()->route('reintegros.index');
+            }
+
+            // Para otros roles (admin, médico auditor), redirigir a reintegros/pendientes
+            return redirect()->route('reintegros.pendientes');
+        }
+
+        // Redirigir a documentos-escuela si es id_entidad_referencia=6
+        if ($notification->id_entidad_referencia == 6) {
+            return redirect()->route('documentos-escuela.index');
+        }
+
+        // Para otros tipos de entidades, redirigir al dashboard por defecto
+        return redirect()->route('dashboard');
+    }
+
     public function render()
     {
         return view('livewire.notification-bell');

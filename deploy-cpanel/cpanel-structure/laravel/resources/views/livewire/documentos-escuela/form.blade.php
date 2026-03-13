@@ -1,0 +1,184 @@
+<div>
+    @if($mensaje)
+    <div class="fixed inset-0 z-50 overflow-y-auto" x-data="{ show: true }" x-show="show" x-transition>
+        <div class="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+            <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" @click="show = false"></div>
+            <div class="inline-block align-bottom bg-white rounded-lg px-4 pt-5 pb-4 text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-sm sm:w-full sm:p-6">
+                <div>
+                    <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full {{ $tipoMensaje === 'success' ? 'bg-green-100' : 'bg-red-100' }}">
+                        @if($tipoMensaje === 'success')
+                            <svg class="h-6 w-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                        @endif
+                    </div>
+                    <div class="mt-3 text-center sm:mt-5">
+                        <h3 class="text-lg leading-6 font-medium text-gray-900">¡Éxito!</h3>
+                        <div class="mt-2">
+                            <p class="text-sm text-gray-500">{{ $mensaje }}</p>
+                            @if($modo == 'create' && $tipoMensaje === 'success')
+                                <p class="text-xs text-gray-400 mt-2">Redirigiendo al listado en 3 segundos...</p>
+                            @endif
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-5 sm:mt-6">
+                    @if($modo == 'create')
+                        <button @click="show = false" wire:click="redirigirAlListado" type="button" class="inline-flex justify-center w-full rounded-md border border-transparent shadow-sm px-4 py-2 bg-green-600 hover:bg-green-700 text-base font-medium text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 sm:text-sm">
+                            Ir al Listado
+                        </button>
+                    @else
+                        <button @click="show = false" wire:click="limpiarMensaje" type="button" class="inline-flex justify-center w-full rounded-md border border-transparent shadow-sm px-4 py-2 bg-green-600 hover:bg-green-700 text-base font-medium text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 sm:text-sm">
+                            Aceptar
+                        </button>
+                    @endif
+                </div>
+            </div>
+        </div>
+    </div>
+    @endif
+
+    <form wire:submit.prevent="guardar" class="space-y-6 p-6 bg-white rounded-xl border border-secondary-200">
+        @csrf
+        <!-- Información del Documento -->
+        <div class="border-b border-secondary-200 pb-6">
+            <h3 class="text-lg font-medium text-secondary-900 mb-4">Información del Documento</h3>
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <!-- Columna Izquierda: Información del Documento -->
+                <div class="space-y-4">
+                    <div class="space-y-1">
+                        <label for="nombre_documento" class="block text-sm font-medium text-secondary-700">Nombre del Documento <span class="text-danger-500">*</span></label>
+                        <input wire:model="nombre_documento" type="text" id="nombre_documento" class="block w-full px-3 py-2 border border-secondary-300 rounded-lg text-sm" {{ $modo == 'show' ? 'readonly' : '' }}>
+                        @error('nombre_documento') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
+                    </div>
+
+
+                    <div class="space-y-1">
+                        <label for="fecha_carga" class="block text-sm font-medium text-secondary-700">Fecha de Carga</label>
+                        <input wire:model="fecha_carga" type="date" id="fecha_carga" class="block w-full px-3 py-2 border border-secondary-300 rounded-lg text-sm" {{ $modo == 'show' ? 'readonly' : '' }}>
+                        @error('fecha_carga') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
+                    </div>
+
+                    <div class="space-y-1">
+                        <label for="descripcion" class="block text-sm font-medium text-secondary-700">Descripción</label>
+                        <textarea wire:model="descripcion" id="descripcion" rows="4" class="block w-full px-3 py-2 border border-secondary-300 rounded-lg text-sm" {{ $modo == 'show' ? 'readonly' : '' }}></textarea>
+                        @error('descripcion') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
+                    </div>
+                </div>
+
+                <!-- Columna Derecha: Información de la Escuela y Estado -->
+                <div class="space-y-4">
+                    <div class="space-y-1">
+                        <label class="block text-sm font-medium text-secondary-700">Escuela</label>
+                        <div class="border border-secondary-300 rounded-lg p-4 bg-secondary-50">
+                            <div class="flex items-center p-2 rounded-md bg-primary-100 border border-primary-300">
+                                <div class="flex items-center flex-1">
+                                    <svg class="w-5 h-5 mr-3 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+                                    </svg>
+                                    <span class="text-sm font-medium text-secondary-900">{{ $escuela ? $escuela->nombre : 'Escuela no encontrada' }}</span>
+                                </div>
+                            </div>
+                            <div class="mt-2 text-xs text-secondary-600">
+                                Este documento pertenece únicamente a tu escuela
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- Documentos Adjuntos -->
+        <div class="border-b border-secondary-200 pb-6">
+            <h3 class="text-lg font-medium text-secondary-900 mb-4">Archivo Adjunto</h3>
+            @if($modo != 'show')
+            <div class="mb-6" x-data="{ isUploading: false, progress: 0 }" x-on:livewire-upload-start="isUploading = true" x-on:livewire-upload-finish="isUploading = false" x-on:livewire-upload-error="isUploading = false" x-on:livewire-upload-progress="progress = $event.detail.progress">
+                <div class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-secondary-300 border-dashed rounded-lg">
+                    <div class="space-y-1 text-center">
+                        <svg class="mx-auto h-12 w-12 text-secondary-400" stroke="currentColor" fill="none" viewBox="0 0 48 48"><path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /></svg>
+                        <div class="flex text-sm text-secondary-600">
+                            <label for="archivos_adjuntos" class="relative cursor-pointer bg-white rounded-md font-medium text-primary-600 hover:text-primary-500">
+                                <span>Subir archivo</span>
+                                <input wire:model="archivos_adjuntos" id="archivos_adjuntos" type="file" class="sr-only">
+                            </label>
+                            <p class="pl-1">o arrastrar y soltar</p>
+                        </div>
+                        <p class="text-xs text-secondary-500">Cualquier tipo de archivo hasta 20MB (excepto archivos ejecutables por seguridad)</p>
+                    </div>
+                </div>
+                <div x-show="isUploading"><progress max="100" x-bind:value="progress" class="w-full"></progress></div>
+                @error('archivos_adjuntos.*') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
+            </div>
+            @endif
+
+            <div id="lista_archivos_container">
+                <label class="block text-sm font-medium text-secondary-700 mb-2">Archivo:</label>
+                <div class="space-y-2">
+                    @if($documento_id && \App\Models\DocumentoInstitucional::find($documento_id)?->archivo_path)
+                        @php
+                            $documento = \App\Models\DocumentoInstitucional::find($documento_id);
+                        @endphp
+                        <div class="flex items-center justify-between bg-white border border-secondary-200 rounded-lg p-3">
+                            <div class="flex items-center flex-1">
+                                <a href="{{ \Illuminate\Support\Facades\Storage::url($documento->archivo_path) }}" target="_blank" class="font-medium text-secondary-900 truncate hover:text-primary-600">{{ basename($documento->archivo_path) }}</a>
+                                <span class="text-sm text-secondary-600 ml-2">({{ \Illuminate\Support\Facades\Storage::size('public/' . $documento->archivo_path) ? number_format(\Illuminate\Support\Facades\Storage::size('public/' . $documento->archivo_path) / 1024, 2) . ' KB' : 'Tamaño desconocido' }})</span>
+                            </div>
+                            @if($modo != 'show')
+                            <button wire:click.prevent="eliminarArchivoExistente" type="button" class="text-red-600 hover:text-red-800 p-1 ml-2">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                            </button>
+                            @endif
+                        </div>
+                    @endif
+                    
+                    @if (count($archivos_adjuntos) > 0)
+                        @foreach ($archivos_adjuntos as $archivo)
+                            <div class="flex items-center justify-between bg-white border border-secondary-200 rounded-lg p-3">
+                                <div class="font-medium text-secondary-900 truncate">{{ $archivo->getClientOriginalName() }}</div>
+                                <button wire:click.prevent="$removeUpload('archivos_adjuntos', '{{ $archivo->getFilename() }}')" type="button" class="text-red-600 hover:text-red-800 p-1">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                                </button>
+                            </div>
+                        @endforeach
+                    @endif
+                    
+                    @if(!($documento_id && \App\Models\DocumentoInstitucional::find($documento_id)?->archivo_path) && count($archivos_adjuntos) == 0)
+                        <div class="text-center py-8 border-2 border-dashed border-secondary-200 rounded-lg">
+                            <p class="text-sm text-secondary-500">No hay archivo adjunto</p>
+                        </div>
+                    @endif
+                </div>
+            </div>
+        </div>
+
+        <!-- Botones de Acción -->
+        <div class="flex items-center justify-between pt-6 border-t border-secondary-200">
+            <a href="{{ route('documentos-escuela.index') }}" class="inline-flex items-center px-4 py-2 border border-secondary-300 rounded-lg text-sm font-medium text-secondary-700 bg-white hover:bg-secondary-50">Volver al Listado</a>
+            @if($modo != 'show')
+            <button type="submit" class="inline-flex items-center px-6 py-2 bg-primary-600 border border-transparent rounded-lg font-medium text-sm text-white hover:bg-primary-700">
+                <div wire:loading.remove wire:target="guardar">
+                    {{ $modo == 'create' ? 'Guardar Documento' : 'Actualizar Documento' }}
+                </div>
+                <div wire:loading wire:target="guardar">
+                    Guardando...
+                </div>
+            </button>
+            @endif
+        </div>
+    </form>
+
+    @push('scripts')
+    <script>
+        document.addEventListener('livewire:init', () => {
+            Livewire.on('mostrar-mensaje', () => {
+                // El modal se muestra automáticamente por las directivas de Alpine
+            });
+
+            Livewire.on('mostrar-mensaje-y-redirigir', () => {
+                setTimeout(() => {
+                    @this.call('redirigirAlListado');
+                }, 3000);
+            });
+        });
+    </script>
+    @endpush
+</div>

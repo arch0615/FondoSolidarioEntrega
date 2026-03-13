@@ -74,6 +74,11 @@ class Form extends Component
     public function mount($modo = 'create', $usuario_id = null)
     {
         $this->modo = $modo;
+
+        // Obtener el usuario actual
+        $userActual = Auth::user();
+        $esUsuarioGeneral = $userActual && $userActual->id_rol == 1;
+
         if ($usuario_id) {
             $this->usuario_id = $usuario_id;
             $usuario = User::findOrFail($usuario_id);
@@ -84,6 +89,13 @@ class Form extends Component
             $this->id_escuela = $usuario->id_escuela;
             $this->activo = $usuario->activo;
             $this->email_verificado = $usuario->email_verificado;
+        } else {
+            // Para creación de nuevos usuarios
+            if ($esUsuarioGeneral) {
+                // Si el usuario actual es usuario_general, forzar rol y escuela
+                $this->id_rol = 1; // Usuario General
+                $this->id_escuela = $userActual->id_escuela;
+            }
         }
     }
 
@@ -91,9 +103,15 @@ class Form extends Component
     {
         $roles = Role::where('activo', true)->get();
         $escuelas = Escuela::where('activo', true)->get();
+
+        // Determinar si el usuario actual es usuario_general
+        $user = Auth::user();
+        $esUsuarioGeneral = $user && $user->id_rol == 1;
+
         return view('livewire.usuarios.form', [
             'roles' => $roles,
             'escuelas' => $escuelas,
+            'esUsuarioGeneral' => $esUsuarioGeneral,
         ]);
     }
 
@@ -101,14 +119,25 @@ class Form extends Component
     {
         $this->validate();
 
+        // Obtener el usuario actual
+        $userActual = Auth::user();
+        $esUsuarioGeneral = $userActual && $userActual->id_rol == 1;
+
         $data = [
             'nombre' => $this->nombre,
             'apellido' => $this->apellido,
             'email' => $this->email,
             'id_rol' => $this->id_rol,
-            'id_escuela' => $this->id_rol == 1 ? $this->id_escuela : null,
             'activo' => $this->activo,
         ];
+
+        // Para usuarios generales, forzar rol y escuela
+        if ($esUsuarioGeneral) {
+            $data['id_rol'] = 1; // Usuario General
+            $data['id_escuela'] = $userActual->id_escuela;
+        } else {
+            $data['id_escuela'] = $this->id_rol == 1 ? $this->id_escuela : null;
+        }
 
         if ($this->password) {
             $data['password'] = Hash::make($this->password);
@@ -117,7 +146,7 @@ class Form extends Component
         if ($this->modo == 'create') {
             $usuario = User::create($data);
             AuditoriaService::registrarCreacion('usuarios', $usuario->id_usuario, $data);
-            
+
             // Mostrar modal de confirmación antes de redirigir
             $this->mensaje = 'Usuario creado exitosamente.';
             $this->tipoMensaje = 'success';
@@ -127,11 +156,11 @@ class Form extends Component
             $datosAnteriores = $usuario->getOriginal();
             $usuario->update($data);
             AuditoriaService::registrarActualizacion('usuarios', $usuario->id_usuario, $datosAnteriores, $data);
-            
+
             // Para modo edición, mostrar mensaje sin redireccionar
             $this->mensaje = 'Usuario actualizado exitosamente.';
             $this->tipoMensaje = 'success';
-            
+
             // Limpiar el mensaje después de 5 segundos
             $this->dispatch('mostrar-mensaje');
         }

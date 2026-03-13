@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Livewire\GestionPagos\Index as GestionPagosIndex;
+use App\Livewire\Documentos\Repositorio as DocumentosRepositorio;
 
 /*
 |--------------------------------------------------------------------------
@@ -66,6 +67,14 @@ Route::middleware('auth')->group(function () {
             return view('empleados.form', ['modo' => 'edit', 'empleado_id' => $id]);
         })->name('edit');
 
+        // Ruta de impresión debe ir antes de la ruta show para evitar conflictos
+        Route::get('/{id}/print-beneficiarios', [App\Http\Controllers\EmpleadoController::class, 'printBeneficiarios'])->name('print.beneficiarios');
+
+        // Ruta de prueba para verificar que funciona
+        Route::get('/{id}/test-print', function ($id) {
+            return "Ruta de prueba funcionando para empleado ID: {$id}";
+        })->name('test.print');
+
         Route::get('/{id}', function ($id) {
             return view('empleados.form', ['modo' => 'show', 'empleado_id' => $id]);
         })->name('show');
@@ -98,8 +107,8 @@ Route::middleware('auth')->group(function () {
         Route::get('/export/pdf', [\App\Http\Controllers\PrestadorExportController::class, 'exportarPDF'])->name('export.pdf');
     });
 
-    // Rutas para Usuarios usando componentes Livewire - Solo Admin
-    Route::prefix('usuarios')->name('usuarios.')->middleware(['auth', 'role:admin'])->group(function () {
+    // Rutas para Usuarios usando componentes Livewire - Admin y Usuario General
+    Route::prefix('usuarios')->name('usuarios.')->middleware(['auth', 'role:admin,usuario_general'])->group(function () {
         Route::get('/', \App\Livewire\Usuarios\Index::class)->name('index');
 
         Route::get('/create', function () {
@@ -123,17 +132,9 @@ Route::middleware('auth')->group(function () {
     Route::prefix('alumnos')->name('alumnos.')->middleware('auth')->group(function () {
         Route::get('/', \App\Livewire\Alumnos\Index::class)->name('index');
 
-        Route::get('/create', function () {
-            return view('alumnos.form', ['modo' => 'create']);
-        })->name('create');
-
-        Route::get('/{id}/edit', function ($id) {
-            return view('alumnos.form', ['modo' => 'edit', 'alumno_id' => $id]);
-        })->name('edit');
-
-        Route::get('/{id}', function ($id) {
-            return view('alumnos.form', ['modo' => 'show', 'alumno_id' => $id]);
-        })->name('show');
+        Route::get('/create', \App\Livewire\Alumnos\Form::class)->name('create');
+        Route::get('/{alumno_id}/edit', \App\Livewire\Alumnos\Form::class)->name('edit');
+        Route::get('/{alumno_id}', \App\Livewire\Alumnos\Form::class)->name('show');
 
         // Rutas de exportación
         Route::get('/export/csv', [\App\Http\Controllers\AlumnosExportController::class, 'exportarCSV'])->name('export.csv');
@@ -157,6 +158,22 @@ Route::middleware('auth')->group(function () {
             return view('accidentes.form', ['modo' => 'show', 'accidente_id' => $id]);
         })->name('show');
 
+        Route::get('/{id}/print', function ($id) {
+            $accidente = \App\Models\Accidente::with(['escuela', 'alumnos.alumno', 'estado'])->findOrFail($id);
+            $archivos = \App\Models\ArchivoAdjunto::paraEntidad('accidente', $id)->recientes()->get();
+            return view('accidentes.print', compact('accidente', 'archivos'));
+        })->name('print');
+
+        Route::get('/{id}/dossier', function ($id) {
+            $accidente = \App\Models\Accidente::with([
+                'escuela', 'alumnos.alumno', 'estado',
+                'derivaciones.alumno', 'derivaciones.prestador',
+                'reintegros.alumno', 'reintegros.estadoReintegro', 'reintegros.tiposGastos'
+            ])->findOrFail($id);
+            $archivos = \App\Models\ArchivoAdjunto::paraEntidad('accidente', $id)->recientes()->get();
+            return view('accidentes.dossier', compact('accidente', 'archivos'));
+        })->name('dossier');
+
         // Rutas de exportación
         Route::get('/export/csv', [\App\Http\Controllers\AccidentesExportController::class, 'exportarCSV'])->name('export.csv');
         Route::get('/export/excel', [\App\Http\Controllers\AccidentesExportController::class, 'exportarExcel'])->name('export.excel');
@@ -179,6 +196,12 @@ Route::middleware('auth')->group(function () {
             return view('salidas_educativas.form', ['modo' => 'show', 'salida_id' => $id]);
         })->name('show');
 
+        Route::get('/{id}/print', function ($id) {
+            $salida = \App\Models\SalidaEducativa::with('escuela')->findOrFail($id);
+            $archivos = \App\Models\ArchivoAdjunto::paraEntidad('salida_educativa', $id)->recientes()->get();
+            return view('salidas_educativas.print', compact('salida', 'archivos'));
+        })->name('print');
+
         // Rutas de exportación
         Route::get('/export/csv', [\App\Http\Controllers\SalidaEducativaExportController::class, 'exportarCSV'])->name('export.csv');
         Route::get('/export/excel', [\App\Http\Controllers\SalidaEducativaExportController::class, 'exportarExcel'])->name('export.excel');
@@ -200,6 +223,11 @@ Route::middleware('auth')->group(function () {
         Route::get('/{id}', function ($id) {
             return view('pasantias.form', ['modo' => 'show', 'pasantia_id' => $id]);
         })->name('show');
+
+        Route::get('/{id}/print', function ($id) {
+            $pasantia = \App\Models\Pasantia::with(['escuela', 'alumno'])->findOrFail($id);
+            return view('pasantias.print', compact('pasantia'));
+        })->name('print');
 
         // Rutas de exportación
         Route::get('/export/csv', [App\Http\Controllers\PasantiaExportController::class, 'exportCsv'])->name('export.csv');
@@ -255,7 +283,8 @@ Route::middleware('auth')->group(function () {
 
     // Rutas para Reintegros (conectado a BD)
     Route::prefix('reintegros')->name('reintegros.')->middleware('auth')->group(function () {
-        Route::get('/', \App\Livewire\Reintegros\Index::class)->name('index');
+        // Ruta principal accesible para admin, usuario_general y medico_auditor
+        Route::get('/', \App\Livewire\Reintegros\Index::class)->name('index')->middleware('role:admin,usuario_general,medico_auditor');
         Route::get('/pendientes', \App\Livewire\Reintegros\Pendientes::class)->name('pendientes');
 
         Route::get('/create', function () {
@@ -297,7 +326,44 @@ Route::middleware('auth')->group(function () {
         Route::get('/export/csv', [\App\Http\Controllers\DocumentosExportController::class, 'exportarCSV'])->name('export.csv');
         Route::get('/export/excel', [\App\Http\Controllers\DocumentosExportController::class, 'exportarExcel'])->name('export.excel');
         Route::get('/export/pdf', [\App\Http\Controllers\DocumentosExportController::class, 'exportarPDF'])->name('export.pdf');
+
+        // Ruta para descargar archivos de documentos
+        Route::get('/{id}/download', [\App\Http\Controllers\DocumentoController::class, 'descargarArchivo'])->name('download');
+
+        // Ruta para descargar archivo individual por ID de archivo
+        Route::get('/archivo/{archivoId}/download', [\App\Http\Controllers\DocumentoController::class, 'descargarArchivoIndividual'])->name('archivo.download');
     });
+
+    // Rutas para Documentos de Escuela (conectado a BD)
+    Route::prefix('documentos-escuela')->name('documentos-escuela.')->middleware('auth')->group(function () {
+        Route::get('/', \App\Livewire\DocumentosEscuela\Index::class)->name('index');
+
+        Route::get('/create', function () {
+            return view('documentos-escuela.form', ['modo' => 'create']);
+        })->name('create');
+
+        Route::get('/{id}/edit', function ($id) {
+            return view('documentos-escuela.form', ['modo' => 'edit', 'documento_id' => $id]);
+        })->name('edit');
+
+        Route::get('/{id}', function ($id) {
+            return view('documentos-escuela.form', ['modo' => 'show', 'documento_id' => $id]);
+        })->name('show');
+
+        // Rutas de exportación
+        Route::get('/export/csv', [\App\Http\Controllers\DocumentosExportController::class, 'exportarCSV'])->name('export.csv');
+        Route::get('/export/excel', [\App\Http\Controllers\DocumentosExportController::class, 'exportarExcel'])->name('export.excel');
+        Route::get('/export/pdf', [\App\Http\Controllers\DocumentosExportController::class, 'exportarPDF'])->name('export.pdf');
+
+        // Ruta para descargar archivos de documentos
+        Route::get('/{id}/download', [\App\Http\Controllers\DocumentoController::class, 'descargarArchivo'])->name('download');
+    });
+
+    // Ruta del repositorio para usuarios generales (ruta aislada)
+    Route::get('/repositorio', function () {
+        return view('documentos.repositorio');
+    })->name('repositorio')
+      ->middleware(['auth', 'role:usuario_general']);
     
     // Rutas de Auditoría
     Route::prefix('auditoria')->name('auditoria.')->middleware(['auth', 'role:admin'])->group(function () {
@@ -317,7 +383,10 @@ Route::middleware('auth')->group(function () {
 
     // Ruta de Historial de Auditorías para múltiples roles
     Route::prefix('auditoria')->name('auditoria.')->middleware(['auth', 'role:admin,medico_auditor,usuario_general'])->group(function () {
-        Route::get('/historial-auditorias', \App\Livewire\Auditoria\HistorialAuditorias::class)->name('historial-auditorias');
+        Route::get('/historial-auditorias', function () {
+            // Redirigir a la pantalla de reintegros
+            return redirect()->route('reintegros.index');
+        })->name('historial-auditorias');
         
         Route::get('/detalle/{type}/{id}', function ($type, $id) {
             $item = null;

@@ -5,6 +5,7 @@ namespace App\Livewire\Derivaciones;
 use App\Models\Accidente;
 use App\Models\Derivacion;
 use App\Models\Prestador;
+// use App\Models\CatTipoGasto;
 use App\Services\AuditoriaService;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
@@ -87,6 +88,9 @@ class Form extends Component
             $this->impresa = $derivacion->impresa;
             $this->fecha_impresion = $derivacion->fecha_impresion;
 
+            // // Cargar tipos de gastos seleccionados
+            // $this->tiposGastosSeleccionados = $derivacion->tiposGastos->pluck('id_tipo_gasto')->toArray();
+
             // Cargar alumnos del accidente para el modo edición
             if ($this->id_accidente && !$accidente_id) { // Evitar recargar si ya se hizo por el parametro de ruta
                 $accidente = Accidente::with('alumnos.alumno')->find($this->id_accidente);
@@ -109,6 +113,7 @@ class Form extends Component
 
         $accidentes = $accidentesQuery->get();
         $prestadores = Prestador::where('activo', 1)->orderBy('nombre')->get();
+        // $tiposGasto = CatTipoGasto::orderBy('descripcion')->get();
         return view('livewire.derivaciones.form', compact('accidentes', 'prestadores'));
     }
 
@@ -143,8 +148,12 @@ class Form extends Component
 
         if ($this->modo == 'create') {
             $derivacion = Derivacion::create($data);
+            // // Sincronizar tipos de gastos
+            // $derivacion->tiposGastos()->sync($this->tiposGastosSeleccionados);
+
+            // $data['tipos_gastos'] = $this->tiposGastosSeleccionados;
             AuditoriaService::registrarCreacion('derivaciones', $derivacion->id_derivacion, $data);
-            
+
             session()->flash('message', 'Derivación creada exitosamente.');
             $this->redirigirAlListado();
 
@@ -152,8 +161,13 @@ class Form extends Component
             $derivacion = Derivacion::findOrFail($this->derivacion_id);
             $datosAnteriores = $derivacion->getOriginal();
             $derivacion->update($data);
+
+            // // Sincronizar tipos de gastos
+            // $derivacion->tiposGastos()->sync($this->tiposGastosSeleccionados);
+
+            // $data['tipos_gastos'] = $this->tiposGastosSeleccionados;
             AuditoriaService::registrarActualizacion('derivaciones', $derivacion->id_derivacion, $datosAnteriores, $data);
-            
+
             $this->mensaje = 'Derivación actualizada exitosamente.';
             $this->tipoMensaje = 'success';
             $this->dispatch('mostrar-mensaje');

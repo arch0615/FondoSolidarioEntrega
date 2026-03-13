@@ -142,17 +142,17 @@
                             </button>
                         </th>
                          <th scope="col" class="px-6 py-4 text-left text-xs font-medium text-secondary-500 uppercase tracking-wider">
-                             <button wire:click="sortBy('id_prestador')" class="group inline-flex items-center hover:text-secondary-700">
-                                Prestador
-                                @if($sortField === 'id_prestador')
-                                    @if($sortDirection === 'asc') <svg class="ml-2 w-4 h-4 text-primary-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"></path></svg>
-                                    @else <svg class="ml-2 w-4 h-4 text-primary-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-                                    @endif
-                                @else <svg class="ml-2 w-4 h-4 text-secondary-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"></path></svg>
-                                @endif
-                            </button>
-                        </th>
-                        <th scope="col" class="px-6 py-4 text-left text-xs font-medium text-secondary-500 uppercase tracking-wider">
+                              <button wire:click="sortBy('id_prestador')" class="group inline-flex items-center hover:text-secondary-700">
+                                 Prestador
+                                 @if($sortField === 'id_prestador')
+                                     @if($sortDirection === 'asc') <svg class="ml-2 w-4 h-4 text-primary-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"></path></svg>
+                                     @else <svg class="ml-2 w-4 h-4 text-primary-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                                     @endif
+                                 @else <svg class="ml-2 w-4 h-4 text-secondary-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"></path></svg>
+                                 @endif
+                             </button>
+                         </th>
+                         <th scope="col" class="px-6 py-4 text-left text-xs font-medium text-secondary-500 uppercase tracking-wider">
                             <button wire:click="sortBy('fecha_derivacion')" class="group inline-flex items-center hover:text-secondary-700">
                                 Fecha Derivación
                                 @if($sortField === 'fecha_derivacion')
@@ -187,7 +187,7 @@
                         </td>
                          <td class="px-6 py-4 whitespace-nowrap">
                             <div class="text-sm text-secondary-900">
-                                ACC-{{ str_pad($derivacion->id_accidente, 3, '0', STR_PAD_LEFT) }} 
+                                {{ $derivacion->accidente->numero_expediente ?? 'ACC-' . str_pad($derivacion->id_accidente, 3, '0', STR_PAD_LEFT) }}
                                 ({{ $derivacion->alumno->nombre_completo ?? 'N/A' }})
                             </div>
                             <div class="text-sm text-secondary-500">{{ $derivacion->accidente->escuela->nombre ?? 'N/A' }}</div>

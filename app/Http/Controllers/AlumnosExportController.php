@@ -57,15 +57,25 @@ class AlumnosExportController extends Controller
             $file = fopen('php://output', 'w');
             fprintf($file, chr(0xEF).chr(0xBB).chr(0xBF)); // BOM para UTF-8
             
-            fputcsv($file, ['Apellido', 'Nombre', 'DNI', 'CUIL', 'Grado/Curso', 'Escuela', 'Estado']);
+            fputcsv($file, ['Apellido', 'Nombre', 'DNI', 'Familiar 1', 'Parentesco 1', 'Teléfono 1', 'Familiar 2', 'Parentesco 2', 'Teléfono 2', 'Familiar 3', 'Parentesco 3', 'Teléfono 3', 'Fecha Nacimiento', 'Obra Social', 'Deportes', 'Escuela', 'Estado']);
 
             foreach ($alumnos as $alumno) {
                 fputcsv($file, [
                     export_clean($alumno->apellido),
                     export_clean($alumno->nombre),
                     export_clean($alumno->dni),
-                    export_clean($alumno->cuil),
-                    export_clean($alumno->sala_grado_curso),
+                    export_clean($alumno->familiar1),
+                    export_clean($alumno->parentesco1),
+                    export_clean($alumno->telefono_contacto1),
+                    export_clean($alumno->familiar2),
+                    export_clean($alumno->parentesco2),
+                    export_clean($alumno->telefono_contacto2),
+                    export_clean($alumno->familiar3),
+                    export_clean($alumno->parentesco3),
+                    export_clean($alumno->telefono_contacto3),
+                    export_clean($alumno->fecha_nacimiento ? $alumno->fecha_nacimiento->format('d/m/Y') : ''),
+                    export_clean($alumno->obra_social),
+                    export_clean($alumno->deportes),
                     export_clean($alumno->escuela->nombre ?? 'N/A'),
                     export_clean($alumno->activo ? 'Activo' : 'Inactivo'),
                 ]);
@@ -118,8 +128,18 @@ class AlumnosExportController extends Controller
             <Cell ss:StyleID="Header"><Data ss:Type="String">Apellido</Data></Cell>
             <Cell ss:StyleID="Header"><Data ss:Type="String">Nombre</Data></Cell>
             <Cell ss:StyleID="Header"><Data ss:Type="String">DNI</Data></Cell>
-            <Cell ss:StyleID="Header"><Data ss:Type="String">CUIL</Data></Cell>
-            <Cell ss:StyleID="Header"><Data ss:Type="String">Grado/Curso</Data></Cell>
+            <Cell ss:StyleID="Header"><Data ss:Type="String">Familiar 1</Data></Cell>
+            <Cell ss:StyleID="Header"><Data ss:Type="String">Parentesco 1</Data></Cell>
+            <Cell ss:StyleID="Header"><Data ss:Type="String">Teléfono 1</Data></Cell>
+            <Cell ss:StyleID="Header"><Data ss:Type="String">Familiar 2</Data></Cell>
+            <Cell ss:StyleID="Header"><Data ss:Type="String">Parentesco 2</Data></Cell>
+            <Cell ss:StyleID="Header"><Data ss:Type="String">Teléfono 2</Data></Cell>
+            <Cell ss:StyleID="Header"><Data ss:Type="String">Familiar 3</Data></Cell>
+            <Cell ss:StyleID="Header"><Data ss:Type="String">Parentesco 3</Data></Cell>
+            <Cell ss:StyleID="Header"><Data ss:Type="String">Teléfono 3</Data></Cell>
+            <Cell ss:StyleID="Header"><Data ss:Type="String">Fecha Nacimiento</Data></Cell>
+            <Cell ss:StyleID="Header"><Data ss:Type="String">Obra Social</Data></Cell>
+            <Cell ss:StyleID="Header"><Data ss:Type="String">Deportes</Data></Cell>
             <Cell ss:StyleID="Header"><Data ss:Type="String">Escuela</Data></Cell>
             <Cell ss:StyleID="Header"><Data ss:Type="String">Estado</Data></Cell>
            </Row>';
@@ -129,8 +149,18 @@ class AlumnosExportController extends Controller
              <Cell><Data ss:Type="String">' . export_clean($alumno->apellido) . '</Data></Cell>
              <Cell><Data ss:Type="String">' . export_clean($alumno->nombre) . '</Data></Cell>
              <Cell><Data ss:Type="String">' . export_clean($alumno->dni) . '</Data></Cell>
-             <Cell><Data ss:Type="String">' . export_clean($alumno->cuil) . '</Data></Cell>
-             <Cell><Data ss:Type="String">' . export_clean($alumno->sala_grado_curso) . '</Data></Cell>
+             <Cell><Data ss:Type="String">' . export_clean($alumno->familiar1) . '</Data></Cell>
+             <Cell><Data ss:Type="String">' . export_clean($alumno->parentesco1) . '</Data></Cell>
+             <Cell><Data ss:Type="String">' . export_clean($alumno->telefono_contacto1) . '</Data></Cell>
+             <Cell><Data ss:Type="String">' . export_clean($alumno->familiar2) . '</Data></Cell>
+             <Cell><Data ss:Type="String">' . export_clean($alumno->parentesco2) . '</Data></Cell>
+             <Cell><Data ss:Type="String">' . export_clean($alumno->telefono_contacto2) . '</Data></Cell>
+             <Cell><Data ss:Type="String">' . export_clean($alumno->familiar3) . '</Data></Cell>
+             <Cell><Data ss:Type="String">' . export_clean($alumno->parentesco3) . '</Data></Cell>
+             <Cell><Data ss:Type="String">' . export_clean($alumno->telefono_contacto3) . '</Data></Cell>
+             <Cell><Data ss:Type="String">' . export_clean($alumno->fecha_nacimiento ? $alumno->fecha_nacimiento->format('d/m/Y') : '') . '</Data></Cell>
+             <Cell><Data ss:Type="String">' . export_clean($alumno->obra_social) . '</Data></Cell>
+             <Cell><Data ss:Type="String">' . export_clean($alumno->deportes) . '</Data></Cell>
              <Cell><Data ss:Type="String">' . export_clean($alumno->escuela->nombre ?? 'N/A') . '</Data></Cell>
              <Cell><Data ss:Type="String">' . export_clean($alumno->activo ? 'Activo' : 'Inactivo') . '</Data></Cell>
             </Row>';

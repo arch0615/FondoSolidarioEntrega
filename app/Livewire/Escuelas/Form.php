@@ -19,6 +19,8 @@ class Form extends Component
     public $email;
     public $aporte_por_alumno;
     public $fecha_alta;
+    public $cantidad_empleados;
+    public $cantidad_alumnos;
     public $activo = true;
 
     // Mensajes de retroalimentación
@@ -33,8 +35,10 @@ class Form extends Component
             'direccion' => 'nullable|string|max:300',
             'telefono' => 'nullable|string|max:50',
             'email' => 'nullable|email|max:100',
-            'aporte_por_alumno' => 'required|numeric|min:0',
-            'fecha_alta' => 'required|date',
+            'aporte_por_alumno' => 'nullable|numeric|min:0',
+            'fecha_alta' => 'nullable|date',
+            'cantidad_empleados' => 'nullable|integer|min:0',
+            'cantidad_alumnos' => 'nullable|integer|min:0',
             'activo' => 'boolean',
         ];
     }
@@ -42,11 +46,9 @@ class Form extends Component
     protected function messages()
     {
         return [
-            'codigo_escuela.required' => 'El código de la escuela es obligatorio.',
-            'codigo_escuela.unique' => 'El código de escuela ya está en uso.',
+            'codigo_escuela.required' => 'El CUIT es obligatorio.',
+            'codigo_escuela.unique' => 'El CUIT ya está en uso.',
             'nombre.required' => 'El nombre es obligatorio.',
-            'aporte_por_alumno.required' => 'El aporte por alumno es obligatorio.',
-            'fecha_alta.required' => 'La fecha de alta es obligatoria.',
         ];
     }
 
@@ -63,6 +65,8 @@ class Form extends Component
             $this->email = $escuela->email;
             $this->aporte_por_alumno = $escuela->aporte_por_alumno;
             $this->fecha_alta = $escuela->fecha_alta ? $escuela->fecha_alta->format('Y-m-d') : null;
+            $this->cantidad_empleados = $escuela->cantidad_empleados;
+            $this->cantidad_alumnos = $escuela->cantidad_alumnos;
             $this->activo = $escuela->activo;
         } else {
             $this->fecha_alta = now()->format('Y-m-d');
@@ -86,6 +90,8 @@ class Form extends Component
             'email' => $this->email,
             'aporte_por_alumno' => $this->aporte_por_alumno,
             'fecha_alta' => $this->fecha_alta,
+            'cantidad_empleados' => $this->cantidad_empleados,
+            'cantidad_alumnos' => $this->cantidad_alumnos,
             'activo' => $this->activo,
         ];
 

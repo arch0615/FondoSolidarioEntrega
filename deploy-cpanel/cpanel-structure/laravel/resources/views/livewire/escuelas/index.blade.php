@@ -56,7 +56,7 @@
                     <input wire:model.live="filtro_nombre" type="text" id="filtro_nombre" class="block w-full mt-1 px-3 py-2 border border-secondary-300 rounded-lg" placeholder="Buscar por nombre">
                 </div>
                 <div>
-                    <label for="filtro_codigo" class="block text-sm font-medium text-secondary-700">Código</label>
+                    <label for="filtro_codigo" class="block text-sm font-medium text-secondary-700">CUIT</label>
                     <input wire:model.live="filtro_codigo" type="text" id="filtro_codigo" class="block w-full mt-1 px-3 py-2 border border-secondary-300 rounded-lg" placeholder="Ej: ESC001">
                 </div>
                 <div>
@@ -84,7 +84,7 @@
                 <div class="flex justify-between items-start mb-4">
                     <div>
                         <h2 class="text-xl font-semibold text-primary-700">{{ $escuela->nombre }}</h2>
-                        <p class="text-xs text-secondary-500">Código: {{ $escuela->codigo_escuela }}</p>
+                        <p class="text-xs text-secondary-500">CUIT: {{ $escuela->codigo_escuela }}</p>
                     </div>
                     <div class="flex items-center space-x-2">
                         @if ($escuela->activo)
@@ -121,8 +121,8 @@
                 <div class="border-t border-secondary-200 pt-4 mb-4">
                     <h4 class="text-sm font-medium text-secondary-600 mb-2">Resumen General:</h4>
                     <div class="grid grid-cols-2 gap-x-4 gap-y-1 text-sm">
-                        <p>Alumnos: <span class="font-semibold">{{ $escuela->alumnos_count }}</span></p>
-                        <p>Empleados: <span class="font-semibold">{{ $escuela->empleados_count }}</span></p>
+                        <p>Alumnos: <span class="font-semibold">{{ $escuela->cantidad_alumnos ?? 0 }}</span></p>
+                        <p>Empleados: <span class="font-semibold">{{ $escuela->cantidad_empleados ?? 0 }}</span></p>
                         <p>Salidas Ed.: <span class="font-semibold">{{ $escuela->salidas_educativas_count }}</span></p>
                         <p>Pasantías: <span class="font-semibold">{{ $escuela->pasantias_count }}</span></p>
                         <p>Benef. SVO: <span class="font-semibold">{{ $escuela->beneficiarios_svo_count }}</span></p>

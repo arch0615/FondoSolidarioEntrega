@@ -234,7 +234,7 @@
       array (
         'driver' => 'mysql',
         'url' => NULL,
-        'host' => '127.0.0.1',
+        'host' => 'localhost',
         'port' => '3306',
         'database' => 'fondo_solidario_jaec',
         'username' => 'root',
@@ -254,7 +254,7 @@
       array (
         'driver' => 'mariadb',
         'url' => NULL,
-        'host' => '127.0.0.1',
+        'host' => 'localhost',
         'port' => '3306',
         'database' => 'fondo_solidario_jaec',
         'username' => 'root',
@@ -274,7 +274,7 @@
       array (
         'driver' => 'pgsql',
         'url' => NULL,
-        'host' => '127.0.0.1',
+        'host' => 'localhost',
         'port' => '3306',
         'database' => 'fondo_solidario_jaec',
         'username' => 'root',
@@ -289,7 +289,7 @@
       array (
         'driver' => 'sqlsrv',
         'url' => NULL,
-        'host' => '127.0.0.1',
+        'host' => 'localhost',
         'port' => '3306',
         'database' => 'fondo_solidario_jaec',
         'username' => 'root',
@@ -576,10 +576,10 @@
         'transport' => 'smtp',
         'scheme' => NULL,
         'url' => NULL,
-        'host' => 'mailpit',
-        'port' => '1025',
-        'username' => NULL,
-        'password' => NULL,
+        'host' => 'jaeccba.org',
+        'port' => '465',
+        'username' => 'no-reply@fondosolidario.com',
+        'password' => '9l3S.YodfWeq',
         'timeout' => NULL,
         'local_domain' => 'localhost',
       ),
@@ -630,7 +630,7 @@
     ),
     'from' => 
     array (
-      'address' => 'hello@example.com',
+      'address' => 'no-reply@fondosolidario.com',
       'name' => 'Fondo Solidario JAEC',
     ),
     'markdown' => 

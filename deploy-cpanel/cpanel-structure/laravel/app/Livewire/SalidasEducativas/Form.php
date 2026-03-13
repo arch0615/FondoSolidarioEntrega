@@ -34,13 +34,13 @@ class Form extends Component
     protected function rules()
     {
         return [
-            'id_escuela' => 'required|integer|exists:escuelas,id_escuela',
+            'id_escuela' => 'required|exists:escuelas,id_escuela',
             'fecha_salida' => 'required|date',
             'hora_salida' => 'required',
             'hora_regreso' => 'required|after:hora_salida',
             'destino' => 'required|string|max:255',
             'proposito' => 'required|string',
-            'grado_curso' => 'required|string|max:100',
+            'grado_curso' => 'nullable|string|max:100',
             'cantidad_alumnos' => 'required|integer|min:1',
             'docentes_acompanantes' => 'required|string|max:255',
             'transporte' => 'required|string|max:255',
@@ -57,7 +57,7 @@ class Form extends Component
             'hora_regreso.after' => 'La hora de regreso debe ser posterior a la hora de salida.',
             'destino.required' => 'El destino es obligatorio.',
             'proposito.required' => 'El propósito es obligatorio.',
-            'grado_curso.required' => 'El grado/curso es obligatorio.',
+            'grado_curso.required' => 'El grado/curso es opcional.',
             'cantidad_alumnos.required' => 'La cantidad de alumnos es obligatoria.',
             'cantidad_alumnos.integer' => 'La cantidad de alumnos debe ser un número.',
             'cantidad_alumnos.min' => 'Debe haber al menos un alumno.',
@@ -106,9 +106,10 @@ class Form extends Component
 
     public function guardar()
     {
-        $this->validate();
+        try {
+            $this->validate();
 
-        $data = [
+            $data = [
             'id_escuela' => $this->id_escuela,
             'fecha_salida' => $this->fecha_salida,
             'hora_salida' => $this->hora_salida,
@@ -141,6 +142,11 @@ class Form extends Component
             $this->tipoMensaje = 'success';
             $this->dispatch('mostrar-mensaje');
         }
+
+        } catch (\Exception $e) {
+            $this->mensaje = 'Error al guardar: ' . $e->getMessage();
+            $this->tipoMensaje = 'error';
+        }
     }
 
     public function limpiarMensaje()
@@ -151,6 +157,6 @@ class Form extends Component
 
     public function redirigirAlListado()
     {
-        return redirect()->route('salidas_educativas.index');
+        return redirect()->route('salidas-educativas.index');
     }
 }

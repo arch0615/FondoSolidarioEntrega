@@ -5,6 +5,7 @@ namespace App\Livewire\Reintegros;
 use App\Models\CatEstadoReintegro;
 use App\Models\Reintegro;
 use App\Models\SolicitudInfoAuditor;
+use App\Models\HistorialReintegro;
 use App\Services\AuditoriaService;
 use App\Services\NotificationService;
 use Livewire\Component;
@@ -45,7 +46,7 @@ class Pendientes extends Component
     // Propiedades para la gestión de reintegros
     public $reintegroSeleccionadoId;
     public $reintegroSeleccionado;
-    public $showDetailPanel = false;
+    public $showDetailModal = false;
     public $solicitandoInformacion = false;
     public $solicitudInfoTexto = '';
     public $rechazandoReintegro = false;
@@ -55,6 +56,11 @@ class Pendientes extends Component
     public $observacionesAuditor = '';
     public $pagandoReintegro = false;
     public $numeroTransferencia = '';
+    
+    // Nuevas propiedades para mensajes e historial
+    public $enviandoMensaje = false;
+    public $textoMensaje = '';
+    public $historialReintegro = [];
 
     // IDs de estados de reintegro
     public $estadoNuevoId;
@@ -91,6 +97,7 @@ class Pendientes extends Component
             'montoAutorizado' => 'required_if:aprobandoReintegro,true|numeric|min:0',
             'observacionesAuditor' => 'nullable|string|max:500',
             'numeroTransferencia' => 'required_if:pagandoReintegro,true|string|max:255',
+            'textoMensaje' => 'required_if:enviandoMensaje,true|string|max:1000',
         ];
     }
 
@@ -111,6 +118,9 @@ class Pendientes extends Component
             'numeroTransferencia.required_if' => 'Debe ingresar el número de transferencia.',
             'numeroTransferencia.string' => 'El número de transferencia debe ser una cadena de texto.',
             'numeroTransferencia.max' => 'El número de transferencia no debe exceder los 255 caracteres.',
+            'textoMensaje.required_if' => 'Debe ingresar el texto del mensaje.',
+            'textoMensaje.string' => 'El mensaje debe ser una cadena de texto.',
+            'textoMensaje.max' => 'El mensaje no debe exceder los 1000 caracteres.',
         ];
     }
 
@@ -123,11 +133,12 @@ class Pendientes extends Component
     public function getReintegrosPendientes()
     {
         $query = Reintegro::query()
-            ->with(['accidente.escuela', 'alumno', 'estadoReintegro', 'usuarioSolicita'])
+            ->with(['accidente.escuela', 'accidente.alumnos.alumno', 'alumno', 'estadoReintegro', 'usuarioSolicita', 'tiposGastos'])
             ->where('id_estado_reintegro', $this->estadoNuevoId)
             ->when($this->filtro_id_accidente, function ($query) {
                 $query->whereHas('accidente', function($q) {
-                    $q->where('id_accidente_entero', 'like', '%' . $this->filtro_id_accidente . '%');
+                    $q->where('numero_expediente', 'like', '%' . $this->filtro_id_accidente . '%')
+                      ->orWhere('id_accidente_entero', 'like', '%' . $this->filtro_id_accidente . '%');
                 });
             })
             ->when($this->filtro_escuela, function ($query) {
@@ -163,20 +174,66 @@ class Pendientes extends Component
 
     public function verDetalle($reintegroId)
     {
-        $this->reintegroSeleccionado = Reintegro::with(['accidente.escuela', 'alumno', 'estadoReintegro', 'usuarioSolicita', 'archivos'])->findOrFail($reintegroId);
+        $this->reintegroSeleccionado = Reintegro::with([
+            'accidente.escuela',
+            'accidente.alumnos.alumno',
+            'alumno',
+            'estadoReintegro',
+            'usuarioSolicita',
+            'archivos',
+            'tiposGastos',
+            'historial.usuario'
+        ])->findOrFail($reintegroId);
+        
         $this->reintegroSeleccionadoId = $reintegroId;
         $this->montoAutorizado = $this->reintegroSeleccionado->monto_solicitado; // Valor por defecto al aprobar
         $this->observacionesAuditor = $this->reintegroSeleccionado->observaciones_auditor;
         $this->numeroTransferencia = $this->reintegroSeleccionado->numero_transferencia;
-        $this->showDetailPanel = true;
+        
+        // Cargar historial
+        $this->cargarHistorial();
+        
+        $this->showDetailModal = true;
     }
 
     public function cerrarDetalle()
     {
         $this->reintegroSeleccionado = null;
         $this->reintegroSeleccionadoId = null;
-        $this->showDetailPanel = false;
-        $this->reset(['solicitandoInformacion', 'solicitudInfoTexto', 'rechazandoReintegro', 'motivoRechazo', 'aprobandoReintegro', 'montoAutorizado', 'observacionesAuditor', 'pagandoReintegro', 'numeroTransferencia']);
+        $this->showDetailModal = false;
+        $this->historialReintegro = [];
+        $this->reset(['solicitandoInformacion', 'solicitudInfoTexto', 'rechazandoReintegro', 'motivoRechazo', 'aprobandoReintegro', 'montoAutorizado', 'observacionesAuditor', 'pagandoReintegro', 'numeroTransferencia', 'enviandoMensaje', 'textoMensaje']);
+    }
+
+    /**
+     * Cargar historial del reintegro
+     */
+    public function cargarHistorial()
+    {
+        if ($this->reintegroSeleccionadoId) {
+            $this->historialReintegro = HistorialReintegro::with('usuario')
+                ->where('id_reintegro', $this->reintegroSeleccionadoId)
+                ->orderBy('fecha_hora', 'desc')
+                ->get()
+                ->toArray();
+        }
+    }
+
+    /**
+     * Guardar entrada en el historial
+     */
+    private function guardarHistorial($accion, $mensaje)
+    {
+        HistorialReintegro::create([
+            'id_reintegro' => $this->reintegroSeleccionadoId,
+            'id_usuario' => Auth::id(),
+            'fecha_hora' => now(),
+            'mensaje' => $mensaje,
+            'accion' => $accion,
+        ]);
+        
+        // Recargar historial
+        $this->cargarHistorial();
     }
 
     public function solicitarInformacion()
@@ -196,14 +253,8 @@ class Pendientes extends Component
 
         AuditoriaService::registrarActualizacion('reintegros', $reintegro->id_reintegro, $datosAnteriores, $reintegro->toArray());
 
-        // Registrar en el log de historial de auditorías
-        SolicitudInfoAuditor::create([
-            'id_reintegro' => $reintegro->id_reintegro,
-            'id_auditor' => Auth::id(),
-            'fecha_solicitud' => now(),
-            'descripcion_solicitud' => $this->solicitudInfoTexto,
-            'id_estado_solicitud' => 2, // 2 = 'Pendiente de Respuesta'
-        ]);
+        // Guardar en historial
+        $this->guardarHistorial('solicitar_informacion', $this->solicitudInfoTexto);
         
         // Notificar a la escuela
         $titulo = "Información requerida para Reintegro REI-{$reintegro->id_reintegro}";
@@ -246,14 +297,8 @@ class Pendientes extends Component
 
         AuditoriaService::registrarActualizacion('reintegros', $reintegro->id_reintegro, $datosAnteriores, $reintegro->toArray());
 
-        // Registrar en el log de historial de auditorías
-        SolicitudInfoAuditor::create([
-            'id_reintegro' => $reintegro->id_reintegro,
-            'id_auditor' => Auth::id(),
-            'fecha_solicitud' => now(),
-            'descripcion_solicitud' => 'Rechazado: ' . $this->motivoRechazo,
-            'id_estado_solicitud' => 3, // Asumiendo 3 = Rechazado
-        ]);
+        // Guardar en historial
+        $this->guardarHistorial('rechazar', $this->motivoRechazo);
 
         // Notificar a la escuela
         $titulo = "Reintegro Rechazado: REI-{$reintegro->id_reintegro}";
@@ -294,14 +339,12 @@ class Pendientes extends Component
 
         AuditoriaService::registrarActualizacion('reintegros', $reintegro->id_reintegro, $datosAnteriores, $reintegro->toArray());
 
-        // Registrar en el log de historial de auditorías
-        SolicitudInfoAuditor::create([
-            'id_reintegro' => $reintegro->id_reintegro,
-            'id_auditor' => Auth::id(),
-            'fecha_solicitud' => now(),
-            'descripcion_solicitud' => 'Aprobado. Monto: ' . $this->montoAutorizado . '. Obs: ' . $this->observacionesAuditor,
-            'id_estado_solicitud' => 1, // Asumiendo 1 = Aprobado
-        ]);
+        // Guardar en historial
+        $mensajeHistorial = "Aprobado por un monto de $ {$this->montoAutorizado}";
+        if ($this->observacionesAuditor) {
+            $mensajeHistorial .= ". Observaciones: {$this->observacionesAuditor}";
+        }
+        $this->guardarHistorial('aceptar', $mensajeHistorial);
 
         // Notificar a la escuela
         $tituloEscuela = "Reintegro Aprobado: REI-{$reintegro->id_reintegro}";
@@ -353,6 +396,44 @@ class Pendientes extends Component
     {
         $this->pagandoReintegro = false;
         $this->numeroTransferencia = '';
+    }
+
+    /**
+     * Mostrar modal para enviar mensaje
+     */
+    public function mostrarModalMensaje()
+    {
+        $this->enviandoMensaje = true;
+    }
+
+    /**
+     * Enviar mensaje a la escuela
+     */
+    public function enviarMensaje()
+    {
+        $this->validateOnly('textoMensaje');
+
+        $reintegro = Reintegro::findOrFail($this->reintegroSeleccionadoId);
+
+        // Guardar en historial
+        $this->guardarHistorial('mensaje', $this->textoMensaje);
+
+        // Notificar a la escuela
+        $titulo = "Nuevo mensaje para Reintegro REI-{$reintegro->id_reintegro}";
+        $mensaje = "Ha recibido un nuevo mensaje sobre el reintegro del alumno {$reintegro->alumno->nombre_completo}: {$this->textoMensaje}";
+        NotificationService::notificarEscuela($reintegro->accidente->escuela->id_escuela, $titulo, $mensaje, 'reintegro', $reintegro->id_reintegro);
+
+        session()->flash('message', 'Mensaje enviado correctamente para el reintegro: ' . $reintegro->id_reintegro);
+        $this->cancelarMensaje();
+    }
+
+    /**
+     * Cancelar envío de mensaje
+     */
+    public function cancelarMensaje()
+    {
+        $this->enviandoMensaje = false;
+        $this->textoMensaje = '';
     }
 
     // Hooks para resetear paginación

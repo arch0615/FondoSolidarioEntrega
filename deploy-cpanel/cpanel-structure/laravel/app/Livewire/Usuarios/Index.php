@@ -45,6 +45,12 @@ class Index extends Component
     public function mount()
     {
         // No necesitamos auditar consultas, solo modificaciones
+
+        // Si el usuario actual es usuario_general (id_rol = 1), filtrar por su escuela
+        $user = Auth::user();
+        if ($user && $user->id_rol == 1 && $user->id_escuela) {
+            $this->filtro_escuela = $user->id_escuela;
+        }
     }
 
     public function render()
@@ -53,11 +59,18 @@ class Index extends Component
         $roles = Role::where('activo', true)->get();
         $escuelas = Escuela::where('activo', true)->get();
 
-        return view('livewire.usuarios.index', compact('usuarios', 'roles', 'escuelas'));
+        // Determinar si el usuario actual es usuario_general
+        $user = Auth::user();
+        $esUsuarioGeneral = $user && $user->id_rol == 1;
+
+        return view('livewire.usuarios.index', compact('usuarios', 'roles', 'escuelas', 'esUsuarioGeneral'));
     }
 
     public function getUsuarios()
     {
+        $user = Auth::user();
+        $esUsuarioGeneral = $user && $user->id_rol == 1;
+
         $query = User::with(['role', 'escuela'])
             ->when($this->filtro_nombre, function ($query) {
                 $query->where('nombre', 'like', '%' . $this->filtro_nombre . '%');
@@ -71,9 +84,6 @@ class Index extends Component
             ->when($this->filtro_rol, function ($query) {
                 $query->where('id_rol', $this->filtro_rol);
             })
-            ->when($this->filtro_escuela, function ($query) {
-                $query->where('id_escuela', $this->filtro_escuela);
-            })
             ->when($this->filtro_estado !== '', function ($query) {
                 $activo = $this->filtro_estado === 'activo';
                 $query->where('activo', $activo);
@@ -82,6 +92,14 @@ class Index extends Component
                 $verificado = $this->filtro_verificado === '1';
                 $query->where('email_verificado', $verificado);
             });
+
+        // Para usuarios generales, forzar filtro por su escuela
+        if ($esUsuarioGeneral && $user->id_escuela) {
+            $query->where('id_escuela', $user->id_escuela);
+        } elseif ($this->filtro_escuela) {
+            // Para otros usuarios, aplicar filtro normal de escuela
+            $query->where('id_escuela', $this->filtro_escuela);
+        }
 
         // Aplicar ordenamiento
         $query->orderBy($this->sortField, $this->sortDirection);
@@ -108,15 +126,30 @@ class Index extends Component
 
     public function limpiarFiltros()
     {
-        $this->reset([
+        $user = Auth::user();
+        $esUsuarioGeneral = $user && $user->id_rol == 1;
+
+        $filtros = [
             'filtro_nombre',
-            'filtro_apellido', 
+            'filtro_apellido',
             'filtro_email',
             'filtro_rol',
-            'filtro_escuela',
             'filtro_estado',
             'filtro_verificado'
-        ]);
+        ];
+
+        // Solo incluir filtro_escuela si no es usuario_general
+        if (!$esUsuarioGeneral) {
+            $filtros[] = 'filtro_escuela';
+        }
+
+        $this->reset($filtros);
+
+        // Si es usuario_general, restaurar el filtro de escuela
+        if ($esUsuarioGeneral && $user->id_escuela) {
+            $this->filtro_escuela = $user->id_escuela;
+        }
+
         $this->resetPage();
     }
 

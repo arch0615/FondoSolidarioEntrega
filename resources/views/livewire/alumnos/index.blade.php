@@ -88,10 +88,6 @@
                             <label for="filtro_dni" class="block text-sm font-medium text-secondary-700">DNI</label>
                             <input wire:model.live="filtro_dni" type="text" id="filtro_dni" class="block w-full px-3 py-2 border border-secondary-300 rounded-lg text-sm placeholder-secondary-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500" placeholder="Buscar por DNI">
                         </div>
-                         <div class="space-y-1">
-                            <label for="filtro_grado" class="block text-sm font-medium text-secondary-700">Grado/Curso</label>
-                            <input wire:model.live="filtro_grado" type="text" id="filtro_grado" class="block w-full px-3 py-2 border border-secondary-300 rounded-lg text-sm placeholder-secondary-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500" placeholder="Buscar por grado">
-                        </div>
                         @if(auth()->user()->id_rol != 1)
                         <div class="space-y-1">
                            <label for="filtro_escuela" class="block text-sm font-medium text-secondary-700">Escuela</label>
@@ -140,19 +136,8 @@
                             </th>
                             <th scope="col" class="px-6 py-4 text-left text-xs font-medium text-secondary-500 uppercase tracking-wider">
                                  <button wire:click="sortBy('dni')" class="group inline-flex items-center hover:text-secondary-700">
-                                    DNI/CUIL
+                                    DNI
                                     @if($sortField === 'dni')
-                                        @if($sortDirection === 'asc') <svg class="ml-2 w-4 h-4 text-primary-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"></path></svg>
-                                        @else <svg class="ml-2 w-4 h-4 text-primary-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-                                        @endif
-                                    @else <svg class="ml-2 w-4 h-4 text-secondary-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"></path></svg>
-                                    @endif
-                                </button>
-                            </th>
-                             <th scope="col" class="px-6 py-4 text-left text-xs font-medium text-secondary-500 uppercase tracking-wider">
-                                 <button wire:click="sortBy('sala_grado_curso')" class="group inline-flex items-center hover:text-secondary-700">
-                                    Grado/Curso
-                                    @if($sortField === 'sala_grado_curso')
                                         @if($sortDirection === 'asc') <svg class="ml-2 w-4 h-4 text-primary-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"></path></svg>
                                         @else <svg class="ml-2 w-4 h-4 text-primary-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                                         @endif
@@ -196,10 +181,6 @@
                             </td>
                              <td class="px-6 py-4 whitespace-nowrap">
                                 <div class="text-sm text-secondary-900">DNI: {{ $alumno->dni }}</div>
-                                <div class="text-sm text-secondary-500">CUIL: {{ $alumno->cuil ?? 'N/A' }}</div>
-                            </td>
-                             <td class="px-6 py-4 whitespace-nowrap">
-                                <div class="text-sm text-secondary-900">{{ $alumno->sala_grado_curso }}</div>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
                                 <div class="text-sm font-medium text-secondary-900">{{ $alumno->escuela->nombre ?? 'Sin escuela' }}</div>
@@ -237,7 +218,7 @@
                         </tr>
                         @empty
                         <tr>
-                            <td colspan="6" class="px-6 py-12 text-center">
+                            <td colspan="5" class="px-6 py-12 text-center">
                                 <div class="text-secondary-500">No hay registros disponibles.</div>
                             </td>
                         </tr>
@@ -271,7 +252,6 @@
         const filtroNombre = document.getElementById('filtro_nombre')?.value || '';
         const filtroApellido = document.getElementById('filtro_apellido')?.value || '';
         const filtroDni = document.getElementById('filtro_dni')?.value || '';
-        const filtroGrado = document.getElementById('filtro_grado')?.value || '';
         const filtroEscuela = document.getElementById('filtro_escuela')?.value || '';
         const filtroEstado = document.getElementById('filtro_estado')?.value || '';
 
@@ -279,7 +259,6 @@
         if (filtroNombre) params.append('filtro_nombre', filtroNombre);
         if (filtroApellido) params.append('filtro_apellido', filtroApellido);
         if (filtroDni) params.append('filtro_dni', filtroDni);
-        if (filtroGrado) params.append('filtro_grado', filtroGrado);
         if (filtroEscuela) params.append('filtro_escuela', filtroEscuela);
         if (filtroEstado) params.append('filtro_estado', filtroEstado);
 

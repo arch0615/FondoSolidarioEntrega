@@ -21,11 +21,11 @@
             <div class="px-4 py-2 text-sm text-gray-700 font-semibold border-b">Notificaciones</div>
             <div class="divide-y divide-gray-100">
                 @forelse($notifications as $notification)
-                    <a href="#" class="block px-4 py-3 text-sm text-gray-700 hover:bg-gray-100">
+                    <div wire:click="redirectToNotification({{ $notification->id_notificacion }})" class="block px-4 py-3 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer transition-colors duration-200">
                         <p class="font-bold">{{ $notification->titulo }}</p>
                         <p class="text-xs text-gray-500">{{ $notification->mensaje }}</p>
                         <p class="text-xs text-gray-400 mt-1">{{ $notification->fecha_creacion->diffForHumans() }}</p>
-                    </a>
+                    </div>
                 @empty
                     <div class="px-4 py-3 text-sm text-gray-500 text-center">No hay notificaciones nuevas.</div>
                 @endforelse

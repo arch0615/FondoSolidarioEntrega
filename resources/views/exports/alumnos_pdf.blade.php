@@ -32,24 +32,44 @@
     
     <table>
         <thead>
-            <tr>
-                <th>Apellido</th>
-                <th>Nombre</th>
-                <th>DNI</th>
-                <th>CUIL</th>
-                <th>Grado/Curso</th>
-                <th>Escuela</th>
-                <th>Estado</th>
-            </tr>
-        </thead>
+             <tr>
+                 <th>Apellido</th>
+                 <th>Nombre</th>
+                 <th>DNI</th>
+                 <th>Familiar 1</th>
+                 <th>Parentesco 1</th>
+                 <th>Teléfono 1</th>
+                 <th>Familiar 2</th>
+                 <th>Parentesco 2</th>
+                 <th>Teléfono 2</th>
+                 <th>Familiar 3</th>
+                 <th>Parentesco 3</th>
+                 <th>Teléfono 3</th>
+                 <th>Fecha Nacimiento</th>
+                 <th>Obra Social</th>
+                 <th>Deportes</th>
+                 <th>Escuela</th>
+                 <th>Estado</th>
+             </tr>
+         </thead>
         <tbody>
             @foreach($alumnos as $alumno)
                 <tr>
                     <td>{{ $alumno->apellido }}</td>
                     <td>{{ $alumno->nombre }}</td>
                     <td>{{ $alumno->dni }}</td>
-                    <td>{{ $alumno->cuil }}</td>
-                    <td>{{ $alumno->sala_grado_curso }}</td>
+                    <td>{{ $alumno->familiar1 }}</td>
+                    <td>{{ $alumno->parentesco1 }}</td>
+                    <td>{{ $alumno->telefono_contacto1 }}</td>
+                    <td>{{ $alumno->familiar2 }}</td>
+                    <td>{{ $alumno->parentesco2 }}</td>
+                    <td>{{ $alumno->telefono_contacto2 }}</td>
+                    <td>{{ $alumno->familiar3 }}</td>
+                    <td>{{ $alumno->parentesco3 }}</td>
+                    <td>{{ $alumno->telefono_contacto3 }}</td>
+                    <td>{{ $alumno->fecha_nacimiento ? $alumno->fecha_nacimiento->format('d/m/Y') : '' }}</td>
+                    <td>{{ $alumno->obra_social }}</td>
+                    <td>{{ $alumno->deportes }}</td>
                     <td>{{ $alumno->escuela->nombre ?? 'N/A' }}</td>
                     <td>{{ $alumno->activo ? 'Activo' : 'Inactivo' }}</td>
                 </tr>

@@ -12,7 +12,7 @@ class DocumentosExportController extends Controller
     public function exportarCSV(Request $request)
     {
         $documentos = $this->getEntidadesFiltradas($request);
-        $filename = 'documentos_' . date('Y-m-d_H-i-s') . '.csv';
+        $filename = 'documentos_escuela_' . date('Y-m-d_H-i-s') . '.csv';
 
         $headers = [
             'Content-Type' => 'text/csv; charset=UTF-8',
@@ -22,15 +22,14 @@ class DocumentosExportController extends Controller
         $callback = function() use ($documentos) {
             $file = fopen('php://output', 'w');
             fprintf($file, chr(0xEF).chr(0xBB).chr(0xBF));
-            
+
+            // Columnas que se muestran en el listado
             fputcsv($file, [
                 'ID',
                 'Nombre Documento',
+                'Descripción',
                 'Escuela',
-                'Tipo Documento',
-                'Fecha Documento',
-                'Fecha Vencimiento',
-                'Usuario Carga',
+                'Tiene Documento',
                 'Fecha Carga',
             ], ',', '"');
 
@@ -38,11 +37,9 @@ class DocumentosExportController extends Controller
                 fputcsv($file, [
                     $doc->id_documento,
                     $doc->nombre_documento,
-                    $doc->escuela->nombre ?? 'N/A',
-                    $doc->tipoDocumento->nombre ?? 'N/A',
-                    $doc->fecha_documento ? $doc->fecha_documento->format('d/m/Y') : 'N/A',
-                    $doc->fecha_vencimiento ? $doc->fecha_vencimiento->format('d/m/Y') : 'N/A',
-                    $doc->usuarioCarga->nombre_completo ?? 'N/A',
+                    $doc->descripcion ?? '',
+                    $doc->escuela->nombre ?? 'Sin escuela',
+                    $doc->archivo_path ? 'Sí' : 'No',
                     $doc->fecha_carga ? $doc->fecha_carga->format('d/m/Y H:i') : 'N/A',
                 ], ',', '"');
             }
@@ -56,8 +53,8 @@ class DocumentosExportController extends Controller
     public function exportarExcel(Request $request)
     {
         $documentos = $this->getEntidadesFiltradas($request);
-        $filename = 'documentos_' . date('Y-m-d_H-i-s') . '.xls';
-        
+        $filename = 'documentos_escuela_' . date('Y-m-d_H-i-s') . '.xls';
+
         $headers = [
             'Content-Type' => 'application/vnd.ms-excel; charset=UTF-8',
             'Content-Disposition' => 'attachment; filename="' . $filename . '"',
@@ -85,24 +82,32 @@ class DocumentosExportController extends Controller
     private function getEntidadesFiltradas(Request $request)
     {
         $query = DocumentoInstitucional::query()
-            ->with(['escuela', 'tipoDocumento', 'usuarioCarga'])
-            ->when($request->filtro_nombre, function ($query, $nombre) {
-                $query->where('nombre_documento', 'like', '%' . $nombre . '%');
-            })
-            ->when($request->filtro_tipo_documento, function ($query, $tipo) {
-                $query->where('id_tipo_documento', $tipo);
-            })
-            ->when($request->filtro_fecha_desde, function ($query, $fecha) {
-                $query->whereDate('fecha_vencimiento', '>=', $fecha);
-            })
-            ->when($request->filtro_fecha_hasta, function ($query, $fecha) {
-                $query->whereDate('fecha_vencimiento', '<=', $fecha);
-            });
+            ->with(['escuela']);
 
         $usuario = Auth::user();
-        if ($usuario && $usuario->id_rol == 1 && $usuario->id_escuela) {
+
+        // Aplicar los mismos filtros que el listado de documentos-escuela
+        if ($usuario->id_rol == 2) { // Administrador
+            // Excluir documentos donde id_escuela sea null
+            $query->whereNotNull('id_escuela')
+                  ->when($request->filtro_escuela, function ($query, $escuela) {
+                      $query->where('id_escuela', $escuela);
+                  });
+        } else {
+            // Para usuarios no administradores, solo mostrar documentos de su escuela
             $query->where('id_escuela', $usuario->id_escuela);
         }
+
+        // Aplicar filtros del listado
+        $query->when($request->filtro_nombre, function ($query, $nombre) {
+                $query->where('nombre_documento', 'like', '%' . $nombre . '%');
+            })
+            ->when($request->filtro_fecha_desde, function ($query, $fecha) {
+                $query->whereDate('fecha_carga', '>=', $fecha);
+            })
+            ->when($request->filtro_fecha_hasta, function ($query, $fecha) {
+                $query->whereDate('fecha_carga', '<=', $fecha);
+            });
 
         return $query->orderBy('nombre_documento', 'asc')->get();
     }
@@ -115,16 +120,14 @@ class DocumentosExportController extends Controller
          <Styles>
           <Style ss:ID="Header"><Font ss:Bold="1"/></Style>
          </Styles>
-         <Worksheet ss:Name="Documentos">
+         <Worksheet ss:Name="Documentos Escuela">
           <Table>
            <Row>
             <Cell ss:StyleID="Header"><Data ss:Type="String">ID</Data></Cell>
             <Cell ss:StyleID="Header"><Data ss:Type="String">Nombre Documento</Data></Cell>
+            <Cell ss:StyleID="Header"><Data ss:Type="String">Descripción</Data></Cell>
             <Cell ss:StyleID="Header"><Data ss:Type="String">Escuela</Data></Cell>
-            <Cell ss:StyleID="Header"><Data ss:Type="String">Tipo Documento</Data></Cell>
-            <Cell ss:StyleID="Header"><Data ss:Type="String">Fecha Documento</Data></Cell>
-            <Cell ss:StyleID="Header"><Data ss:Type="String">Fecha Vencimiento</Data></Cell>
-            <Cell ss:StyleID="Header"><Data ss:Type="String">Usuario Carga</Data></Cell>
+            <Cell ss:StyleID="Header"><Data ss:Type="String">Tiene Documento</Data></Cell>
             <Cell ss:StyleID="Header"><Data ss:Type="String">Fecha Carga</Data></Cell>
            </Row>';
 
@@ -132,11 +135,9 @@ class DocumentosExportController extends Controller
             $html .= '<Row>
              <Cell><Data ss:Type="Number">' . $doc->id_documento . '</Data></Cell>
              <Cell><Data ss:Type="String">' . export_clean($doc->nombre_documento) . '</Data></Cell>
-             <Cell><Data ss:Type="String">' . export_clean($doc->escuela->nombre ?? 'N/A') . '</Data></Cell>
-             <Cell><Data ss:Type="String">' . export_clean($doc->tipoDocumento->nombre ?? 'N/A') . '</Data></Cell>
-             <Cell><Data ss:Type="String">' . ($doc->fecha_documento ? $doc->fecha_documento->format('d/m/Y') : 'N/A') . '</Data></Cell>
-             <Cell><Data ss:Type="String">' . ($doc->fecha_vencimiento ? $doc->fecha_vencimiento->format('d/m/Y') : 'N/A') . '</Data></Cell>
-             <Cell><Data ss:Type="String">' . export_clean($doc->usuarioCarga->nombre_completo ?? 'N/A') . '</Data></Cell>
+             <Cell><Data ss:Type="String">' . export_clean($doc->descripcion ?? '') . '</Data></Cell>
+             <Cell><Data ss:Type="String">' . export_clean($doc->escuela->nombre ?? 'Sin escuela') . '</Data></Cell>
+             <Cell><Data ss:Type="String">' . ($doc->archivo_path ? 'Sí' : 'No') . '</Data></Cell>
              <Cell><Data ss:Type="String">' . ($doc->fecha_carga ? $doc->fecha_carga->format('d/m/Y H:i') : 'N/A') . '</Data></Cell>
             </Row>';
         }
@@ -154,7 +155,7 @@ class DocumentosExportController extends Controller
         <html>
         <head>
             <meta charset="UTF-8">
-            <title>Reporte de Documentos Institucionales</title>
+            <title>Reporte de Documentos Escuela</title>
             <style>
                 body { font-family: Arial, sans-serif; font-size: 12px; margin: 20px; }
                 table { width: 100%; border-collapse: collapse; margin-top: 20px; }
@@ -169,25 +170,25 @@ class DocumentosExportController extends Controller
         <body>
             <div class="fecha">Generado el: ' . date('d/m/Y H:i') . '</div>
             <div class="header">
-                <h1>Reporte de Documentos Institucionales</h1>
+                <h1>Reporte de Documentos Escuela</h1>
                 <p>Sistema Fondo Solidario</p>
             </div>
-            
+
             <div class="no-print" style="margin-bottom: 20px; text-align: center;">
                 <button onclick="window.print()" style="padding: 10px 20px; background: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer;">
                     🖨️ Imprimir / Guardar como PDF
                 </button>
             </div>
-            
+
             <table>
                 <thead>
                     <tr>
                         <th>ID</th>
                         <th>Nombre Documento</th>
+                        <th>Descripción</th>
                         <th>Escuela</th>
-                        <th>Tipo</th>
-                        <th>Fecha Doc.</th>
-                        <th>Fecha Venc.</th>
+                        <th>Tiene Documento</th>
+                        <th>Fecha Carga</th>
                     </tr>
                 </thead>
                 <tbody>';
@@ -196,16 +197,16 @@ class DocumentosExportController extends Controller
             $html .= '<tr>
                 <td>' . $doc->id_documento . '</td>
                 <td>' . htmlspecialchars($doc->nombre_documento) . '</td>
-                <td>' . htmlspecialchars($doc->escuela->nombre ?? 'N/A') . '</td>
-                <td>' . htmlspecialchars($doc->tipoDocumento->nombre ?? 'N/A') . '</td>
-                <td>' . ($doc->fecha_documento ? $doc->fecha_documento->format('d/m/Y') : 'N/A') . '</td>
-                <td>' . ($doc->fecha_vencimiento ? $doc->fecha_vencimiento->format('d/m/Y') : 'N/A') . '</td>
+                <td>' . htmlspecialchars($doc->descripcion ?? '') . '</td>
+                <td>' . htmlspecialchars($doc->escuela->nombre ?? 'Sin escuela') . '</td>
+                <td>' . ($doc->archivo_path ? 'Sí' : 'No') . '</td>
+                <td>' . ($doc->fecha_carga ? $doc->fecha_carga->format('d/m/Y H:i') : 'N/A') . '</td>
             </tr>';
         }
 
         $html .= '</tbody>
             </table>
-            
+
             <div class="footer">
                 <p>Total de registros: ' . count($documentos) . '</p>
                 <p>Sistema Fondo Solidario - ' . date('Y') . '</p>

@@ -84,12 +84,15 @@
                     </div>
                      <div class="space-y-1">
                         <label for="filtro_escuela" class="block text-sm font-medium text-secondary-700">Escuela</label>
-                        <select wire:model.live="filtro_escuela" id="filtro_escuela" class="block w-full px-3 py-2 border border-secondary-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500">
+                        <select wire:model.live="filtro_escuela" id="filtro_escuela" class="block w-full px-3 py-2 border border-secondary-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 {{ $esUsuarioGeneral ? 'bg-secondary-50' : 'bg-white' }}" {{ $esUsuarioGeneral ? 'disabled' : '' }}>
                             <option value="">Todas</option>
                             @foreach($escuelas as $escuela)
                                 <option value="{{ $escuela->id_escuela }}">{{ $escuela->nombre }}</option>
                             @endforeach
                         </select>
+                        @if($esUsuarioGeneral)
+                            <p class="text-xs text-secondary-500">Solo puedes ver usuarios de tu escuela</p>
+                        @endif
                     </div>
                     <div class="space-y-1">
                         <label for="filtro_estado" class="block text-sm font-medium text-secondary-700">Estado</label>

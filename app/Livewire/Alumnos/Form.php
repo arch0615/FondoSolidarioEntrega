@@ -7,6 +7,7 @@ use App\Models\Alumno;
 use App\Models\Escuela;
 use App\Services\AuditoriaService;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 class Form extends Component
 {
@@ -20,10 +21,18 @@ class Form extends Component
     public $dni;
     public $cuil;
     public $sala_grado_curso;
-    public $nombre_padre_madre;
-    public $telefono_contacto;
+    public $familiar1;
+    public $parentesco1;
+    public $telefono_contacto1;
+    public $familiar2;
+    public $parentesco2;
+    public $telefono_contacto2;
+    public $familiar3;
+    public $parentesco3;
+    public $telefono_contacto3;
     public $fecha_nacimiento;
     public $activo = true;
+    public $posee_obra_social = false;
     public $obra_social;
     public $deportes;
 
@@ -42,9 +51,16 @@ class Form extends Component
             'apellido' => 'required|string|max:100',
             'dni' => 'required|string|max:10|unique:alumnos,dni,' . $this->alumno_id . ',id_alumno',
             'cuil' => 'nullable|string|max:15|unique:alumnos,cuil,' . $this->alumno_id . ',id_alumno',
-            'sala_grado_curso' => 'required|string|max:50',
-            'nombre_padre_madre' => 'nullable|string|max:200',
-            'telefono_contacto' => 'nullable|string|max:50',
+            'sala_grado_curso' => 'nullable|string|max:50',
+            'familiar1' => 'nullable|string|max:200',
+            'parentesco1' => 'nullable|string|max:100',
+            'telefono_contacto1' => 'nullable|string|max:50',
+            'familiar2' => 'nullable|string|max:200',
+            'parentesco2' => 'nullable|string|max:100',
+            'telefono_contacto2' => 'nullable|string|max:50',
+            'familiar3' => 'nullable|string|max:200',
+            'parentesco3' => 'nullable|string|max:100',
+            'telefono_contacto3' => 'nullable|string|max:50',
             'fecha_nacimiento' => 'required|date',
             'activo' => 'boolean',
         ];
@@ -59,14 +75,25 @@ class Form extends Component
             'dni.required' => 'El DNI es obligatorio.',
             'dni.unique' => 'El DNI ingresado ya existe.',
             'cuil.unique' => 'El CUIL ingresado ya existe.',
-            'sala_grado_curso.required' => 'La sala/grado/curso es obligatoria.',
             'fecha_nacimiento.required' => 'La fecha de nacimiento es obligatoria.',
         ];
     }
 
-    public function mount($modo = 'create', $alumno_id = null)
+    public function mount($alumno_id = null)
     {
-        $this->modo = $modo;
+        // Determinar el modo basado en la ruta actual
+        $currentRoute = request()->route()->getName();
+        
+        if ($currentRoute === 'alumnos.create') {
+            $this->modo = 'create';
+        } elseif ($currentRoute === 'alumnos.edit') {
+            $this->modo = 'edit';
+        } elseif ($currentRoute === 'alumnos.show') {
+            $this->modo = 'show';
+        } else {
+            $this->modo = 'create'; // fallback
+        }
+        
         $this->escuelas = Escuela::where('activo', true)->orderBy('nombre')->get();
         $user = Auth::user();
 
@@ -83,11 +110,19 @@ class Form extends Component
             $this->dni = $alumno->dni;
             $this->cuil = $alumno->cuil;
             $this->sala_grado_curso = $alumno->sala_grado_curso;
-            $this->nombre_padre_madre = $alumno->nombre_padre_madre;
-            $this->telefono_contacto = $alumno->telefono_contacto;
+            $this->familiar1 = $alumno->familiar1;
+            $this->parentesco1 = $alumno->parentesco1;
+            $this->telefono_contacto1 = $alumno->telefono_contacto1;
+            $this->familiar2 = $alumno->familiar2;
+            $this->parentesco2 = $alumno->parentesco2;
+            $this->telefono_contacto2 = $alumno->telefono_contacto2;
+            $this->familiar3 = $alumno->familiar3;
+            $this->parentesco3 = $alumno->parentesco3;
+            $this->telefono_contacto3 = $alumno->telefono_contacto3;
             $this->fecha_nacimiento = $alumno->fecha_nacimiento ? $alumno->fecha_nacimiento->format('Y-m-d') : null;
             $this->activo = $alumno->activo;
             $this->obra_social = $alumno->obra_social;
+            $this->posee_obra_social = !empty($alumno->obra_social);
             $this->deportes = $alumno->deportes;
         }
     }
@@ -108,8 +143,15 @@ class Form extends Component
             'dni' => $this->dni,
             'cuil' => $this->cuil,
             'sala_grado_curso' => $this->sala_grado_curso,
-            'nombre_padre_madre' => $this->nombre_padre_madre,
-            'telefono_contacto' => $this->telefono_contacto,
+            'familiar1' => $this->familiar1,
+            'parentesco1' => $this->parentesco1,
+            'telefono_contacto1' => $this->telefono_contacto1,
+            'familiar2' => $this->familiar2,
+            'parentesco2' => $this->parentesco2,
+            'telefono_contacto2' => $this->telefono_contacto2,
+            'familiar3' => $this->familiar3,
+            'parentesco3' => $this->parentesco3,
+            'telefono_contacto3' => $this->telefono_contacto3,
             'fecha_nacimiento' => $this->fecha_nacimiento,
             'activo' => $this->activo,
             'obra_social' => $this->obra_social,

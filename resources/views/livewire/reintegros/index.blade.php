@@ -13,8 +13,13 @@
     <!-- Header Section -->
     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 mb-8">
         <div>
-            <h1 class="text-2xl font-semibold text-secondary-900">Gestión de Reintegros</h1>
-            <p class="mt-1 text-sm text-secondary-600">Administra las solicitudes de reintegro de gastos médicos.</p>
+            @if(Auth::user()->id_rol == 3)
+                <h1 class="text-2xl font-semibold text-secondary-900">Historial de Auditorías</h1>
+                <p class="mt-1 text-sm text-secondary-600">Listado de Auditorías atendidas</p>
+            @else
+                <h1 class="text-2xl font-semibold text-secondary-900">Gestión de Reintegros</h1>
+                <p class="mt-1 text-sm text-secondary-600">Administra las solicitudes de reintegro de gastos médicos.</p>
+            @endif
         </div>
         <div class="flex items-center space-x-3">
             <!-- Botón de Exportar -->
@@ -41,22 +46,28 @@
                     </div>
                 </div>
             </div>
+            @if(Auth::user()->id_rol != 3)
             <a href="{{ route('reintegros.create') }}" class="inline-flex items-center px-4 py-2 bg-primary-600 border border-transparent rounded-lg font-medium text-sm text-white hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-colors duration-200">
                 <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
                 </svg>
                 Nuevo Reintegro
             </a>
+            @endif
         </div>
     </div>
 
     <!-- Filtros -->
     <div class="bg-white rounded-xl border border-secondary-200 mb-6">
         <div class="p-6">
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
                 <div class="space-y-1">
                     <label for="filtro_id_accidente" class="block text-sm font-medium text-secondary-700">ID Accidente</label>
                     <input wire:model.live="filtro_id_accidente" type="text" id="filtro_id_accidente" class="block w-full px-3 py-2 border border-secondary-300 rounded-lg text-sm placeholder-secondary-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500" placeholder="Buscar por ID Accidente">
+                </div>
+                <div class="space-y-1">
+                    <label for="filtro_alumno" class="block text-sm font-medium text-secondary-700">Alumno (Nombre/DNI)</label>
+                    <input wire:model.live="filtro_alumno" type="text" id="filtro_alumno" class="block w-full px-3 py-2 border border-secondary-300 rounded-lg text-sm placeholder-secondary-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500" placeholder="Nombre, apellido o DNI">
                 </div>
                 @if(Auth::user()->id_rol != 1)
                 <div class="space-y-1">
@@ -142,25 +153,28 @@
                             <div class="text-sm font-medium text-secondary-900">{{ $reintegro->id_reintegro }}</div>
                         </td>
                          <td class="px-6 py-4 whitespace-nowrap">
-                            <div class="text-sm text-secondary-900">{{ $reintegro->accidente->id_accidente_entero ?? 'N/A' }} ({{ $reintegro->alumno->nombre_completo ?? 'N/A' }})</div>
-                            <div class="text-sm text-secondary-500">{{ $reintegro->accidente->escuela->nombre ?? 'N/A' }}</div>
-                        </td>
+                             <div class="text-sm text-secondary-900">{{ $reintegro->accidente->numero_expediente ?? $reintegro->accidente->id_accidente_entero ?? 'N/A' }} ({{ $reintegro->alumno->nombre_completo ?? 'N/A' }})</div>
+                             <div class="text-sm text-secondary-500">{{ $reintegro->accidente->escuela->nombre ?? 'N/A' }}</div>
+                         </td>
                         <td class="px-6 py-4 whitespace-nowrap">
                             <div class="text-sm font-medium text-secondary-900">{{ $reintegro->fecha_solicitud ? $reintegro->fecha_solicitud->format('d/m/Y') : 'N/A' }}</div>
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-right">
                             <div class="text-sm font-medium text-secondary-900">$ {{ number_format($reintegro->monto_solicitado, 2) }}</div>
                         </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-center">
-                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {{ $reintegro->estadoReintegro->color_clase ?? 'bg-secondary-100 text-secondary-800' }}">
+                        <td class="px-6 py-4 text-center">
+                            <div class="w-24 mx-auto text-xs font-medium text-secondary-900 leading-tight break-words">
                                 {{ $reintegro->estadoReintegro->descripcion ?? 'Sin Estado' }}
-                            </span>
+                            </div>
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-center">
                             <div class="flex items-center justify-center space-x-2">
                                 <a href="{{ route('reintegros.show', $reintegro->id_reintegro) }}" class="p-2 text-secondary-400 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition-colors duration-200" title="Ver detalles">
                                     <i class="fas fa-eye"></i>
                                 </a>
+                                <button wire:click="showHistorial({{ $reintegro->id_reintegro }})" class="p-2 text-secondary-400 hover:text-info-600 hover:bg-info-50 rounded-lg transition-colors duration-200" title="Ver historial">
+                                    <i class="fas fa-history"></i>
+                                </button>
                                 @if($reintegro->id_estado_reintegro == 2) {{-- Requiere Info --}}
                                     <button wire:click="showObservation({{ $reintegro->id_reintegro }})" class="p-2 text-info-400 hover:text-info-600 hover:bg-info-50 rounded-lg transition-colors duration-200" title="Ver Información Solicitada">
                                         <i class="fas fa-info-circle"></i>
@@ -176,6 +190,7 @@
                                         <i class="fas fa-dollar-sign"></i>
                                     </button>
                                 @endif
+                                @if(Auth::user()->id_rol != 3)
                                 <a href="{{ route('reintegros.edit', $reintegro->id_reintegro) }}"
                                    class="p-2 rounded-lg transition-colors duration-200 {{ in_array($reintegro->id_estado_reintegro, [$estadoRechazadoId, $estadoAutorizadoId, $estadoPagadoId]) ? 'text-secondary-300 cursor-not-allowed' : 'text-secondary-400 hover:text-warning-600 hover:bg-warning-50' }}"
                                    title="Editar"
@@ -189,6 +204,7 @@
                                         @if(in_array($reintegro->id_estado_reintegro, [$estadoRechazadoId, $estadoAutorizadoId, $estadoPagadoId])) disabled @endif>
                                     <i class="fas fa-trash"></i>
                                 </button>
+                                @endif
                             </div>
                         </td>
                     </tr>
@@ -258,6 +274,275 @@
             <div class="flex justify-end items-center mt-6">
                 <button @click="show = false" wire:click="closePagoInfoModal" class="px-4 py-2 bg-secondary-200 text-secondary-800 rounded-lg hover:bg-secondary-300 transition-colors">
                     Cerrar
+                </button>
+            </div>
+        </div>
+    </div>
+    @endif
+
+    <!-- Modal para Historial del Reintegro -->
+    <div x-data="{ show: @entangle('showingHistorialModal') }"
+         x-show="show"
+         @keydown.escape.window="show = false"
+         class="fixed inset-0 bg-gray-900 bg-opacity-60 z-50 flex justify-center items-center"
+         style="display: none;">
+        <div class="bg-white rounded-xl shadow-2xl w-full max-w-2xl max-h-[80vh] m-4 flex flex-col" @click.away="show = false">
+            <!-- Header del Modal -->
+            <div class="flex items-center justify-between p-6 border-b border-secondary-200">
+                <h3 class="text-xl font-semibold text-secondary-900">Historial del Reintegro #{{ $reintegroHistorialId }}</h3>
+                <button @click="show = false" wire:click="closeHistorialModal" class="text-secondary-400 hover:text-secondary-600 transition-colors">
+                    <i class="fas fa-times text-lg"></i>
+                </button>
+            </div>
+            
+            <!-- Contenido del Historial -->
+            <div class="flex-1 overflow-y-auto p-6">
+                @if(count($historialReintegro) > 0)
+                    <div class="space-y-4">
+                        @foreach($historialReintegro as $entrada)
+                            <div class="border-l-4 border-{{ $entrada['color_accion'] }}-400 bg-{{ $entrada['color_accion'] }}-50 p-4 rounded-r-lg">
+                                <div class="flex items-start justify-between">
+                                    <div class="flex-1">
+                                        <div class="flex items-center space-x-2 mb-2">
+                                            <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-{{ $entrada['color_accion'] }}-100 text-{{ $entrada['color_accion'] }}-800">
+                                                {{ $entrada['texto_accion'] }}
+                                            </span>
+                                            <span class="text-xs text-secondary-500">
+                                                por {{ $entrada['usuario'] }}
+                                            </span>
+                                        </div>
+                                        @if($entrada['mensaje'])
+                                            <p class="text-sm text-secondary-700 mt-2">{{ $entrada['mensaje'] }}</p>
+                                        @endif
+                                    </div>
+                                    <div class="text-xs text-secondary-500 ml-4 whitespace-nowrap">
+                                        {{ \Carbon\Carbon::parse($entrada['fecha_hora'])->format('d/m/Y H:i') }}
+                                    </div>
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+                @else
+                    <div class="text-center py-8">
+                        <i class="fas fa-history text-4xl text-secondary-300 mb-4"></i>
+                        <p class="text-secondary-500">No hay historial disponible para este reintegro.</p>
+                    </div>
+                @endif
+            </div>
+            
+            <!-- Footer del Modal -->
+            <div class="flex justify-between items-center p-6 border-t border-secondary-200">
+                <div class="flex space-x-3">
+                    @if(Auth::user()->id_rol != 3)
+                    <!-- Botón Enviar Mensaje (solo visible para roles que no sean médico auditor) -->
+                    <button wire:click="showMessageModal({{ $reintegroHistorialId }})" class="inline-flex items-center px-4 py-2 bg-blue-600 border border-transparent rounded-lg font-medium text-sm text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-200">
+                        <i class="fas fa-comment mr-2"></i>
+                        Enviar Mensaje
+                    </button>
+                    
+                    <!-- Botón Enviar Información Requerida (solo si estado = 2) -->
+                    @if($reintegroParaContestar && $reintegroParaContestar->id_estado_reintegro == 2)
+                        <button wire:click="showContestModal({{ $reintegroHistorialId }})" class="inline-flex items-center px-4 py-2 bg-primary-600 border border-transparent rounded-lg font-medium text-sm text-white hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-colors duration-200">
+                            <i class="fas fa-reply mr-2"></i>
+                            Enviar Información Requerida
+                        </button>
+                    @endif
+                    @endif
+                </div>
+                <button @click="show = false" wire:click="closeHistorialModal" class="px-4 py-2 bg-secondary-200 text-secondary-800 rounded-lg hover:bg-secondary-300 transition-colors">
+                    Cerrar
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para Contestar -->
+    @if($reintegroParaContestar)
+    <div x-data="{ show: @entangle('showingContestModal') }"
+         x-show="show"
+         @keydown.escape.window="show = false"
+         class="fixed inset-0 bg-gray-900 bg-opacity-60 z-50 flex justify-center items-center"
+         style="display: none;">
+        <div class="bg-white rounded-xl shadow-2xl w-full max-w-2xl max-h-[90vh] m-4 flex flex-col" @click.away="show = false">
+            <!-- Header del Modal -->
+            <div class="flex items-center justify-between p-6 border-b border-secondary-200">
+                <h3 class="text-xl font-semibold text-secondary-900">Contestar Reintegro #{{ $reintegroParaContestar->id_reintegro }}</h3>
+                <button @click="show = false" wire:click="closeContestModal" class="text-secondary-400 hover:text-secondary-600 transition-colors">
+                    <i class="fas fa-times text-lg"></i>
+                </button>
+            </div>
+            
+            <!-- Información del Reintegro -->
+            <div class="px-6 py-4 bg-secondary-50 border-b border-secondary-200">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                    <div>
+                        <span class="font-medium text-secondary-600">Alumno:</span>
+                        <span class="text-secondary-800">{{ $reintegroParaContestar->alumno->nombre_completo ?? 'N/A' }}</span>
+                    </div>
+                    <div>
+                        <span class="font-medium text-secondary-600">Escuela:</span>
+                        <span class="text-secondary-800">{{ $reintegroParaContestar->accidente->escuela->nombre ?? 'N/A' }}</span>
+                    </div>
+                    <div>
+                        <span class="font-medium text-secondary-600">Estado:</span>
+                        <span class="text-secondary-800">{{ $reintegroParaContestar->estadoReintegro->descripcion ?? 'N/A' }}</span>
+                    </div>
+                    <div>
+                        <span class="font-medium text-secondary-600">Monto:</span>
+                        <span class="text-secondary-800">${{ number_format($reintegroParaContestar->monto_solicitado, 2) }}</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Formulario de Respuesta -->
+            <div class="flex-1 overflow-y-auto p-6">
+                <form wire:submit.prevent="enviarRespuesta">
+                    <!-- Campo de Mensaje -->
+                    <div class="mb-6">
+                        <label for="contestMessage" class="block text-sm font-medium text-secondary-700 mb-2">
+                            Mensaje <span class="text-red-500">*</span>
+                        </label>
+                        <textarea
+                            wire:model="contestMessage"
+                            id="contestMessage"
+                            rows="4"
+                            class="block w-full px-3 py-2 border border-secondary-300 rounded-lg text-sm placeholder-secondary-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 resize-none"
+                            placeholder="Escriba su respuesta aquí..."
+                            maxlength="1000"></textarea>
+                        @error('contestMessage')
+                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                        @enderror
+                        <p class="mt-1 text-xs text-secondary-500">Máximo 1000 caracteres</p>
+                    </div>
+
+                    <!-- Campo de Archivos -->
+                    <div class="mb-6">
+                        <label for="contestFiles" class="block text-sm font-medium text-secondary-700 mb-2">
+                            Archivos Adjuntos (Opcional)
+                        </label>
+                        <input
+                            wire:model="contestFiles"
+                            type="file"
+                            id="contestFiles"
+                            multiple
+                            class="block w-full text-sm text-secondary-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-primary-50 file:text-primary-700 hover:file:bg-primary-100 border border-secondary-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500">
+                        @error('contestFiles.*')
+                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                        @enderror
+                        <p class="mt-1 text-xs text-secondary-500">Máximo 10MB por archivo. Formatos permitidos: PDF, JPG, PNG, DOC, DOCX</p>
+                    </div>
+
+                    <!-- Descripción de Archivos -->
+                    @if(!empty($contestFiles))
+                    <div class="mb-6">
+                        <label for="contestFilesDescription" class="block text-sm font-medium text-secondary-700 mb-2">
+                            Descripción de los Archivos (Opcional)
+                        </label>
+                        <input
+                            wire:model="contestFilesDescription"
+                            type="text"
+                            id="contestFilesDescription"
+                            class="block w-full px-3 py-2 border border-secondary-300 rounded-lg text-sm placeholder-secondary-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                            placeholder="Breve descripción de los archivos adjuntos"
+                            maxlength="255">
+                    </div>
+                    @endif
+
+                    <!-- Archivos Seleccionados -->
+                    @if(!empty($contestFiles))
+                    <div class="mb-6">
+                        <h4 class="text-sm font-medium text-secondary-700 mb-2">Archivos Seleccionados:</h4>
+                        <div class="space-y-2">
+                            @foreach($contestFiles as $index => $file)
+                                <div class="flex items-center justify-between p-2 bg-secondary-50 rounded-lg">
+                                    <div class="flex items-center space-x-2">
+                                        <i class="fas fa-file text-secondary-400"></i>
+                                        <span class="text-sm text-secondary-700">{{ $file->getClientOriginalName() }}</span>
+                                        <span class="text-xs text-secondary-500">({{ number_format($file->getSize() / 1024, 1) }} KB)</span>
+                                    </div>
+                                </div>
+                            @endforeach
+                        </div>
+                    </div>
+                    @endif
+                </form>
+            </div>
+            
+            <!-- Footer del Modal -->
+            <div class="flex justify-end space-x-3 p-6 border-t border-secondary-200">
+                <button @click="show = false" wire:click="closeContestModal" type="button" class="px-4 py-2 bg-secondary-200 text-secondary-800 rounded-lg hover:bg-secondary-300 transition-colors">
+                    Cancelar
+                </button>
+                <button wire:click="enviarRespuesta" type="button" class="inline-flex items-center px-4 py-2 bg-primary-600 border border-transparent rounded-lg font-medium text-sm text-white hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-colors duration-200">
+                    <i class="fas fa-paper-plane mr-2"></i>
+                    Enviar Respuesta
+                </button>
+            </div>
+        </div>
+    </div>
+    @endif
+
+    <!-- Modal para Enviar Mensaje -->
+    @if($reintegroParaMensaje)
+    <div x-data="{ show: @entangle('showingMessageModal') }"
+         x-show="show"
+         @keydown.escape.window="show = false"
+         class="fixed inset-0 bg-gray-900 bg-opacity-60 z-50 flex justify-center items-center"
+         style="display: none;">
+        <div class="bg-white rounded-xl shadow-2xl w-full max-w-lg max-h-[80vh] m-4 flex flex-col" @click.away="show = false">
+            <!-- Header del Modal -->
+            <div class="flex items-center justify-between p-6 border-b border-secondary-200">
+                <h3 class="text-xl font-semibold text-secondary-900">Enviar Mensaje - Reintegro #{{ $reintegroParaMensaje->id_reintegro }}</h3>
+                <button @click="show = false" wire:click="closeMessageModal" class="text-secondary-400 hover:text-secondary-600 transition-colors">
+                    <i class="fas fa-times text-lg"></i>
+                </button>
+            </div>
+            
+            <!-- Información del Reintegro -->
+            <div class="px-6 py-4 bg-secondary-50 border-b border-secondary-200">
+                <div class="grid grid-cols-1 gap-2 text-sm">
+                    <div>
+                        <span class="font-medium text-secondary-600">Alumno:</span>
+                        <span class="text-secondary-800">{{ $reintegroParaMensaje->alumno->nombre_completo ?? 'N/A' }}</span>
+                    </div>
+                    <div>
+                        <span class="font-medium text-secondary-600">Estado:</span>
+                        <span class="text-secondary-800">{{ $reintegroParaMensaje->estadoReintegro->descripcion ?? 'N/A' }}</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Formulario de Mensaje -->
+            <div class="flex-1 overflow-y-auto p-6">
+                <form wire:submit.prevent="enviarMensaje">
+                    <!-- Campo de Mensaje -->
+                    <div class="mb-6">
+                        <label for="messageText" class="block text-sm font-medium text-secondary-700 mb-2">
+                            Mensaje <span class="text-red-500">*</span>
+                        </label>
+                        <textarea
+                            wire:model="messageText"
+                            id="messageText"
+                            rows="4"
+                            class="block w-full px-3 py-2 border border-secondary-300 rounded-lg text-sm placeholder-secondary-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 resize-none"
+                            placeholder="Escriba su mensaje aquí..."
+                            maxlength="1000"></textarea>
+                        @error('messageText')
+                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                        @enderror
+                        <p class="mt-1 text-xs text-secondary-500">Máximo 1000 caracteres</p>
+                    </div>
+                </form>
+            </div>
+            
+            <!-- Footer del Modal -->
+            <div class="flex justify-end space-x-3 p-6 border-t border-secondary-200">
+                <button @click="show = false" wire:click="closeMessageModal" type="button" class="px-4 py-2 bg-secondary-200 text-secondary-800 rounded-lg hover:bg-secondary-300 transition-colors">
+                    Cancelar
+                </button>
+                <button wire:click="enviarMensaje" type="button" class="inline-flex items-center px-4 py-2 bg-blue-600 border border-transparent rounded-lg font-medium text-sm text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-200">
+                    <i class="fas fa-paper-plane mr-2"></i>
+                    Enviar Mensaje
                 </button>
             </div>
         </div>

@@ -7,6 +7,8 @@ use App\Models\Notificacion;
 use App\Models\Reintegro;
 use App\Models\User;
 use App\Services\AuditoriaService;
+use App\Services\ReintegroMailService;
+use Illuminate\Support\Facades\Log;
 use Livewire\Component;
 use Livewire\WithPagination;
 
@@ -65,8 +67,16 @@ class Index extends Component
                 'estado' => 'Pagado'
             ]);
 
-            // Enviar notificación a la escuela
+            // Enviar notificación a la escuela (in-app)
             $this->enviarNotificacionEscuela($reintegro);
+
+            // Enviar notificación por email a la escuela
+            try {
+                $detalle = "Fecha de pago: {$this->fecha_pago}\nN° Transferencia: {$this->numero_transferencia}\nMonto autorizado: $" . number_format($reintegro->monto_autorizado ?? 0, 2);
+                ReintegroMailService::enviarNotificacionEstadoAEscuela($reintegro, 'Pago', $detalle);
+            } catch (\Exception $e) {
+                Log::warning('Error al enviar email de pago de reintegro: ' . $e->getMessage());
+            }
 
             $this->showPagoModal = false;
             $this->reset(['reintegroSeleccionado', 'fecha_pago', 'numero_transferencia']);
@@ -93,11 +103,59 @@ class Index extends Component
         }
     }
 
+    public function enviarAseguradora($id)
+    {
+        $reintegro = Reintegro::find($id);
+
+        if ($reintegro) {
+            $estadoAnterior = $reintegro->id_estado_reintegro;
+            $reintegro->id_estado_reintegro = 6; // 6 = Enviado a Aseguradora
+            $reintegro->save();
+
+            AuditoriaService::registrarActualizacion('reintegros', $reintegro->id_reintegro,
+                ['id_estado_reintegro' => $estadoAnterior],
+                ['id_estado_reintegro' => 6]
+            );
+
+            // Notificar a la escuela
+            $escuela = $reintegro->accidente->escuela;
+            $usuarioEscuela = User::where('id_escuela', $escuela->id_escuela)->first();
+
+            if ($usuarioEscuela) {
+                Notificacion::create([
+                    'id_usuario_destino' => $usuarioEscuela->id_usuario,
+                    'tipo_notificacion' => 'Reintegro Enviado a Aseguradora',
+                    'titulo' => 'Reintegro Enviado a Aseguradora',
+                    'mensaje' => "El reintegro #{$reintegro->id_reintegro} para el alumno {$reintegro->alumno->nombre_completo} ha sido enviado a la compañía aseguradora.",
+                    'id_entidad_referencia' => $reintegro->id_reintegro,
+                    'tipo_entidad' => 'reintegro',
+                    'fecha_creacion' => now(),
+                    'leida' => false,
+                ]);
+            }
+
+            // Enviar notificación por email a la escuela
+            try {
+                ReintegroMailService::enviarNotificacionEstadoAEscuela($reintegro, 'Enviado a Aseguradora');
+            } catch (\Exception $e) {
+                Log::warning('Error al enviar email de reintegro enviado a aseguradora: ' . $e->getMessage());
+            }
+
+            session()->flash('message', 'Reintegro enviado a aseguradora exitosamente.');
+        }
+    }
+
     public function render()
     {
         // Reintegros pendientes de pago (Estado Autorizado = 3)
         $pendientes = Reintegro::with('alumno', 'accidente.escuela')
             ->where('id_estado_reintegro', 3) // 3 = Autorizado
+            ->orderBy('fecha_autorizacion', 'asc')
+            ->get();
+
+        // Reintegros enviados a aseguradora (Estado = 6)
+        $enviadosAseguradora = Reintegro::with('alumno', 'accidente.escuela')
+            ->where('id_estado_reintegro', 6)
             ->orderBy('fecha_autorizacion', 'asc')
             ->get();
 
@@ -121,6 +179,7 @@ class Index extends Component
 
         return view('livewire.gestion-pagos.index', [
             'pendientes' => $pendientes,
+            'enviadosAseguradora' => $enviadosAseguradora,
             'historialPaginado' => $historialPaginado
         ]);
     }

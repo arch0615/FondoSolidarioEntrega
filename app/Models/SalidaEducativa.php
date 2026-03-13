@@ -16,6 +16,7 @@ class SalidaEducativa extends Model
         'id_escuela',
         'id_usuario_carga',
         'fecha_salida',
+        'fecha_hasta',
         'hora_salida',
         'hora_regreso',
         'destino',
@@ -29,6 +30,7 @@ class SalidaEducativa extends Model
 
     protected $casts = [
         'fecha_salida' => 'date',
+        'fecha_hasta' => 'date',
         'hora_salida' => 'datetime:H:i',
         'hora_regreso' => 'datetime:H:i',
         'fecha_carga' => 'datetime',

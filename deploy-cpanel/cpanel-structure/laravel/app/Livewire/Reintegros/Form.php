@@ -8,6 +8,7 @@ use App\Models\CatTipoGasto;
 use App\Models\Reintegro;
 use App\Services\AuditoriaService;
 use App\Services\NotificationService;
+use App\Services\ReintegroMailService;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Livewire\Component;
@@ -25,7 +26,7 @@ class Form extends Component
     public $id_alumno;
     public $id_usuario_solicita;
     public $fecha_solicitud;
-    public $id_tipo_gasto;
+    public $tiposGastosSeleccionados = [];
     public $descripcion_gasto;
     public $monto_solicitado;
     public $id_estado_reintegro;
@@ -51,7 +52,8 @@ class Form extends Component
             'id_accidente' => 'required|integer|exists:accidentes,id_accidente',
             'id_alumno' => 'required|integer|exists:alumnos,id_alumno',
             'fecha_solicitud' => 'required|date',
-            'id_tipo_gasto' => 'required|integer|exists:cat_tipos_gastos,id_tipo_gasto',
+            'tiposGastosSeleccionados' => 'required|array|min:1',
+            'tiposGastosSeleccionados.*' => 'integer|exists:cat_tipos_gastos,id_tipo_gasto',
             'descripcion_gasto' => 'required|string|max:500',
             'monto_solicitado' => 'required|numeric|min:0',
             'archivos_adjuntos.*' => 'nullable|file|max:10240',
@@ -64,7 +66,9 @@ class Form extends Component
             'id_accidente.required' => 'Debe seleccionar un accidente.',
             'id_alumno.required' => 'Debe seleccionar un alumno.',
             'fecha_solicitud.required' => 'La fecha de solicitud es obligatoria.',
-            'id_tipo_gasto.required' => 'El tipo de gasto es obligatorio.',
+            'tiposGastosSeleccionados.required' => 'Debe seleccionar al menos un tipo de gasto.',
+            'tiposGastosSeleccionados.min' => 'Debe seleccionar al menos un tipo de gasto.',
+            'tiposGastosSeleccionados.*.exists' => 'Uno de los tipos de gastos seleccionados no es válido.',
             'descripcion_gasto.required' => 'La descripción del gasto es obligatoria.',
             'monto_solicitado.required' => 'El monto solicitado es obligatorio.',
         ];
@@ -85,17 +89,17 @@ class Form extends Component
 
         if ($reintegro_id) {
             $this->reintegro_id = $reintegro_id;
-            $this->reintegro = Reintegro::with('archivos', 'alumno')->findOrFail($reintegro_id);
-            
+            $this->reintegro = Reintegro::with('archivos', 'alumno', 'tiposGastos')->findOrFail($reintegro_id);
+
             $this->id_accidente = $this->reintegro->id_accidente;
             $this->id_alumno = $this->reintegro->id_alumno;
             $this->id_usuario_solicita = $this->reintegro->id_usuario_solicita;
             $this->fecha_solicitud = $this->reintegro->fecha_solicitud->format('Y-m-d');
-            $this->id_tipo_gasto = $this->reintegro->id_tipo_gasto;
+            $this->tiposGastosSeleccionados = $this->reintegro->tiposGastos->pluck('id_tipo_gasto')->toArray();
             $this->descripcion_gasto = $this->reintegro->descripcion_gasto;
             $this->monto_solicitado = $this->reintegro->monto_solicitado;
             $this->id_estado_reintegro = $this->reintegro->id_estado_reintegro;
-            
+
             $this->archivos_existentes = $this->reintegro->archivos;
 
             // Cargar alumnos del accidente para el modo edición
@@ -132,7 +136,9 @@ class Form extends Component
 
     public function render()
     {
-        return view('livewire.reintegros.form');
+        return view('livewire.reintegros.form', [
+            'tiposGasto' => $this->tiposGasto
+        ]);
     }
 
     public function guardar()
@@ -143,27 +149,50 @@ class Form extends Component
             'id_accidente' => $this->id_accidente,
             'id_alumno' => $this->id_alumno,
             'fecha_solicitud' => $this->fecha_solicitud,
-            'id_tipo_gasto' => $this->id_tipo_gasto,
             'descripcion_gasto' => $this->descripcion_gasto,
             'monto_solicitado' => $this->monto_solicitado,
             'id_usuario_solicita' => Auth::id(),
         ];
 
         if ($this->modo == 'create') {
-            $data['id_estado_reintegro'] = 1; // Estado inicial "En Proceso"
-            $reintegro = Reintegro::create($data);
-            $this->guardarArchivos($reintegro->id_reintegro);
-            
-            AuditoriaService::registrarCreacion('reintegros', $reintegro->id_reintegro, $data);
+            try {
+                // 1. PRIMERO: Guardar el reintegro (proceso crítico)
+                $data['id_estado_reintegro'] = 1; // Estado inicial "En Proceso"
+                $reintegro = Reintegro::create($data);
+                $reintegro->tiposGastos()->sync($this->tiposGastosSeleccionados);
+                $this->guardarArchivos($reintegro->id_reintegro);
 
-            // Notificar a Médicos Auditores
-            $titulo = "Nueva Solicitud de Reintegro: REI-{$reintegro->id_reintegro}";
-            $mensaje = "Se ha registrado una nueva solicitud de reintegro para el alumno {$reintegro->alumno->nombre_completo} de la escuela {$reintegro->accidente->escuela->nombre}.";
-            NotificationService::notificarRol('Médico Auditor', $titulo, $mensaje, 'reintegro', $reintegro->id_reintegro);
-            
-            $this->mensaje = 'Solicitud de reintegro creada exitosamente.';
-            $this->tipoMensaje = 'success';
-            $this->dispatch('mostrar-mensaje-y-redirigir');
+                // 2. Registrar en auditoría
+                AuditoriaService::registrarCreacion('reintegros', $reintegro->id_reintegro, $data);
+
+                // 3. Notificaciones internas del sistema
+                $titulo = "Nueva Solicitud de Reintegro: REI-{$reintegro->id_reintegro}";
+                $mensaje = "Se ha registrado una nueva solicitud de reintegro para el alumno {$reintegro->alumno->nombre_completo} de la escuela {$reintegro->accidente->escuela->nombre}.";
+                NotificationService::notificarRol('Médico Auditor', $titulo, $mensaje, 'reintegro', $reintegro->id_reintegro);
+
+                // 4. ÚLTIMO: Intento de envío de correos (solo para usuarios generales - rol 1)
+                if (Auth::user()->id_rol == 1) {
+                    try {
+                        ReintegroMailService::enviarNotificacionNuevoReintegro($reintegro);
+                        // El envío de correos es un proceso interno - no se informa al usuario escuela
+                    } catch (\Exception $e) {
+                        // Solo registrar en logs, no mostrar error al usuario escuela
+                        \Illuminate\Support\Facades\Log::warning("Error enviando correo para reintegro {$reintegro->id_reintegro}: " . $e->getMessage());
+                    }
+                }
+
+                // Mensaje final siempre exitoso - sin mencionar correos
+                $this->mensaje = "Solicitud de reintegro REI-{$reintegro->id_reintegro} creada exitosamente.";
+                $this->tipoMensaje = 'success';
+                $this->dispatch('mostrar-mensaje-y-redirigir');
+
+            } catch (\Exception $e) {
+                // Solo si falla el guardado principal
+                $this->mensaje = 'Error al crear la solicitud de reintegro: ' . $e->getMessage();
+                $this->tipoMensaje = 'error';
+                $this->dispatch('mostrar-mensaje');
+                return;
+            }
 
         } else {
             $reintegro = Reintegro::findOrFail($this->reintegro_id);
@@ -175,6 +204,7 @@ class Form extends Component
             }
 
             $reintegro->update($data);
+            $reintegro->tiposGastos()->sync($this->tiposGastosSeleccionados);
             $this->guardarArchivos($reintegro->id_reintegro);
 
             AuditoriaService::registrarActualizacion('reintegros', $reintegro->id_reintegro, $datosAnteriores, $data);

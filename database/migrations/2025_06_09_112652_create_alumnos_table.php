@@ -19,8 +19,15 @@ return new class extends Migration
             $table->string('dni', 10)->nullable()->unique('uk_dni');
             $table->string('cuil', 15)->nullable()->unique('uk_cuil');
             $table->string('sala_grado_curso', 50)->nullable();
-            $table->string('nombre_padre_madre', 200)->nullable();
-            $table->string('telefono_contacto', 50)->nullable();
+            $table->string('familiar1', 200)->nullable();
+            $table->string('parentesco1', 100)->nullable();
+            $table->string('telefono_contacto1', 50)->nullable();
+            $table->string('familiar2', 200)->nullable();
+            $table->string('parentesco2', 100)->nullable();
+            $table->string('telefono_contacto2', 50)->nullable();
+            $table->string('familiar3', 200)->nullable();
+            $table->string('parentesco3', 100)->nullable();
+            $table->string('telefono_contacto3', 50)->nullable();
             $table->date('fecha_nacimiento')->nullable();
             $table->boolean('activo')->nullable()->default(true)->index('idx_activo');
             $table->text('obra_social')->nullable();

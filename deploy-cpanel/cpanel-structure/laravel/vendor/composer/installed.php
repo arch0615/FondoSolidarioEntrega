@@ -3,7 +3,7 @@
         'name' => 'proyecto/base-laravel-livewire',
         'pretty_version' => 'dev-main',
         'version' => 'dev-main',
-        'reference' => 'b5c30d97adceca2515c573f68342d1a13c9071d6',
+        'reference' => '5ad0befcb02a9acc98b2a23c8984c073c25f5508',
         'type' => 'project',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -556,7 +556,7 @@
         'proyecto/base-laravel-livewire' => array(
             'pretty_version' => 'dev-main',
             'version' => 'dev-main',
-            'reference' => 'b5c30d97adceca2515c573f68342d1a13c9071d6',
+            'reference' => '5ad0befcb02a9acc98b2a23c8984c073c25f5508',
             'type' => 'project',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),

@@ -115,7 +115,7 @@
                 <div class="p-6 flex-grow">
                     <div class="flex justify-between items-start mb-4">
                         <div class="flex-1 min-w-0 pr-3">
-                            <h2 class="text-xl font-semibold text-red-700 truncate">{{ $accidente->numero_expediente }}</h2>
+                            <h2 class="text-xl font-semibold text-red-700 break-words">{{ $accidente->numero_expediente ?? 'Sin número de expediente' }}</h2>
                             <div class="mt-1">
                                 @if($accidente->alumnos->count() === 0)
                                     <p class="text-sm text-secondary-500 italic">Sin alumnos asociados</p>
@@ -453,8 +453,13 @@
                                             <p style="
                                                 font-size: 12px !important;
                                                 color: #6b7280 !important;
+                                                margin: 0 0 2px 0 !important;
+                                            ">DNI: ${alumno.dni}</p>
+                                            <p style="
+                                                font-size: 12px !important;
+                                                color: #6b7280 !important;
                                                 margin: 0 !important;
-                                            ">DNI: ${alumno.dni} - ${alumno.sala_grado_curso}</p>
+                                            ">Grado/Sección: ${alumno.grado_seccion}</p>
                                         </div>
                                     </div>
                                 `).join('')}

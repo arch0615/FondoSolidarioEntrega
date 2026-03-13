@@ -105,16 +105,24 @@ class Accidente extends Model
 
     /**
      * Generar número de expediente automático
+     * Formato: EXP-aaaa-idEscuela-Consecutivo
      */
     public function generarNumeroExpediente(): string
     {
         $año = now()->year;
-        $ultimoNumero = static::whereYear('fecha_carga', $año)
+        
+        // Formatear ID de escuela con 4 dígitos (rellenando con ceros a la izquierda)
+        $idEscuelaFormateado = str_pad($this->id_escuela, 4, '0', STR_PAD_LEFT);
+        
+        // Obtener el último número consecutivo para esta escuela en el año actual
+        $ultimoNumero = static::where('id_escuela', $this->id_escuela)
+            ->whereYear('fecha_carga', $año)
             ->whereNotNull('numero_expediente')
             ->count();
         
-        $numero = str_pad($ultimoNumero + 1, 3, '0', STR_PAD_LEFT);
-        return "EXP-{$año}-{$numero}";
+        $consecutivo = str_pad($ultimoNumero + 1, 3, '0', STR_PAD_LEFT);
+        
+        return "EXP-{$año}-{$idEscuelaFormateado}-{$consecutivo}";
     }
 
     /**

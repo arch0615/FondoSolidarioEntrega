@@ -138,14 +138,14 @@ class AdminDashboard extends Component
             ->get()
             ->map(function ($escuela) {
                 // Contar reintegros asociados a la escuela a través de los alumnos
-                $reintegrosCount = Reintegro::whereHas('alumno', function ($query) use ($escuela) {
+                $reintegrosCount = Reintegro::whereHas('accidente', function ($query) use ($escuela) {
                     $query->where('id_escuela', $escuela->id_escuela);
                 })->count();
 
                 // Sumar monto pendiente de reintegros asociados a la escuela (todos los que no estén en estado 'Pagado')
                 $montoPendiente = Reintegro::join('cat_estados_reintegros', 'reintegros.id_estado_reintegro', '=', 'cat_estados_reintegros.id_estado_reintegro')
                                             ->where('cat_estados_reintegros.nombre_estado', '!=', 'Pagado') // Excluir los que ya están pagados
-                                            ->whereHas('alumno', function ($query) use ($escuela) {
+                                            ->whereHas('accidente', function ($query) use ($escuela) {
                                                 $query->where('id_escuela', $escuela->id_escuela);
                                             })
                                             ->sum('monto_solicitado'); // Usar monto_solicitado para pendientes

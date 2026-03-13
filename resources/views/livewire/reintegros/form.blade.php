@@ -38,6 +38,22 @@
         </div>
     @endif
 
+    <!-- Overlay de carga que cubre todo el formulario -->
+    <div wire:loading wire:target="guardar" class="fixed inset-0 z-50 bg-gray-900 bg-opacity-50 flex items-center justify-center">
+        <div class="bg-white rounded-lg p-6 shadow-xl">
+            <div class="flex items-center space-x-4">
+                <svg class="animate-spin h-8 w-8 text-primary-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                <div class="text-lg font-medium text-gray-900">
+                    Guardando solicitud de reintegro...
+                    <div class="text-sm text-gray-500 mt-1">Por favor espere, no cierre esta ventana</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="mx-auto px-4">
         <!-- Formulario -->
         <div class="bg-white rounded-xl border border-secondary-200">
@@ -57,7 +73,7 @@
                                 <option value="">Seleccione un accidente</option>
                                 @foreach($accidentes as $accidente)
                                     <option value="{{ $accidente->id_accidente }}">
-                                        ACC-{{ str_pad($accidente->id_accidente, 3, '0', STR_PAD_LEFT) }} ({{ $accidente->fecha_accidente->format('d/m/Y') }} - {{ \Carbon\Carbon::parse($accidente->hora_accidente)->format('h:i A') }})
+                                        {{ $accidente->numero_expediente ?? 'ACC-' . str_pad($accidente->id_accidente, 3, '0', STR_PAD_LEFT) }} ({{ $accidente->fecha_accidente->format('d/m/Y') }} - {{ \Carbon\Carbon::parse($accidente->hora_accidente)->format('h:i A') }})
                                     </option>
                                 @endforeach
                             </select>
@@ -91,18 +107,41 @@
                             @error('fecha_solicitud') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
                         </div>
 
-                        <!-- Tipo de Gasto -->
-                        <div class="space-y-1">
-                            <label for="id_tipo_gasto" class="block text-sm font-medium text-secondary-700">
-                                Tipo de Gasto <span class="text-danger-500">*</span>
+                        <!-- Tipos de Gasto -->
+                        <div class="space-y-1 md:col-span-2">
+                            <label class="block text-sm font-medium text-secondary-700">
+                                Tipos de Gasto <span class="text-danger-500">*</span>
                             </label>
-                            <select wire:model="id_tipo_gasto" id="id_tipo_gasto" class="block w-full px-3 py-2 border border-secondary-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 {{ $modo == 'show' ? 'bg-secondary-50' : 'bg-white' }}" {{ $modo == 'show' ? 'disabled' : '' }} required>
-                                <option value="">Seleccione un tipo</option>
-                                @foreach($tiposGasto as $tipo)
-                                    <option value="{{ $tipo->id_tipo_gasto }}">{{ $tipo->descripcion }}</option>
-                                @endforeach
-                            </select>
-                            @error('id_tipo_gasto') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
+                            @if($modo == 'show')
+                                <div class="mt-2">
+                                    @if($tiposGastosSeleccionados && count($tiposGastosSeleccionados) > 0)
+                                        @foreach($tiposGastosSeleccionados as $tipoId)
+                                            @php $tipo = $tiposGasto->find($tipoId); @endphp
+                                            @if($tipo)
+                                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-primary-100 text-primary-800 mr-2 mb-2">
+                                                    {{ $tipo->descripcion }}
+                                                </span>
+                                            @endif
+                                        @endforeach
+                                    @else
+                                        <span class="text-secondary-500">Sin tipos de gasto seleccionados</span>
+                                    @endif
+                                </div>
+                            @else
+                                <div class="mt-2 grid grid-cols-2 md:grid-cols-3 gap-3">
+                                    @foreach($tiposGasto as $tipo)
+                                        <label class="relative flex items-start">
+                                            <div class="flex items-center h-5">
+                                                <input wire:model="tiposGastosSeleccionados" type="checkbox" value="{{ $tipo->id_tipo_gasto }}" class="h-4 w-4 text-primary-600 focus:ring-primary-500 border-secondary-300 rounded">
+                                            </div>
+                                            <div class="ml-3 text-sm">
+                                                <span class="text-secondary-700">{{ $tipo->descripcion }}</span>
+                                            </div>
+                                        </label>
+                                    @endforeach
+                                </div>
+                            @endif
+                            @error('tiposGastosSeleccionados') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
                         </div>
 
                         <!-- Monto Solicitado -->
@@ -222,8 +261,26 @@
                         Volver al Listado
                     </a>
                     @if($modo != 'show')
-                    <button type="submit" class="inline-flex items-center px-6 py-2 bg-primary-600 border border-transparent rounded-lg font-medium text-sm text-white hover:bg-primary-700">
-                        {{ $modo == 'create' ? 'Crear Solicitud' : 'Actualizar Solicitud' }}
+                    <button type="submit" 
+                            wire:loading.attr="disabled"
+                            wire:target="guardar"
+                            class="inline-flex items-center px-6 py-2 border border-transparent rounded-lg font-medium text-sm text-white bg-primary-600 hover:bg-primary-700 disabled:bg-primary-400 disabled:cursor-not-allowed">
+                        
+                        <!-- Spinner que se muestra solo cuando está cargando -->
+                        <svg wire:loading wire:target="guardar" class="animate-spin -ml-1 mr-3 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                        
+                        <!-- Texto que se muestra cuando NO está cargando -->
+                        <span wire:loading.remove wire:target="guardar">
+                            {{ $modo == 'create' ? 'Crear Solicitud' : 'Actualizar Solicitud' }}
+                        </span>
+                        
+                        <!-- Texto que se muestra cuando SÍ está cargando -->
+                        <span wire:loading wire:target="guardar">
+                            Guardando...
+                        </span>
                     </button>
                     @endif
                 </div>

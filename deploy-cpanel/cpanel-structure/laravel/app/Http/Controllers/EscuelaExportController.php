@@ -26,28 +26,34 @@ class EscuelaExportController extends Controller
             fprintf($file, chr(0xEF).chr(0xBB).chr(0xBF));
             
             fputcsv($file, [
-                'ID',
-                'Código',
-                'Nombre',
-                'Dirección',
+                'Nombre de Escuela',
+                'CUIT',
+                'Estatus',
                 'Teléfono',
-                'Email',
-                'Aporte por Alumno',
-                'Fecha Alta',
-                'Estado',
+                'Correo',
+                'Domicilio',
+                'Alumnos',
+                'Empleados',
+                'Salidas Educativas',
+                'Pasantías',
+                'Beneficiarios SVO',
+                'Accidentes',
             ], ',', '"');
 
             foreach ($entidades as $entidad) {
                 fputcsv($file, [
-                    $entidad->id_escuela,
-                    $entidad->codigo_escuela,
                     $entidad->nombre,
-                    $entidad->direccion,
-                    $entidad->telefono,
-                    $entidad->email,
-                    $entidad->aporte_por_alumno,
-                    $entidad->fecha_alta ? $entidad->fecha_alta->format('d/m/Y') : 'N/A',
+                    $entidad->codigo_escuela,
                     $entidad->activo ? 'Activo' : 'Inactivo',
+                    $entidad->telefono ?? 'No disponible',
+                    $entidad->email ?? 'No disponible',
+                    $entidad->direccion ?? 'No disponible',
+                    $entidad->cantidad_alumnos ?? 0,
+                    $entidad->cantidad_empleados ?? 0,
+                    $entidad->salidas_educativas_count ?? 0,
+                    $entidad->pasantias_count ?? 0,
+                    $entidad->beneficiarios_svo_count ?? 0,
+                    $entidad->accidentes_count ?? 0,
                 ], ',', '"');
             }
 
@@ -89,7 +95,13 @@ class EscuelaExportController extends Controller
 
     private function getEntidadesFiltradas(Request $request)
     {
-        $query = Escuela::query();
+        $query = Escuela::query()
+            ->withCount([
+                'accidentes',
+                'salidasEducativas',
+                'pasantias',
+                'beneficiariosSvo'
+            ]);
 
         if ($request->has('filtro_nombre') && $request->filtro_nombre) {
             $query->where('nombre', 'like', '%' . $request->filtro_nombre . '%');
@@ -118,30 +130,36 @@ class EscuelaExportController extends Controller
          <Worksheet ss:Name="Escuelas">
           <Table>
            <Row>
-            <Cell ss:StyleID="Header"><Data ss:Type="String">ID</Data></Cell>
-            <Cell ss:StyleID="Header"><Data ss:Type="String">Código</Data></Cell>
-            <Cell ss:StyleID="Header"><Data ss:Type="String">Nombre</Data></Cell>
-            <Cell ss:StyleID="Header"><Data ss:Type="String">Dirección</Data></Cell>
+            <Cell ss:StyleID="Header"><Data ss:Type="String">Nombre de Escuela</Data></Cell>
+            <Cell ss:StyleID="Header"><Data ss:Type="String">CUIT</Data></Cell>
+            <Cell ss:StyleID="Header"><Data ss:Type="String">Estatus</Data></Cell>
             <Cell ss:StyleID="Header"><Data ss:Type="String">Teléfono</Data></Cell>
-            <Cell ss:StyleID="Header"><Data ss:Type="String">Email</Data></Cell>
-            <Cell ss:StyleID="Header"><Data ss:Type="String">Aporte</Data></Cell>
-            <Cell ss:StyleID="Header"><Data ss:Type="String">Fecha Alta</Data></Cell>
-            <Cell ss:StyleID="Header"><Data ss:Type="String">Estado</Data></Cell>
+            <Cell ss:StyleID="Header"><Data ss:Type="String">Correo</Data></Cell>
+            <Cell ss:StyleID="Header"><Data ss:Type="String">Domicilio</Data></Cell>
+            <Cell ss:StyleID="Header"><Data ss:Type="String">Alumnos</Data></Cell>
+            <Cell ss:StyleID="Header"><Data ss:Type="String">Empleados</Data></Cell>
+            <Cell ss:StyleID="Header"><Data ss:Type="String">Salidas Educativas</Data></Cell>
+            <Cell ss:StyleID="Header"><Data ss:Type="String">Pasantías</Data></Cell>
+            <Cell ss:StyleID="Header"><Data ss:Type="String">Beneficiarios SVO</Data></Cell>
+            <Cell ss:StyleID="Header"><Data ss:Type="String">Accidentes</Data></Cell>
            </Row>';
 
-        foreach ($entidades as $entidad) {
-            $html .= '<Row>
-             <Cell><Data ss:Type="Number">' . $entidad->id_escuela . '</Data></Cell>
-             <Cell><Data ss:Type="String">' . export_clean($entidad->codigo_escuela) . '</Data></Cell>
-             <Cell><Data ss:Type="String">' . export_clean($entidad->nombre) . '</Data></Cell>
-             <Cell><Data ss:Type="String">' . export_clean($entidad->direccion) . '</Data></Cell>
-             <Cell><Data ss:Type="String">' . export_clean($entidad->telefono) . '</Data></Cell>
-             <Cell><Data ss:Type="String">' . export_clean($entidad->email) . '</Data></Cell>
-             <Cell><Data ss:Type="Number">' . $entidad->aporte_por_alumno . '</Data></Cell>
-             <Cell><Data ss:Type="String">' . ($entidad->fecha_alta ? $entidad->fecha_alta->format('d/m/Y') : 'N/A') . '</Data></Cell>
-             <Cell><Data ss:Type="String">' . ($entidad->activo ? 'Activo' : 'Inactivo') . '</Data></Cell>
-            </Row>';
-        }
+       foreach ($entidades as $entidad) {
+           $html .= '<Row>
+            <Cell><Data ss:Type="String">' . export_clean($entidad->nombre) . '</Data></Cell>
+            <Cell><Data ss:Type="String">' . export_clean($entidad->codigo_escuela) . '</Data></Cell>
+            <Cell><Data ss:Type="String">' . ($entidad->activo ? 'Activo' : 'Inactivo') . '</Data></Cell>
+            <Cell><Data ss:Type="String">' . export_clean($entidad->telefono ?? 'No disponible') . '</Data></Cell>
+            <Cell><Data ss:Type="String">' . export_clean($entidad->email ?? 'No disponible') . '</Data></Cell>
+            <Cell><Data ss:Type="String">' . export_clean($entidad->direccion ?? 'No disponible') . '</Data></Cell>
+            <Cell><Data ss:Type="Number">' . ($entidad->cantidad_alumnos ?? 0) . '</Data></Cell>
+            <Cell><Data ss:Type="Number">' . ($entidad->cantidad_empleados ?? 0) . '</Data></Cell>
+            <Cell><Data ss:Type="Number">' . ($entidad->salidas_educativas_count ?? 0) . '</Data></Cell>
+            <Cell><Data ss:Type="Number">' . ($entidad->pasantias_count ?? 0) . '</Data></Cell>
+            <Cell><Data ss:Type="Number">' . ($entidad->beneficiarios_svo_count ?? 0) . '</Data></Cell>
+            <Cell><Data ss:Type="Number">' . ($entidad->accidentes_count ?? 0) . '</Data></Cell>
+           </Row>';
+       }
 
         $html .= '  </Table>
          </Worksheet>
@@ -175,22 +193,36 @@ class EscuelaExportController extends Controller
             <table>
                 <thead>
                     <tr>
-                        <th>ID</th>
-                        <th>Código</th>
-                        <th>Nombre</th>
+                        <th>Nombre de Escuela</th>
+                        <th>CUIT</th>
+                        <th>Estatus</th>
                         <th>Teléfono</th>
-                        <th>Estado</th>
+                        <th>Correo</th>
+                        <th>Domicilio</th>
+                        <th>Alumnos</th>
+                        <th>Empleados</th>
+                        <th>Salidas Educativas</th>
+                        <th>Pasantías</th>
+                        <th>Beneficiarios SVO</th>
+                        <th>Accidentes</th>
                     </tr>
                 </thead>
                 <tbody>';
 
         foreach ($entidades as $entidad) {
             $html .= '<tr>
-                <td>' . $entidad->id_escuela . '</td>
-                <td>' . htmlspecialchars($entidad->codigo_escuela) . '</td>
                 <td>' . htmlspecialchars($entidad->nombre) . '</td>
-                <td>' . htmlspecialchars($entidad->telefono) . '</td>
+                <td>' . htmlspecialchars($entidad->codigo_escuela) . '</td>
                 <td>' . ($entidad->activo ? 'Activo' : 'Inactivo') . '</td>
+                <td>' . htmlspecialchars($entidad->telefono ?? 'No disponible') . '</td>
+                <td>' . htmlspecialchars($entidad->email ?? 'No disponible') . '</td>
+                <td>' . htmlspecialchars($entidad->direccion ?? 'No disponible') . '</td>
+                <td>' . ($entidad->cantidad_alumnos ?? 0) . '</td>
+                <td>' . ($entidad->cantidad_empleados ?? 0) . '</td>
+                <td>' . ($entidad->salidas_educativas_count ?? 0) . '</td>
+                <td>' . ($entidad->pasantias_count ?? 0) . '</td>
+                <td>' . ($entidad->beneficiarios_svo_count ?? 0) . '</td>
+                <td>' . ($entidad->accidentes_count ?? 0) . '</td>
             </tr>';
         }
 

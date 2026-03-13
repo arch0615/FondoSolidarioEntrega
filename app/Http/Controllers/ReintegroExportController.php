@@ -34,17 +34,19 @@ class ReintegroExportController extends Controller
                 'Escuela',
                 'Fecha Solicitud',
                 'Monto Solicitado',
+                'Tipos de Gasto',
                 'Estado',
             ]);
 
             foreach ($reintegros as $reintegro) {
                 fputcsv($file, [
                     $reintegro->id_reintegro,
-                    $reintegro->accidente->id_accidente_entero ?? 'N/A',
+                    $reintegro->accidente->numero_expediente ?? $reintegro->accidente->id_accidente_entero ?? 'N/A',
                     export_clean($reintegro->alumno->nombre_completo ?? 'N/A'),
                     export_clean($reintegro->accidente->escuela->nombre ?? 'N/A'),
                     $reintegro->fecha_solicitud ? $reintegro->fecha_solicitud->format('d/m/Y') : '',
                     $reintegro->monto_solicitado,
+                    export_clean($this->formatearTiposGastos($reintegro)),
                     export_clean($reintegro->estadoReintegro->descripcion ?? 'Sin Estado'),
                 ]);
             }
@@ -74,16 +76,17 @@ class ReintegroExportController extends Controller
     private function generarHTMLParaExcel($reintegros)
     {
         $html = '<?xml version="1.0" encoding="UTF-8"?><Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet" xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet"><Styles><Style ss:ID="Header"><Font ss:Bold="1"/></Style></Styles><Worksheet ss:Name="Reintegros"><Table>';
-        $html .= '<Row><Cell ss:StyleID="Header"><Data ss:Type="String">ID Reintegro</Data></Cell><Cell ss:StyleID="Header"><Data ss:Type="String">ID Accidente</Data></Cell><Cell ss:StyleID="Header"><Data ss:Type="String">Alumno</Data></Cell><Cell ss:StyleID="Header"><Data ss:Type="String">Escuela</Data></Cell><Cell ss:StyleID="Header"><Data ss:Type="String">Fecha Solicitud</Data></Cell><Cell ss:StyleID="Header"><Data ss:Type="String">Monto Solicitado</Data></Cell><Cell ss:StyleID="Header"><Data ss:Type="String">Estado</Data></Cell></Row>';
+        $html .= '<Row><Cell ss:StyleID="Header"><Data ss:Type="String">ID Reintegro</Data></Cell><Cell ss:StyleID="Header"><Data ss:Type="String">ID Accidente</Data></Cell><Cell ss:StyleID="Header"><Data ss:Type="String">Alumno</Data></Cell><Cell ss:StyleID="Header"><Data ss:Type="String">Escuela</Data></Cell><Cell ss:StyleID="Header"><Data ss:Type="String">Fecha Solicitud</Data></Cell><Cell ss:StyleID="Header"><Data ss:Type="String">Monto Solicitado</Data></Cell><Cell ss:StyleID="Header"><Data ss:Type="String">Tipos de Gasto</Data></Cell><Cell ss:StyleID="Header"><Data ss:Type="String">Estado</Data></Cell></Row>';
 
         foreach ($reintegros as $reintegro) {
             $html .= '<Row>';
             $html .= '<Cell><Data ss:Type="Number">' . $reintegro->id_reintegro . '</Data></Cell>';
-            $html .= '<Cell><Data ss:Type="String">' . export_clean($reintegro->accidente->id_accidente_entero ?? 'N/A') . '</Data></Cell>';
+            $html .= '<Cell><Data ss:Type="String">' . export_clean($reintegro->accidente->numero_expediente ?? $reintegro->accidente->id_accidente_entero ?? 'N/A') . '</Data></Cell>';
             $html .= '<Cell><Data ss:Type="String">' . export_clean($reintegro->alumno->nombre_completo ?? 'N/A') . '</Data></Cell>';
             $html .= '<Cell><Data ss:Type="String">' . export_clean($reintegro->accidente->escuela->nombre ?? 'N/A') . '</Data></Cell>';
             $html .= '<Cell><Data ss:Type="String">' . ($reintegro->fecha_solicitud ? $reintegro->fecha_solicitud->format('d/m/Y') : '') . '</Data></Cell>';
             $html .= '<Cell><Data ss:Type="Number">' . $reintegro->monto_solicitado . '</Data></Cell>';
+            $html .= '<Cell><Data ss:Type="String">' . export_clean($this->formatearTiposGastos($reintegro)) . '</Data></Cell>';
             $html .= '<Cell><Data ss:Type="String">' . export_clean($reintegro->estadoReintegro->descripcion ?? 'Sin Estado') . '</Data></Cell>';
             $html .= '</Row>';
         }
@@ -102,11 +105,12 @@ class ReintegroExportController extends Controller
 
     private function getReintegrosQuery(Request $request)
     {
-        $query = Reintegro::query()->with(['accidente', 'alumno', 'estadoReintegro', 'accidente.escuela']);
+        $query = Reintegro::query()->with(['accidente', 'alumno', 'estadoReintegro', 'accidente.escuela', 'tiposGastos']);
         
         if ($request->filled('filtro_id_accidente')) {
             $query->whereHas('accidente', function($q) use ($request) {
-                $q->where('id_accidente_entero', 'like', '%' . $request->filtro_id_accidente . '%');
+                $q->where('numero_expediente', 'like', '%' . $request->filtro_id_accidente . '%')
+                  ->orWhere('id_accidente_entero', 'like', '%' . $request->filtro_id_accidente . '%');
             });
         }
         
@@ -131,6 +135,23 @@ class ReintegroExportController extends Controller
             }
         }
 
+        // Filtrar para rol de Médico Auditor (rol=3): solo ver reintegros cerrados
+        if ($usuario && $usuario->id_rol == 3) {
+            $query->whereIn('id_estado_reintegro', [3, 4, 5]); // 3=Autorizado, 4=Rechazado, 5=Pagado
+        }
+
         return $query->orderBy('id_reintegro', 'desc');
+    }
+
+    /**
+     * Formatea los tipos de gastos separados por coma
+     */
+    private function formatearTiposGastos($reintegro)
+    {
+        if (!$reintegro->tiposGastos || $reintegro->tiposGastos->count() === 0) {
+            return 'Sin tipos de gasto';
+        }
+
+        return $reintegro->tiposGastos->pluck('descripcion')->join(', ');
     }
 }

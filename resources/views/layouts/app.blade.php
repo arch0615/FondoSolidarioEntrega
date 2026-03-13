@@ -28,7 +28,7 @@
             <div class="flex items-center justify-between">
                 <!-- Logo and Title -->
                 <div class="flex items-center gap-4">
-                    <img src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/LogoFondoBlanco-oKKkrA6edv1XnSs9HXshtlyWLdv9nx.png" alt="JAEC Logo" class="h-10 object-contain">
+                    <img src="{{ asset('images/LogoFondoBlanco.png') }}" alt="JAEC Logo" class="h-10 object-contain">
                     <div>
                         <h1 class="text-xl font-semibold text-primary-600">Fondo Solidario</h1>
                         <p class="text-sm text-gray-600">Sistema de Gestión JAEC</p>
@@ -123,13 +123,15 @@
         function toggleMenu(menuId) {
             const menu = document.getElementById(menuId + '-menu');
             const icon = document.getElementById(menuId + '-icon');
-            
-            if (menu.classList.contains('hidden')) {
-                menu.classList.remove('hidden');
-                icon.className = 'fas fa-chevron-down text-xs';
-            } else {
-                menu.classList.add('hidden');
-                icon.className = 'fas fa-chevron-right text-xs';
+
+            if (menu) {
+                if (menu.classList.contains('hidden')) {
+                    menu.classList.remove('hidden');
+                    if (icon) icon.className = 'fas fa-chevron-down text-xs';
+                } else {
+                    menu.classList.add('hidden');
+                    if (icon) icon.className = 'fas fa-chevron-right text-xs';
+                }
             }
         }
 
@@ -176,5 +178,41 @@
     
     @livewireScripts
     @stack('scripts')
+
+    <!-- Toast Container -->
+    <div id="toast-container" class="fixed top-4 right-4 z-[9999] flex flex-col gap-2 w-80 pointer-events-none"></div>
+
+    <!-- Session Flash Toasts -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            @if (session('toast_success'))
+                showToast(@json(session('toast_success')), 'success');
+            @endif
+            @if (session('toast_error'))
+                showToast(@json(session('toast_error')), 'error');
+            @endif
+            @if (session('toast_warning'))
+                showToast(@json(session('toast_warning')), 'warning');
+            @endif
+            @if (session('toast_info'))
+                showToast(@json(session('toast_info')), 'info');
+            @endif
+            @if (session('success'))
+                showToast(@json(session('success')), 'success');
+            @endif
+            @if (session('error'))
+                showToast(@json(session('error')), 'error');
+            @endif
+        });
+
+        // Livewire toast events
+        document.addEventListener('livewire:initialized', () => {
+            Livewire.on('toast', ({ message, type = 'info' }) => showToast(message, type));
+            Livewire.on('toast-success', ({ message }) => showToast(message, 'success'));
+            Livewire.on('toast-error',   ({ message }) => showToast(message, 'error'));
+            Livewire.on('toast-warning', ({ message }) => showToast(message, 'warning'));
+            Livewire.on('toast-info',    ({ message }) => showToast(message, 'info'));
+        });
+    </script>
 </body>
 </html>

@@ -1,13 +1,13 @@
 <?php
-// Archivo temporal para crear enlace simbólico de storage
-// IMPORTANTE: Eliminar este archivo después de ejecutarlo
+// Archivo temporal para crear enlace simbolico de storage
+// IMPORTANTE: Eliminar este archivo despues de ejecutarlo
 
-$targetFolder = '../storage/app/public';
+$targetFolder = '../laravel/storage/app/public';
 $linkFolder = 'storage';
 
 if (file_exists($linkFolder)) {
-    echo "El enlace simbólico ya existe.";
+    echo "El enlace simbolico ya existe.";
 } else {
     symlink($targetFolder, $linkFolder);
-    echo "Enlace simbólico creado exitosamente. Por favor, elimina este archivo.";
+    echo "Enlace simbolico creado exitosamente. Por favor, elimina este archivo.";
 }

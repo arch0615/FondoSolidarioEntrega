@@ -41,53 +41,77 @@
         <!-- Información del Documento -->
         <div class="border-b border-secondary-200 pb-6">
             <h3 class="text-lg font-medium text-secondary-900 mb-4">Información del Documento</h3>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div class="md:col-span-2 space-y-1">
-                    <label for="nombre_documento" class="block text-sm font-medium text-secondary-700">Nombre del Documento <span class="text-danger-500">*</span></label>
-                    <input wire:model="nombre_documento" type="text" id="nombre_documento" class="block w-full px-3 py-2 border border-secondary-300 rounded-lg text-sm" {{ $modo == 'show' ? 'readonly' : '' }}>
-                    @error('nombre_documento') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <!-- Columna Izquierda: Información del Documento -->
+                <div class="space-y-4">
+                    <div class="space-y-1">
+                        <label for="nombre_documento" class="block text-sm font-medium text-secondary-700">Nombre del Documento <span class="text-danger-500">*</span></label>
+                        <input wire:model="nombre_documento" type="text" id="nombre_documento" class="block w-full px-3 py-2 border border-secondary-300 rounded-lg text-sm" {{ $modo == 'show' ? 'readonly' : '' }}>
+                        @error('nombre_documento') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
+                    </div>
+
+                    <div class="space-y-1">
+                        <label for="fecha_documento" class="block text-sm font-medium text-secondary-700">Fecha del Documento</label>
+                        <input wire:model="fecha_documento" type="date" id="fecha_documento" class="block w-full px-3 py-2 border border-secondary-300 rounded-lg text-sm" {{ $modo == 'show' ? 'readonly' : '' }}>
+                        @error('fecha_documento') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
+                    </div>
+
+                    <div class="space-y-1">
+                        <label for="fecha_vencimiento" class="block text-sm font-medium text-secondary-700">Fecha de Vencimiento</label>
+                        <input wire:model="fecha_vencimiento" type="date" id="fecha_vencimiento" class="block w-full px-3 py-2 border border-secondary-300 rounded-lg text-sm" {{ $modo == 'show' ? 'readonly' : '' }}>
+                        @error('fecha_vencimiento') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
+                    </div>
+
+                    <div class="space-y-1">
+                        <label for="descripcion" class="block text-sm font-medium text-secondary-700">Descripción</label>
+                        <textarea wire:model="descripcion" id="descripcion" rows="4" class="block w-full px-3 py-2 border border-secondary-300 rounded-lg text-sm" {{ $modo == 'show' ? 'readonly' : '' }}></textarea>
+                        @error('descripcion') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
+                    </div>
                 </div>
 
-                {{-- Campo tipo de documento oculto temporalmente
-                <div class="space-y-1">
-                    <label for="id_tipo_documento" class="block text-sm font-medium text-secondary-700">Tipo de Documento <span class="text-danger-500">*</span></label>
-                    <select wire:model="id_tipo_documento" id="id_tipo_documento" class="block w-full px-3 py-2 border border-secondary-300 rounded-lg text-sm" {{ $modo == 'show' ? 'disabled' : '' }}>
-                        <option value="">Seleccione un tipo</option>
-                        @foreach($tipos_documento as $tipo)
-                            <option value="{{ $tipo->id_tipo_documento }}">{{ $tipo->nombre_tipo_documento }}</option>
-                        @endforeach
-                    </select>
-                    @error('id_tipo_documento') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
-                </div>
-                --}}
+                <!-- Columna Derecha: Selector de Escuelas -->
+                <div class="space-y-4">
+                    <div class="space-y-1">
+                        <label class="block text-sm font-medium text-secondary-700">Escuelas <span class="text-danger-500">*</span></label>
+                        <div class="border border-secondary-300 rounded-lg p-4 bg-secondary-50">
+                            @if($modo != 'show')
+                            <div class="flex gap-2 mb-3">
+                                <button wire:click="seleccionarTodasEscuelas" type="button" class="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded-md text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
+                                    Seleccionar Todas
+                                </button>
+                                <button wire:click="limpiarSeleccion" type="button" class="inline-flex items-center px-3 py-1.5 border border-secondary-300 text-xs font-medium rounded-md text-secondary-700 bg-white hover:bg-secondary-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
+                                    Limpiar
+                                </button>
+                            </div>
+                            @endif
 
-                <div class="space-y-1">
-                    <label for="id_escuela" class="block text-sm font-medium text-secondary-700">Escuela <span class="text-danger-500">*</span></label>
-                    <select wire:model="id_escuela" id="id_escuela" class="block w-full px-3 py-2 border border-secondary-300 rounded-lg text-sm" {{ $modo == 'show' || auth()->user()->id_rol == 1 ? 'disabled' : '' }}>
-                        <option value="">Seleccione una escuela</option>
-                        @foreach($escuelas as $escuela)
-                            <option value="{{ $escuela->id_escuela }}">{{ $escuela->nombre }}</option>
-                        @endforeach
-                    </select>
-                    @error('id_escuela') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
-                </div>
+                            <div class="max-h-60 overflow-y-auto border border-secondary-200 rounded-md bg-white">
+                                <div class="p-2 space-y-1">
+                                    @foreach($escuelas as $escuela)
+                                        <div wire:click="toggleEscuela({{ $escuela->id_escuela }})"
+                                             class="flex items-center p-2 rounded-md cursor-pointer transition-colors duration-150 {{ in_array($escuela->id_escuela, $escuelas_seleccionadas) ? 'bg-primary-100 border border-primary-300' : 'hover:bg-secondary-50' }}"
+                                             {{ $modo == 'show' ? '' : '' }}>
+                                            <div class="flex items-center flex-1">
+                                                <div class="w-4 h-4 mr-3 rounded border-2 {{ in_array($escuela->id_escuela, $escuelas_seleccionadas) ? 'bg-primary-600 border-primary-600' : 'border-secondary-300' }}">
+                                                    @if(in_array($escuela->id_escuela, $escuelas_seleccionadas))
+                                                        <svg class="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                                                        </svg>
+                                                    @endif
+                                                </div>
+                                                <span class="text-sm text-secondary-900">{{ $escuela->nombre }}</span>
+                                            </div>
+                                        </div>
+                                    @endforeach
+                                </div>
+                            </div>
 
-                <div class="space-y-1">
-                    <label for="fecha_documento" class="block text-sm font-medium text-secondary-700">Fecha del Documento</label>
-                    <input wire:model="fecha_documento" type="date" id="fecha_documento" class="block w-full px-3 py-2 border border-secondary-300 rounded-lg text-sm" {{ $modo == 'show' ? 'readonly' : '' }}>
-                    @error('fecha_documento') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
-                </div>
-
-                <div class="space-y-1">
-                    <label for="fecha_vencimiento" class="block text-sm font-medium text-secondary-700">Fecha de Vencimiento</label>
-                    <input wire:model="fecha_vencimiento" type="date" id="fecha_vencimiento" class="block w-full px-3 py-2 border border-secondary-300 rounded-lg text-sm" {{ $modo == 'show' ? 'readonly' : '' }}>
-                    @error('fecha_vencimiento') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
-                </div>
-
-                <div class="md:col-span-2 space-y-1">
-                    <label for="descripcion" class="block text-sm font-medium text-secondary-700">Descripción</label>
-                    <textarea wire:model="descripcion" id="descripcion" rows="4" class="block w-full px-3 py-2 border border-secondary-300 rounded-lg text-sm" {{ $modo == 'show' ? 'readonly' : '' }}></textarea>
-                    @error('descripcion') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
+                            <div class="mt-2 text-xs text-secondary-600">
+                                {{ count($escuelas_seleccionadas) }} escuela(s) seleccionada(s)
+                            </div>
+                        </div>
+                        @error('escuelas_seleccionadas') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
+                    </div>
                 </div>
             </div>
         </div>

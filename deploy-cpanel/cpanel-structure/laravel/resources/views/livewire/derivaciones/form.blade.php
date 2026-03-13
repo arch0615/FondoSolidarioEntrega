@@ -89,7 +89,7 @@
                                 <option value="">Seleccione un accidente</option>
                                 @foreach($accidentes as $accidente)
                                     <option value="{{ $accidente->id_accidente }}">
-                                        ACC-{{ str_pad($accidente->id_accidente, 3, '0', STR_PAD_LEFT) }} ({{ $accidente->fecha_accidente->format('d/m/Y') }} - {{ \Carbon\Carbon::parse($accidente->hora_accidente)->format('h:i A') }})
+                                        {{ $accidente->numero_expediente ?? 'ACC-' . str_pad($accidente->id_accidente, 3, '0', STR_PAD_LEFT) }} ({{ $accidente->fecha_accidente->format('d/m/Y') }} - {{ \Carbon\Carbon::parse($accidente->hora_accidente)->format('h:i A') }})
                                     </option>
                                 @endforeach
                             </select>
@@ -218,6 +218,7 @@
                             <p class="text-xs text-secondary-500">Descripción breve del motivo de la derivación según la evaluación inicial en la escuela.</p>
                             @error('diagnostico_inicial') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
                         </div>
+
 
                         <!-- Observaciones Adicionales -->
                         <div class="md:col-span-2 space-y-1">

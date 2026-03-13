@@ -28,23 +28,29 @@ class SalidaEducativaExportController extends Controller
             
             fputcsv($file, [
                 'ID',
-                'Fecha Salida',
+                'Fecha y Horario',
                 'Destino',
+                'Propósito',
                 'Escuela',
-                'Grado/Curso',
                 'Cantidad Alumnos',
+                'Docentes Acompañantes',
                 'Transporte',
                 'Fecha Carga'
             ], ',', '"');
 
             foreach ($salidas as $salida) {
+                $fechaHorario = $salida->fecha_salida->format('d/m/Y') . "\n" .
+                               ($salida->hora_salida ? $salida->hora_salida->format('H:i') : 'N/A') . ' - ' .
+                               ($salida->hora_regreso ? $salida->hora_regreso->format('H:i') : 'N/A');
+
                 fputcsv($file, [
                     $salida->id_salida,
-                    $salida->fecha_salida->format('d/m/Y'),
+                    $fechaHorario,
                     export_clean($salida->destino),
+                    export_clean($salida->proposito),
                     export_clean($salida->escuela->nombre ?? 'N/A'),
-                    export_clean($salida->grado_curso),
                     $salida->cantidad_alumnos,
+                    export_clean($salida->docentes_acompanantes),
                     export_clean($salida->transporte),
                     $salida->fecha_carga->format('d/m/Y H:i')
                 ], ',', '"');
@@ -123,23 +129,29 @@ class SalidaEducativaExportController extends Controller
           <Table>
            <Row>
             <Cell ss:StyleID="Header"><Data ss:Type="String">ID</Data></Cell>
-            <Cell ss:StyleID="Header"><Data ss:Type="String">Fecha Salida</Data></Cell>
+            <Cell ss:StyleID="Header"><Data ss:Type="String">Fecha y Horario</Data></Cell>
             <Cell ss:StyleID="Header"><Data ss:Type="String">Destino</Data></Cell>
+            <Cell ss:StyleID="Header"><Data ss:Type="String">Propósito</Data></Cell>
             <Cell ss:StyleID="Header"><Data ss:Type="String">Escuela</Data></Cell>
-            <Cell ss:StyleID="Header"><Data ss:Type="String">Grado/Curso</Data></Cell>
             <Cell ss:StyleID="Header"><Data ss:Type="String">Alumnos</Data></Cell>
+            <Cell ss:StyleID="Header"><Data ss:Type="String">Docentes Acompañantes</Data></Cell>
             <Cell ss:StyleID="Header"><Data ss:Type="String">Transporte</Data></Cell>
             <Cell ss:StyleID="Header"><Data ss:Type="String">Fecha Carga</Data></Cell>
            </Row>';
 
         foreach ($salidas as $salida) {
+            $fechaHorario = $salida->fecha_salida->format('d/m/Y') . "\n" .
+                           ($salida->hora_salida ? $salida->hora_salida->format('H:i') : 'N/A') . ' - ' .
+                           ($salida->hora_regreso ? $salida->hora_regreso->format('H:i') : 'N/A');
+
             $html .= '<Row>
              <Cell><Data ss:Type="Number">' . $salida->id_salida . '</Data></Cell>
-             <Cell><Data ss:Type="String">' . $salida->fecha_salida->format('d/m/Y') . '</Data></Cell>
+             <Cell><Data ss:Type="String">' . $fechaHorario . '</Data></Cell>
              <Cell><Data ss:Type="String">' . export_clean($salida->destino) . '</Data></Cell>
+             <Cell><Data ss:Type="String">' . export_clean($salida->proposito) . '</Data></Cell>
              <Cell><Data ss:Type="String">' . export_clean($salida->escuela->nombre ?? 'N/A') . '</Data></Cell>
-             <Cell><Data ss:Type="String">' . export_clean($salida->grado_curso) . '</Data></Cell>
              <Cell><Data ss:Type="Number">' . $salida->cantidad_alumnos . '</Data></Cell>
+             <Cell><Data ss:Type="String">' . export_clean($salida->docentes_acompanantes) . '</Data></Cell>
              <Cell><Data ss:Type="String">' . export_clean($salida->transporte) . '</Data></Cell>
              <Cell><Data ss:Type="String">' . $salida->fecha_carga->format('d/m/Y H:i') . '</Data></Cell>
             </Row>';
@@ -166,6 +178,8 @@ class SalidaEducativaExportController extends Controller
                 th { background-color: #f2f2f2; }
                 .header { text-align: center; margin-bottom: 20px; }
                 .no-print { margin-bottom: 20px; text-align: center; }
+                .fecha-horario { font-size: 11px; }
+                .horario { color: #0066cc; font-size: 10px; font-weight: normal; }
             </style>
         </head>
         <body>
@@ -177,11 +191,12 @@ class SalidaEducativaExportController extends Controller
                 <thead>
                     <tr>
                         <th>ID</th>
-                        <th>Fecha Salida</th>
+                        <th>Fecha y Horario</th>
                         <th>Destino</th>
+                        <th>Propósito</th>
                         <th>Escuela</th>
-                        <th>Grado/Curso</th>
                         <th>Alumnos</th>
+                        <th>Docentes Acompañantes</th>
                         <th>Transporte</th>
                         <th>Fecha Carga</th>
                     </tr>
@@ -189,13 +204,20 @@ class SalidaEducativaExportController extends Controller
                 <tbody>';
 
         foreach ($salidas as $salida) {
+            $fechaHorario = '<div class="fecha-horario">' . $salida->fecha_salida->format('d/m/Y') . '</div>';
+            $fechaHorario .= '<div class="horario">' .
+                           ($salida->hora_salida ? $salida->hora_salida->format('H:i') : 'N/A') . ' - ' .
+                           ($salida->hora_regreso ? $salida->hora_regreso->format('H:i') : 'N/A') .
+                           '</div>';
+
             $html .= '<tr>
                 <td>' . $salida->id_salida . '</td>
-                <td>' . $salida->fecha_salida->format('d/m/Y') . '</td>
+                <td>' . $fechaHorario . '</td>
                 <td>' . export_clean($salida->destino) . '</td>
+                <td>' . export_clean($salida->proposito) . '</td>
                 <td>' . export_clean($salida->escuela->nombre ?? 'N/A') . '</td>
-                <td>' . export_clean($salida->grado_curso) . '</td>
                 <td>' . $salida->cantidad_alumnos . '</td>
+                <td>' . export_clean($salida->docentes_acompanantes) . '</td>
                 <td>' . export_clean($salida->transporte) . '</td>
                 <td>' . $salida->fecha_carga->format('d/m/Y H:i') . '</td>
             </tr>';

@@ -14,6 +14,7 @@ class AccidenteAlumno extends Model
     protected $fillable = [
         'id_accidente',
         'id_alumno',
+        'grado_seccion',
     ];
 
     public function accidente(): BelongsTo

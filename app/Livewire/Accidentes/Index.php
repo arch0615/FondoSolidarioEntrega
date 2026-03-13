@@ -19,6 +19,7 @@ class Index extends Component
     public $filtro_fecha = '';
     public $filtro_estado = '';
     public $filtro_expediente = '';
+    public $filtro_alumno = '';
 
     // CONTROL DE ROL DE USUARIO
     public $es_usuario_general = false;
@@ -36,8 +37,10 @@ class Index extends Component
         'filtro_fecha' => ['except' => ''],
         'filtro_estado' => ['except' => ''],
         'filtro_expediente' => ['except' => ''],
+        'filtro_alumno' => ['except' => ''],
         'sortField' => ['except' => 'fecha_accidente'],
         'sortDirection' => ['except' => 'desc'],
+        'perPage' => ['except' => 10],
     ];
 
     public function mount()
@@ -84,6 +87,13 @@ class Index extends Component
             })
             ->when($this->filtro_expediente, function ($query) {
                 $query->where('numero_expediente', 'like', '%' . $this->filtro_expediente . '%');
+            })
+            ->when($this->filtro_alumno, function ($query) {
+                $query->whereHas('alumnos.alumno', function ($q) {
+                    $q->where('nombre', 'like', '%' . $this->filtro_alumno . '%')
+                      ->orWhere('apellido', 'like', '%' . $this->filtro_alumno . '%')
+                      ->orWhere('dni', 'like', '%' . $this->filtro_alumno . '%');
+                });
             });
 
         // Aplicar ordenamiento
@@ -107,9 +117,9 @@ class Index extends Component
     {
         // Para usuarios generales, no limpiar el filtro de escuela
         if ($this->es_usuario_general) {
-            $this->reset(['filtro_fecha', 'filtro_estado', 'filtro_expediente']);
+            $this->reset(['filtro_fecha', 'filtro_estado', 'filtro_expediente', 'filtro_alumno']);
         } else {
-            $this->reset(['filtro_escuela', 'filtro_fecha', 'filtro_estado', 'filtro_expediente']);
+            $this->reset(['filtro_escuela', 'filtro_fecha', 'filtro_estado', 'filtro_expediente', 'filtro_alumno']);
         }
         $this->resetPage();
     }
@@ -161,12 +171,13 @@ class Index extends Component
                     'nombre_completo' => $accidenteAlumno->alumno->nombre_completo ?? 'Sin nombre',
                     'dni' => $accidenteAlumno->alumno->dni ?? 'Sin DNI',
                     'sala_grado_curso' => $accidenteAlumno->alumno->sala_grado_curso ?? 'Sin curso',
+                    'grado_seccion' => $accidenteAlumno->grado_seccion ?? 'Sin grado/sección',
                 ];
             })->toArray();
 
             $this->dispatch('alumnosModal',
                 alumnos: $alumnos,
-                expediente: $accidente->numero_expediente,
+                expediente: $accidente->numero_expediente ?? 'Sin número de expediente',
                 escuela: $accidente->escuela->nombre ?? 'Sin escuela'
             );
             
@@ -180,5 +191,7 @@ class Index extends Component
     public function updatingFiltroFecha() { $this->resetPage(); }
     public function updatingFiltroEstado() { $this->resetPage(); }
     public function updatingFiltroExpediente() { $this->resetPage(); }
+    public function updatingFiltroAlumno() { $this->resetPage(); }
+    public function updatingPerPage() { $this->resetPage(); }
 
 }

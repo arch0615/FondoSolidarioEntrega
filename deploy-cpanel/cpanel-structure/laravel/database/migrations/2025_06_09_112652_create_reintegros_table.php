@@ -32,6 +32,19 @@ return new class extends Migration
 
             $table->index(['id_estado_reintegro', 'fecha_solicitud'], 'idx_reintegros_estado_fecha');
         });
+
+        // Crear tabla pivot para relación many-to-many con tipos de gastos
+        Schema::create('reintegro_tipos_gastos', function (Blueprint $table) {
+            $table->integer('id_reintegro');
+            $table->integer('id_tipo_gasto');
+
+            $table->primary(['id_reintegro', 'id_tipo_gasto']);
+            $table->foreign('id_reintegro')->references('id_reintegro')->on('reintegros')->onDelete('cascade');
+            $table->foreign('id_tipo_gasto')->references('id_tipo_gasto')->on('cat_tipos_gastos')->onDelete('cascade');
+
+            $table->index('id_reintegro');
+            $table->index('id_tipo_gasto');
+        });
     }
 
     /**
@@ -39,6 +52,7 @@ return new class extends Migration
      */
     public function down(): void
     {
+        Schema::dropIfExists('reintegro_tipos_gastos');
         Schema::dropIfExists('reintegros');
     }
 };

@@ -151,8 +151,8 @@
                             </button>
                         </th>
                          <th scope="col" class="px-6 py-4 text-left text-xs font-medium text-secondary-500 uppercase tracking-wider">
-                             <button wire:click="sortBy('cargo')" class="group inline-flex items-center hover:text-secondary-700">
-                                Cargo
+                              <button wire:click="sortBy('cargo')" class="group inline-flex items-center hover:text-secondary-700">
+                                 Cargo(s)
                                 @if($sortField === 'cargo')
                                     @if($sortDirection === 'asc')
                                         <svg class="ml-2 w-4 h-4 text-primary-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"></path></svg>
@@ -234,6 +234,9 @@
                                 <a href="{{ route('empleados.edit', $empleado->id_empleado) }}" class="p-2 text-secondary-400 hover:text-warning-600 hover:bg-warning-50 rounded-lg transition-colors duration-200" title="Editar">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
                                 </a>
+                                <button wire:click="imprimirBeneficiarios({{ $empleado->id_empleado }})" class="p-2 text-secondary-400 hover:text-success-600 hover:bg-success-50 rounded-lg transition-colors duration-200" title="Imprimir Beneficiarios SVO">
+                                    <i class="fas fa-print"></i>
+                                </button>
                                 <button wire:click="cambiarEstado({{ $empleado->id_empleado }})" class="p-2 text-secondary-400 hover:text-info-600 hover:bg-info-50 rounded-lg transition-colors duration-200" title="{{ $empleado->activo ? 'Desactivar' : 'Activar' }}">
                                     @if($empleado->activo)
                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"></path></svg>
@@ -284,14 +287,14 @@
         const filtroDni = @this.get('filtro_dni');
         const filtroEscuela = @this.get('filtro_escuela');
         const filtroEstado = @this.get('filtro_estado');
-        
+
         const params = new URLSearchParams();
         if (filtroNombre) params.append('filtro_nombre', filtroNombre);
         if (filtroApellido) params.append('filtro_apellido', filtroApellido);
         if (filtroDni) params.append('filtro_dni', filtroDni);
         if (filtroEscuela) params.append('filtro_escuela', filtroEscuela);
         if (filtroEstado) params.append('filtro_estado', filtroEstado);
-        
+
         let url = '';
         switch(formato) {
             case 'csv':
@@ -304,12 +307,19 @@
                 url = '{{ route("empleados.export.pdf") }}';
                 break;
         }
-        
+
         if (params.toString()) {
             url += '?' + params.toString();
         }
-        
+
         window.open(url, '_blank');
     }
+
+    document.addEventListener('livewire:init', () => {
+        Livewire.on('imprimir-beneficiarios', ({ id }) => {
+            const url = `{{ url('empleados') }}/${id}/print-beneficiarios`;
+            window.open(url, '_blank');
+        });
+    });
 </script>
 @endpush

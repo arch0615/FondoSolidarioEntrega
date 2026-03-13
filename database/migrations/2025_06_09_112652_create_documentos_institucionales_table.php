@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('documentos_institucionales', function (Blueprint $table) {
             $table->integer('id_documento', true);
-            $table->integer('id_escuela')->index('idx_escuela');
+            $table->integer('id_escuela')->nullable()->index('idx_escuela');
             $table->string('nombre_documento', 200);
             $table->string('descripcion', 500)->nullable();
             $table->date('fecha_documento')->nullable();
@@ -21,6 +21,7 @@ return new class extends Migration
             $table->integer('id_usuario_carga')->index('id_usuario_carga');
             $table->dateTime('fecha_carga')->nullable();
             $table->integer('id_tipo_documento')->nullable()->index('fk_documentos_tipo');
+            $table->string('archivo_path', 500)->nullable();
         });
     }
 

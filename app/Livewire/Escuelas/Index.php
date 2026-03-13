@@ -43,8 +43,6 @@ class Index extends Component
     {
         $query = Escuela::query()
             ->withCount([
-                'alumnos',
-                'empleados',
                 'accidentes',
                 'salidasEducativas',
                 'pasantias',

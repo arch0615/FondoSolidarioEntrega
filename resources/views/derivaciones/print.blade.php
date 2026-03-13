@@ -19,7 +19,7 @@
             margin: 0 auto;
             margin-bottom: 0.5cm;
             box-shadow: 0 0 0.5cm rgba(0,0,0,0.5);
-            padding: 2.5cm;
+            padding: 1cm;
             box-sizing: border-box;
         }
         @media print {
@@ -30,6 +30,10 @@
             }
             .no-print {
                 display: none;
+            }
+            @page {
+                margin: 0.3cm;
+                size: A4;
             }
         }
     </style>
@@ -45,48 +49,55 @@
     </div>
 
     <div class="page">
-        <!-- Encabezado -->
-        <header class="text-center mb-12">
-            <h1 class="text-2xl font-bold text-black">AUTORIZACIÓN DE DERIVACIÓN MÉDICA</h1>
+        <!-- Encabezado con imagen -->
+        <header class="mb-4">
+            <div class="w-full mb-3">
+                <img src="{{ asset('images/EncabezadoDerivacion.png') }}"
+                     alt="Encabezado Derivación"
+                     class="w-full h-auto object-contain"
+                     style="max-height: 120px;">
+            </div>
+            <div class="text-center">
+                <h1 class="text-xl font-bold text-black">AUTORIZACIÓN DE DERIVACIÓN MÉDICA</h1>
+            </div>
         </header>
 
         <!-- Fecha -->
-        <div class="text-right mb-10">
-            <p>Fecha de Emisión: <span class="font-semibold">{{ now()->format('d/m/Y') }}</span></p>
+        <div class="text-right mb-4">
+            <p class="text-sm">Fecha de Emisión: <span class="font-semibold">{{ now()->format('d/m/Y') }}</span></p>
         </div>
 
         <!-- Cuerpo -->
-        <main class="text-base leading-relaxed">
-            <p class="mb-6">Por medio de la presente, la Dirección de la <strong>{{ $derivacion->accidente->escuela->nombre }}</strong>, autoriza la derivación para atención médica del alumno/a:</p>
+        <main class="text-sm leading-normal">
+            <p class="mb-3">Por medio de la presente, la Dirección de la <strong>{{ $derivacion->accidente->escuela->nombre }}</strong>, autoriza la derivación para atención médica del alumno/a:</p>
             
-            <div class="bg-gray-50 border border-gray-200 rounded-md p-4 mb-6">
+            <div class="bg-gray-50 border border-gray-200 rounded-md p-3 mb-3">
                 <p><strong>Nombre Completo:</strong> {{ $derivacion->alumno->nombre_completo }}</p>
                 <p><strong>DNI:</strong> {{ $derivacion->alumno->dni }}</p>
-                <p><strong>Sala/Grado/Curso:</strong> {{ $derivacion->alumno->sala_grado_curso ?? 'N/A' }}</p>
             </div>
 
-            <p class="mb-6">El/la mismo/a será trasladado/a a la institución <strong>{{ $derivacion->prestador->nombre }}</strong> en compañía de <strong>{{ $derivacion->acompanante }}</strong>, con fecha y hora de derivación <strong>{{ $derivacion->fecha_derivacion->format('d/m/Y') }} a las {{ \Carbon\Carbon::parse($derivacion->hora_derivacion)->format('H:i') }} hs.</strong></p>
+            <p class="mb-3">El/la mismo/a será trasladado/a a la institución <strong>{{ $derivacion->prestador->nombre }}</strong> en compañía de <strong>{{ $derivacion->acompanante }}</strong>, con fecha y hora de derivación <strong>{{ $derivacion->fecha_derivacion->format('d/m/Y') }} a las {{ \Carbon\Carbon::parse($derivacion->hora_derivacion)->format('H:i') }} hs.</strong></p>
 
-            <p class="mb-6">El motivo de la derivación se debe a un accidente ocurrido en las instalaciones de la escuela, cuya descripción y diagnóstico presuntivo se detallan a continuación:</p>
+            <p class="mb-3">El motivo de la derivación se debe a un accidente ocurrido en las instalaciones de la escuela, cuya descripción y diagnóstico presuntivo se detallan a continuación:</p>
 
-            <div class="bg-gray-50 border border-gray-200 rounded-md p-4 mb-8">
+            <div class="bg-gray-50 border border-gray-200 rounded-md p-3 mb-4">
                 <p><strong>Descripción del Accidente:</strong> {{ $derivacion->accidente->descripcion_accidente }}</p>
-                <p class="mt-2"><strong>Diagnóstico Inicial (Presuntivo):</strong> {{ $derivacion->diagnostico_inicial }}</p>
+                <p class="mt-1"><strong>Diagnóstico Inicial (Presuntivo):</strong> {{ $derivacion->diagnostico_inicial }}</p>
                 @if($derivacion->observaciones)
-                <p class="mt-2"><strong>Observaciones Adicionales:</strong> {{ $derivacion->observaciones }}</p>
+                <p class="mt-1"><strong>Observaciones Adicionales:</strong> {{ $derivacion->observaciones }}</p>
                 @endif
             </div>
 
-            <p>Se extiende la presente para ser presentada ante quien corresponda.</p>
+            <p class="mb-6">Se extiende la presente para ser presentada ante quien corresponda.</p>
         </main>
 
         <!-- Pie de Página y Firmas -->
-        <footer class="mt-32 grid grid-cols-2 gap-24 text-center">
+        <footer class="mt-16 grid grid-cols-2 gap-16 text-center">
             <div class="border-t border-gray-400 pt-2">
-                <p class="text-sm">Firma del Personal Autorizado</p>
+                <p class="text-xs">Firma del Personal Autorizado</p>
             </div>
             <div class="border-t border-gray-400 pt-2">
-                <p class="text-sm">Sello de la Institución</p>
+                <p class="text-xs">Sello de la Institución</p>
             </div>
         </footer>
     </div>

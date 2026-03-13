@@ -15,6 +15,7 @@ return new class extends Migration
             $table->integer('id', true);
             $table->integer('id_accidente');
             $table->integer('id_alumno')->index('id_alumno');
+            $table->string('grado_seccion', 100)->nullable();
             $table->timestamp('created_at')->useCurrent();
             $table->timestamp('updated_at')->nullable();
 

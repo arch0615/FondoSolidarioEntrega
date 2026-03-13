@@ -19,4 +19,5 @@ yarn-error.log
 /.idea
 /.vscode
 .DS_Store
-Thumbs.db
+Thumbs.db.env.local
+diagnostico-correo-laravel.php

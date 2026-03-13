@@ -1,4 +1,4 @@
-<div>
+<div x-data="{ modalAlumno: @entangle('mostrar_modal_alumno') }">
     <!-- Modal de confirmación -->
     @if($mensaje)
         <div class="fixed inset-0 z-50 overflow-y-auto" x-data="{ show: true }" x-show="show" x-transition>
@@ -11,10 +11,14 @@
                                 <svg class="h-6 w-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
                                 </svg>
+                            @else
+                                <svg class="h-6 w-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+                                </svg>
                             @endif
                         </div>
                         <div class="mt-3 text-center sm:mt-5">
-                            <h3 class="text-lg leading-6 font-medium text-gray-900">¡Éxito!</h3>
+                            <h3 class="text-lg leading-6 font-medium text-gray-900">{{ $tipoMensaje === 'success' ? '¡Éxito!' : '¡Atención!' }}</h3>
                             <div class="mt-2">
                                 <p class="text-sm text-gray-500">{{ $mensaje }}</p>
                                 @if($modo == 'create' && $tipoMensaje === 'success')
@@ -24,12 +28,12 @@
                         </div>
                     </div>
                     <div class="mt-5 sm:mt-6">
-                        @if($modo == 'create')
+                        @if($modo == 'create' && $tipoMensaje === 'success')
                             <button @click="show = false" wire:click="redirigirAlListado" type="button" class="inline-flex justify-center w-full rounded-md border border-transparent shadow-sm px-4 py-2 bg-green-600 hover:bg-green-700 text-base font-medium text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 sm:text-sm">
                                 Ir al Listado
                             </button>
                         @else
-                            <button @click="show = false" wire:click="limpiarMensaje" type="button" class="inline-flex justify-center w-full rounded-md border border-transparent shadow-sm px-4 py-2 bg-green-600 hover:bg-green-700 text-base font-medium text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 sm:text-sm">
+                            <button @click="show = false" wire:click="limpiarMensaje" type="button" class="inline-flex justify-center w-full rounded-md border border-transparent shadow-sm px-4 py-2 {{ $tipoMensaje === 'success' ? 'bg-green-600 hover:bg-green-700 focus:ring-green-500' : 'bg-red-600 hover:bg-red-700 focus:ring-red-500' }} text-base font-medium text-white focus:outline-none focus:ring-2 focus:ring-offset-2 sm:text-sm">
                                 Aceptar
                             </button>
                         @endif
@@ -37,6 +41,47 @@
                 </div>
             </div>
         </div>
+    @endif
+
+    <!-- Modal de error de validación -->
+    @if($this->getErrorBag()->has('alumnos_seleccionados'))
+    <div class="fixed inset-0 z-50 overflow-y-auto" x-data="{ show: true }" x-show="show" x-transition>
+        <div class="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+            <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" @click="show = false"></div>
+            <div class="inline-block align-bottom bg-white rounded-lg px-4 pt-5 pb-4 text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full sm:p-6">
+                <div>
+                    <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-red-100">
+                        <svg class="h-6 w-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+                        </svg>
+                    </div>
+                    <div class="mt-3 text-center sm:mt-5">
+                        <h3 class="text-lg leading-6 font-medium text-gray-900">Error de Validación</h3>
+                        <div class="mt-2">
+                            <p class="text-sm text-gray-500">{{ $this->getErrorBag()->first('alumnos_seleccionados') }}</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-5 sm:mt-6">
+                    <button @click="show = false" type="button" class="inline-flex justify-center w-full rounded-md border border-transparent shadow-sm px-4 py-2 bg-red-600 hover:bg-red-700 text-base font-medium text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 sm:text-sm">
+                        Entendido
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    @endif
+
+    <!-- Mensaje específico para nuevo alumno creado -->
+    @if(session('alumno_creado'))
+    <div class="fixed top-4 right-4 z-50 max-w-sm w-full bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded shadow-lg" x-data="{ show: true }" x-show="show" x-transition x-init="setTimeout(() => show = false, 4000)">
+        <div class="flex items-center">
+            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+            </svg>
+            <span class="text-sm font-medium">{{ session('alumno_creado') }}</span>
+        </div>
+    </div>
     @endif
 
     <div class="mx-auto px-4">
@@ -77,62 +122,107 @@
                 <!-- Selección de Escuela -->
                 <div class="border-b border-secondary-200 pb-6">
                     <h3 class="text-lg font-medium text-secondary-900 mb-4">Información de la Escuela</h3>
-                    <div class="space-y-1">
-                        <label for="id_escuela" class="block text-sm font-medium text-secondary-700">
-                            Escuela <span class="text-danger-500">*</span>
-                        </label>
-                        <select wire:model="id_escuela" id="id_escuela" class="block w-full px-3 py-2 border border-secondary-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 {{ $modo == 'show' || $es_usuario_general ? 'bg-secondary-50' : 'bg-white' }}" {{ $modo == 'show' || $es_usuario_general ? 'disabled' : '' }} required>
-                            <option value="">Seleccione una escuela</option>
-                            @foreach($escuelas as $escuela)
-                                <option value="{{ $escuela->id_escuela }}">{{ $escuela->nombre }}</option>
-                            @endforeach
-                        </select>
-                        @if($es_usuario_general)
-                            <p class="text-xs text-secondary-500 mt-1">La escuela se asigna automáticamente según su usuario</p>
+                    <div class="grid grid-cols-1 {{ $modo != 'create' ? 'md:grid-cols-2' : '' }} gap-6">
+                        <div class="space-y-1">
+                            <label for="id_escuela" class="block text-sm font-medium text-secondary-700">
+                                Escuela <span class="text-danger-500">*</span>
+                            </label>
+                            <select wire:model="id_escuela" id="id_escuela" class="block w-full px-3 py-2 border border-secondary-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 {{ $modo == 'show' || $es_usuario_general ? 'bg-secondary-50' : 'bg-white' }}" {{ $modo == 'show' || $es_usuario_general ? 'disabled' : '' }} required>
+                                <option value="">Seleccione una escuela</option>
+                                @foreach($escuelas as $escuela)
+                                    <option value="{{ $escuela->id_escuela }}">{{ $escuela->nombre }}</option>
+                                @endforeach
+                            </select>
+                            @if($es_usuario_general)
+                                <p class="text-xs text-secondary-500 mt-1">La escuela se asigna automáticamente según su usuario</p>
+                            @endif
+                            @error('id_escuela')
+                                <span class="text-red-500 text-sm">{{ $message }}</span>
+                            @enderror
+                        </div>
+
+                        @if($modo != 'create')
+                        <!-- Número de Expediente -->
+                        <div class="space-y-1">
+                            <label for="numero_expediente" class="block text-sm font-medium text-secondary-700">
+                                Número de Expediente
+                            </label>
+                            <input wire:model="numero_expediente" type="text" id="numero_expediente" class="block w-full px-3 py-2 border border-secondary-300 rounded-lg text-sm bg-secondary-50 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500" readonly>
+                            <p class="text-xs text-secondary-500 mt-1">El número de expediente se genera automáticamente</p>
+                            @error('numero_expediente')
+                                <span class="text-red-500 text-sm">{{ $message }}</span>
+                            @enderror
+                        </div>
                         @endif
-                        @error('id_escuela') 
-                            <span class="text-red-500 text-sm">{{ $message }}</span> 
-                        @enderror
                     </div>
                 </div>
 
                 <!-- Información de los Alumnos -->
-                <div class="border-b border-secondary-200 pb-6">
+                <div class="border-b border-secondary-200 pb-6" data-seccion="alumnos">
                     <h3 class="text-lg font-medium text-secondary-900 mb-4">Alumnos Involucrados</h3>
                     
                     <!-- Campo de búsqueda con autocompletado -->
                     <div class="mb-4">
                         <label for="buscar_alumno" class="block text-sm font-medium text-secondary-700 mb-2">
-                            Buscar y Agregar Alumnos <span class="text-danger-500">*</span>
+                            Buscar y Agregar Alumno <span class="text-danger-500">*</span>
                         </label>
                         <div class="flex gap-2">
                             <div class="flex-1 relative">
-                                <input wire:model.live="buscar_alumno" type="text" id="buscar_alumno" class="block w-full px-3 py-2 border border-secondary-300 rounded-lg text-sm placeholder-secondary-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 {{ $modo == 'show' ? 'bg-secondary-50' : 'bg-white' }}" placeholder="Escriba el nombre del alumno..." {{ $modo == 'show' ? 'readonly' : '' }} autocomplete="off">
-                                
+                                <input wire:model.live="buscar_alumno" wire:click="mostrarDropdownAlumnos" type="text" id="buscar_alumno" class="block w-full px-3 py-2 border border-secondary-300 rounded-lg text-sm placeholder-secondary-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 {{ $modo == 'show' ? 'bg-secondary-50' : 'bg-white' }}" placeholder="Escriba el nombre del alumno..." {{ $modo == 'show' ? 'readonly' : '' }} autocomplete="off">
+
                                 <!-- Dropdown de sugerencias -->
-                                @if(strlen($buscar_alumno) >= 2 && $id_escuela)
-                                    @php $sugerencias = $this->buscarAlumnos(); @endphp
-                                    @if($sugerencias->count() > 0)
-                                    <div class="absolute z-10 mt-1 w-full bg-white border border-secondary-300 rounded-lg shadow-lg max-h-60 overflow-y-auto">
-                                        @foreach($sugerencias as $alumno)
-                                        <div wire:click="agregarAlumno({{ $alumno->id_alumno }})" class="p-2 hover:bg-secondary-50 cursor-pointer border-b border-secondary-100">
-                                            <div class="font-medium text-secondary-900">{{ $alumno->nombre_completo }}</div>
-                                            <div class="text-sm text-secondary-600">{{ $alumno->sala_grado_curso }} - DNI: {{ $alumno->dni }}</div>
-                                        </div>
-                                        @endforeach
+                                @if($mostrar_dropdown)
+                                @php $sugerencias = $this->buscarAlumnos(); @endphp
+                                @if($sugerencias->count() > 0)
+                                <div class="absolute z-10 mt-1 w-full bg-white border border-secondary-300 rounded-lg shadow-lg max-h-60 overflow-y-auto">
+                                    @foreach($sugerencias as $alumno)
+                                    <div wire:click="seleccionarAlumno({{ $alumno->id_alumno }})" class="p-2 hover:bg-secondary-50 cursor-pointer border-b border-secondary-100">
+                                        <div class="font-medium text-secondary-900">{{ $alumno->nombre_completo }}</div>
+                                        <div class="text-sm text-secondary-600">DNI: {{ $alumno->dni }}</div>
                                     </div>
-                                    @endif
+                                    @endforeach
+                                </div>
+                                @endif
                                 @endif
                             </div>
-                            <!-- Botón para agregar nuevo alumno -->
-                            <button wire:click="abrirModalAlumno" type="button" class="inline-flex items-center px-4 py-2 bg-blue-600 border border-transparent rounded-lg font-medium text-sm text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-200 {{ $modo == 'show' || !$id_escuela ? 'opacity-50 cursor-not-allowed' : '' }}" {{ $modo == 'show' || !$id_escuela ? 'disabled' : '' }}>
+
+                            <!-- Campo de Grado/Sección -->
+                            <div class="w-48">
+                                <input wire:model="grado_seccion_actual" type="text" id="grado_seccion_actual" class="block w-full px-3 py-2 border border-secondary-300 rounded-lg text-sm placeholder-secondary-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 {{ $modo == 'show' ? 'bg-secondary-50' : 'bg-white' }}" placeholder="Grado/Sección ej: 5° A" {{ $modo == 'show' ? 'readonly' : '' }}>
+                                @error('grado_seccion_actual')
+                                    <span class="text-red-500 text-sm">{{ $message }}</span>
+                                @enderror
+                            </div>
+
+                            <!-- Botón Agregar Alumno Alumno -->
+                            <button wire:click="agregarAlumnoSeleccionado" type="button" class="inline-flex items-center px-4 py-2 bg-green-600 border border-transparent rounded-lg font-medium text-sm text-white hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-colors duration-200 {{ $modo == 'show' ? 'opacity-50 cursor-not-allowed' : '' }}" {{ $modo == 'show' ? 'disabled' : '' }}">
                                 <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
                                 </svg>
-                                Nuevo Alumno
+                                Agregar Alumno
                             </button>
                         </div>
-                        <p class="text-xs text-secondary-500 mt-1">Escriba para buscar o haga clic en "Nuevo Alumno" para agregar uno nuevo</p>
+                        <p class="text-xs text-secondary-500 mt-1">
+                            <strong>Pasos:</strong> 1) Busque un alumno, 2) Seleccione del listado, 3) Ingrese grado/sección, 4) Haga clic en "Agregar Alumno"
+                        </p>
+                    </div>
+
+                    <!-- Botón para nuevo alumno -->
+                    <div class="mb-4">
+                        <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <h4 class="text-sm font-medium text-blue-800">¿No encuentra el alumno?</h4>
+                                    <p class="text-sm text-blue-700 mt-1">Si el alumno no está registrado en el sistema, puede agregarlo como nuevo alumno.</p>
+                                </div>
+                                <button wire:click="abrirModalAlumno" type="button" class="inline-flex items-center px-4 py-2 bg-blue-600 border border-transparent rounded-lg font-medium text-sm text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-200 {{ $modo == 'show' ? 'opacity-50 cursor-not-allowed' : '' }}" {{ $modo == 'show' ? 'disabled' : '' }}">
+                                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                                    </svg>
+                                    Nuevo Alumno
+                                </button>
+                            </div>
+                        </div>
                     </div>
 
                     <!-- Lista de alumnos seleccionados -->
@@ -147,7 +237,19 @@
                                 <div class="flex items-center justify-between bg-white border border-secondary-200 rounded-lg p-3 mb-2">
                                     <div class="flex-1">
                                         <div class="font-medium text-secondary-900">{{ $alumno->nombre_completo }}</div>
-                                        <div class="text-sm text-secondary-600">{{ $alumno->sala_grado_curso }} - DNI: {{ $alumno->dni }}</div>
+                                        <div class="text-sm text-secondary-600">DNI: {{ $alumno->dni }}</div>
+                                        <div class="text-sm text-secondary-600">
+                                            <span class="font-medium">Grado/Sección:</span>
+                                            @if($modo != 'show')
+                                            <input wire:model.blur="alumnos_seleccionados.{{ $alumno->indice_real }}.grado_seccion"
+                                                   type="text"
+                                                   class="inline-block w-24 ml-2 px-2 py-1 text-xs border border-secondary-300 rounded focus:outline-none focus:ring-1 focus:ring-primary-500"
+                                                   value="{{ $alumno->grado_seccion_seleccionado }}"
+                                                   placeholder="ej: 5° A">
+                                            @else
+                                            {{ $alumno->grado_seccion_seleccionado }}
+                                            @endif
+                                        </div>
                                     </div>
                                     @if($modo != 'show')
                                     <button wire:click="removerAlumno({{ $alumno->id_alumno }})" type="button" class="text-red-600 hover:text-red-800 p-1">
@@ -449,17 +551,14 @@
                     </button>
                     @endif
                 </div>
-            </form>
+            </div>
         </div>
-    </div>
-
-    <!-- Modal para Nuevo Alumno -->
-    @if($mostrar_modal_alumno)
-    <div class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+        <!-- Modal para Nuevo Alumno (FUERA del formulario principal) -->
+        <div x-show="modalAlumno" class="fixed inset-0 bg-black bg-opacity-50 z-[9999] flex items-center justify-center p-4" style="z-index: 9999 !important;">
         <div class="bg-white rounded-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
             <div class="flex justify-between items-center p-6 border-b border-secondary-200">
                 <h3 class="text-lg font-semibold text-secondary-900">Agregar Nuevo Alumno</h3>
-                <button wire:click="cerrarModalAlumno" type="button" class="text-secondary-400 hover:text-secondary-600">
+                <button @click="modalAlumno = false" type="button" class="text-secondary-400 hover:text-secondary-600">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
                     </svg>
@@ -467,7 +566,7 @@
             </div>
             
             <div class="p-6">
-                <form wire:submit.prevent="guardarNuevoAlumno" class="space-y-6">
+                <div class="space-y-6">
                     <!-- Información Personal del Alumno -->
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <!-- Nombre -->
@@ -475,7 +574,7 @@
                             <label for="nuevo_alumno_nombre" class="block text-sm font-medium text-secondary-700">
                                 Nombre <span class="text-danger-500">*</span>
                             </label>
-                            <input wire:model="nuevo_alumno.nombre" type="text" id="nuevo_alumno_nombre" class="block w-full px-3 py-2 border border-secondary-300 rounded-lg text-sm placeholder-secondary-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500" placeholder="Ej: Ana" required>
+                            <input wire:model="nuevo_alumno.nombre" type="text" id="nuevo_alumno_nombre" class="block w-full px-3 py-2 border border-secondary-300 rounded-lg text-sm placeholder-secondary-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500" placeholder="Ej: Ana">
                             @error('nuevo_alumno.nombre') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
                         </div>
 
@@ -484,7 +583,7 @@
                             <label for="nuevo_alumno_apellido" class="block text-sm font-medium text-secondary-700">
                                 Apellido <span class="text-danger-500">*</span>
                             </label>
-                            <input wire:model="nuevo_alumno.apellido" type="text" id="nuevo_alumno_apellido" class="block w-full px-3 py-2 border border-secondary-300 rounded-lg text-sm placeholder-secondary-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500" placeholder="Ej: Martínez" required>
+                            <input wire:model="nuevo_alumno.apellido" type="text" id="nuevo_alumno_apellido" class="block w-full px-3 py-2 border border-secondary-300 rounded-lg text-sm placeholder-secondary-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500" placeholder="Ej: Martínez">
                             @error('nuevo_alumno.apellido') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
                         </div>
 
@@ -493,16 +592,16 @@
                             <label for="nuevo_alumno_dni" class="block text-sm font-medium text-secondary-700">
                                 DNI <span class="text-danger-500">*</span>
                             </label>
-                            <input wire:model="nuevo_alumno.dni" type="text" id="nuevo_alumno_dni" class="block w-full px-3 py-2 border border-secondary-300 rounded-lg text-sm placeholder-secondary-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500" placeholder="Ej: 45678912" required>
+                            <input wire:model="nuevo_alumno.dni" type="text" id="nuevo_alumno_dni" class="block w-full px-3 py-2 border border-secondary-300 rounded-lg text-sm placeholder-secondary-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500" placeholder="Ej: 45678912">
                             @error('nuevo_alumno.dni') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
                         </div>
 
                         <!-- CUIL -->
-                        <div class="space-y-1">
+                        <div class="space-y-1" style="display: none;">
                             <label for="nuevo_alumno_cuil" class="block text-sm font-medium text-secondary-700">
-                                CUIL <span class="text-danger-500">*</span>
+                                CUIL
                             </label>
-                            <input wire:model="nuevo_alumno.cuil" type="text" id="nuevo_alumno_cuil" class="block w-full px-3 py-2 border border-secondary-300 rounded-lg text-sm placeholder-secondary-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500" placeholder="Ej: 23-45678912-4" required>
+                            <input wire:model="nuevo_alumno.cuil" type="text" id="nuevo_alumno_cuil" class="block w-full px-3 py-2 border border-secondary-300 rounded-lg text-sm placeholder-secondary-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500" placeholder="Ej: 23-45678912-4">
                             @error('nuevo_alumno.cuil') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
                         </div>
 
@@ -511,52 +610,44 @@
                             <label for="nuevo_alumno_fecha_nacimiento" class="block text-sm font-medium text-secondary-700">
                                 Fecha de Nacimiento <span class="text-danger-500">*</span>
                             </label>
-                            <input wire:model="nuevo_alumno.fecha_nacimiento" type="date" id="nuevo_alumno_fecha_nacimiento" class="block w-full px-3 py-2 border border-secondary-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500" required>
+                            <input wire:model="nuevo_alumno.fecha_nacimiento" type="date" id="nuevo_alumno_fecha_nacimiento" class="block w-full px-3 py-2 border border-secondary-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500">
                             @error('nuevo_alumno.fecha_nacimiento') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
                         </div>
 
-                        <!-- Sala/Grado/Curso -->
-                        <div class="space-y-1">
-                            <label for="nuevo_alumno_sala_grado_curso" class="block text-sm font-medium text-secondary-700">
-                                Sala/Grado/Curso <span class="text-danger-500">*</span>
-                            </label>
-                            <input wire:model="nuevo_alumno.sala_grado_curso" type="text" id="nuevo_alumno_sala_grado_curso" class="block w-full px-3 py-2 border border-secondary-300 rounded-lg text-sm placeholder-secondary-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500" placeholder="Ej: 7° Grado, 3° Año, Sala de 5" required>
-                            @error('nuevo_alumno.sala_grado_curso') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
-                        </div>
 
-                        <!-- Nombre del Padre/Madre -->
+                        <!-- Nombre del Familiar -->
                         <div class="space-y-1">
-                            <label for="nuevo_alumno_nombre_padre_madre" class="block text-sm font-medium text-secondary-700">
-                                Nombre del Padre/Madre <span class="text-danger-500">*</span>
+                            <label for="nuevo_alumno_familiar1" class="block text-sm font-medium text-secondary-700">
+                                Nombre del Familiar <span class="text-danger-500">*</span>
                             </label>
-                            <input wire:model="nuevo_alumno.nombre_padre_madre" type="text" id="nuevo_alumno_nombre_padre_madre" class="block w-full px-3 py-2 border border-secondary-300 rounded-lg text-sm placeholder-secondary-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500" placeholder="Ej: Carlos Martínez" required>
-                            @error('nuevo_alumno.nombre_padre_madre') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
+                            <input wire:model="nuevo_alumno.familiar1" type="text" id="nuevo_alumno_familiar1" class="block w-full px-3 py-2 border border-secondary-300 rounded-lg text-sm placeholder-secondary-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500" placeholder="Ej: Carlos Martínez">
+                            @error('nuevo_alumno.familiar1') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
                         </div>
 
                         <!-- Teléfono de Contacto -->
                         <div class="space-y-1">
-                            <label for="nuevo_alumno_telefono_contacto" class="block text-sm font-medium text-secondary-700">
+                            <label for="nuevo_alumno_telefono_contacto1" class="block text-sm font-medium text-secondary-700">
                                 Teléfono de Contacto <span class="text-danger-500">*</span>
                             </label>
-                            <input wire:model="nuevo_alumno.telefono_contacto" type="tel" id="nuevo_alumno_telefono_contacto" class="block w-full px-3 py-2 border border-secondary-300 rounded-lg text-sm placeholder-secondary-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500" placeholder="Ej: (351) 555-1234" required>
-                            @error('nuevo_alumno.telefono_contacto') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
+                            <input wire:model="nuevo_alumno.telefono_contacto1" type="tel" id="nuevo_alumno_telefono_contacto1" class="block w-full px-3 py-2 border border-secondary-300 rounded-lg text-sm placeholder-secondary-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500" placeholder="Ej: (351) 555-1234">
+                            @error('nuevo_alumno.telefono_contacto1') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
                         </div>
+
                     </div>
 
                     <!-- Botones del Modal -->
                     <div class="flex justify-end space-x-3 pt-6 border-t border-secondary-200">
-                        <button wire:click="cerrarModalAlumno" type="button" class="px-4 py-2 border border-secondary-300 rounded-lg text-sm font-medium text-secondary-700 bg-white hover:bg-secondary-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-colors duration-200">
+                        <button @click="modalAlumno = false" type="button" class="px-4 py-2 border border-secondary-300 rounded-lg text-sm font-medium text-secondary-700 bg-white hover:bg-secondary-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-colors duration-200">
                             Cancelar
                         </button>
-                        <button type="submit" class="px-6 py-2 bg-primary-600 border border-transparent rounded-lg font-medium text-sm text-white hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-colors duration-200">
+                        <button wire:click="guardarNuevoAlumno" type="button" class="px-6 py-2 bg-primary-600 border border-transparent rounded-lg font-medium text-sm text-white hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-colors duration-200">
                             Agregar Alumno
                         </button>
                     </div>
-                </form>
+            </div>
             </div>
         </div>
     </div>
-    @endif
 
     @push('scripts')
     <script>
@@ -570,6 +661,33 @@
                 setTimeout(() => {
                     @this.call('redirigirAlListado');
                 }, 3000);
+            });
+
+            // Manejar errores de validación con scroll automático
+            Livewire.on('mostrar-error-validacion', (data) => {
+                console.log('Error de validación:', data);
+
+                // Hacer scroll hasta la sección de alumnos
+                setTimeout(() => {
+                    const seccionAlumnos = document.querySelector('[data-seccion="alumnos"]');
+                    if (seccionAlumnos) {
+                        seccionAlumnos.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'start'
+                        });
+                    }
+                }, 100);
+            });
+
+            // Manejar foco en campo grado/sección
+            Livewire.on('focus-grado-seccion', () => {
+                setTimeout(() => {
+                    const campoGradoSeccion = document.getElementById('grado_seccion_actual');
+                    if (campoGradoSeccion) {
+                        campoGradoSeccion.focus();
+                        campoGradoSeccion.select(); // Seleccionar todo el texto si hay
+                    }
+                }, 100);
             });
         });
 
@@ -596,7 +714,7 @@
                 inputArchivos.addEventListener('change', function(e) {
                     const nuevosArchivos = Array.from(e.target.files);
                     if (nuevosArchivos.length > 0) {
-                        // Agregar nuevos archivos a los existentes en lugar de reemplazar
+                        // Agregar Alumno nuevos archivos a los existentes en lugar de reemplazar
                         archivosSeleccionados = [...archivosSeleccionados, ...nuevosArchivos];
                         mostrarArchivos();
                     }
@@ -638,7 +756,7 @@
                     listaArchivos.appendChild(div);
                 });
 
-                // Agregar eventos para eliminar archivos
+                // Agregar Alumno eventos para eliminar archivos
                 document.querySelectorAll('.eliminar-archivo').forEach(btn => {
                     btn.addEventListener('click', function() {
                         const index = parseInt(this.dataset.index);

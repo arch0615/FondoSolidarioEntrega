@@ -161,12 +161,13 @@ class Index extends Component
                     'nombre_completo' => $accidenteAlumno->alumno->nombre_completo ?? 'Sin nombre',
                     'dni' => $accidenteAlumno->alumno->dni ?? 'Sin DNI',
                     'sala_grado_curso' => $accidenteAlumno->alumno->sala_grado_curso ?? 'Sin curso',
+                    'grado_seccion' => $accidenteAlumno->grado_seccion ?? 'Sin grado/sección',
                 ];
             })->toArray();
 
             $this->dispatch('alumnosModal',
                 alumnos: $alumnos,
-                expediente: $accidente->numero_expediente,
+                expediente: $accidente->numero_expediente ?? 'Sin número de expediente',
                 escuela: $accidente->escuela->nombre ?? 'Sin escuela'
             );
             

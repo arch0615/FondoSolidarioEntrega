@@ -77,7 +77,7 @@
                         <!-- Escuela -->
                         <div class="space-y-1">
                             <label for="id_escuela" class="block text-sm font-medium text-secondary-700">Escuela <span class="text-danger-500">*</span></label>
-                            <select wire:model="id_escuela" id="id_escuela" class="block w-full px-3 py-2 border border-secondary-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 {{ ($modo == 'show' || $esUsuarioGeneral) ? 'bg-secondary-50' : 'bg-white' }}" {{ ($modo == 'show' || $esUsuarioGeneral) ? 'disabled' : '' }}>
+                            <select wire:model.live="id_escuela" id="id_escuela" class="block w-full px-3 py-2 border border-secondary-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 {{ ($modo == 'show' || $esUsuarioGeneral) ? 'bg-secondary-50' : 'bg-white' }}" {{ ($modo == 'show' || $esUsuarioGeneral) ? 'disabled' : '' }}>
                                 <option value="">Seleccione una escuela</option>
                                 @foreach($escuelas as $escuela)
                                     <option value="{{ $escuela->id_escuela }}">{{ $escuela->nombre }}</option>
@@ -121,12 +121,6 @@
                             @error('proposito') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
                         </div>
 
-                        <!-- Grado/Curso -->
-                        <div class="space-y-1">
-                            <label for="grado_curso" class="block text-sm font-medium text-secondary-700">Grado/Curso <span class="text-danger-500">*</span></label>
-                            <input wire:model="grado_curso" type="text" id="grado_curso" class="block w-full px-3 py-2 border border-secondary-300 rounded-lg text-sm placeholder-secondary-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 {{ $modo == 'show' ? 'bg-secondary-50' : 'bg-white' }}" placeholder="Ej: 5to Grado" {{ $modo == 'show' ? 'readonly' : '' }}>
-                            @error('grado_curso') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
-                        </div>
 
                         <!-- Cantidad de Alumnos -->
                         <div class="space-y-1">
