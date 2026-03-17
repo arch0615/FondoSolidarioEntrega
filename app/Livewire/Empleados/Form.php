@@ -207,7 +207,8 @@ class Form extends Component
 
         } catch (\Exception $e) {
             DB::rollback();
-            $this->mensaje = 'Error al guardar: ' . $e->getMessage();
+            \Illuminate\Support\Facades\Log::error('Error al guardar empleado: ' . $e->getMessage());
+            $this->mensaje = 'Ocurrió un error al guardar el empleado. Por favor, verifique los datos e intente nuevamente.';
             $this->tipoMensaje = 'error';
             $this->dispatch('mostrar-mensaje');
         }

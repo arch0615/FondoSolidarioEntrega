@@ -148,8 +148,7 @@ class Form extends Component
             $this->guardarArchivos($salida->id_salida);
             AuditoriaService::registrarCreacion('salidas_educativas', $salida->id_salida, $data);
 
-            $this->mensaje = 'Salida Educativa creada exitosamente.';
-            $this->tipoMensaje = 'success';
+            $this->dispatch('toast-success', message: 'Salida Educativa creada exitosamente.');
             $this->dispatch('mostrar-mensaje-y-redirigir');
 
         } else {
@@ -158,15 +157,14 @@ class Form extends Component
             $salida->update($data);
             $this->guardarArchivos($salida->id_salida);
             AuditoriaService::registrarActualizacion('salidas_educativas', $salida->id_salida, $datosAnteriores, $data);
-            
-            $this->mensaje = 'Salida Educativa actualizada exitosamente.';
-            $this->tipoMensaje = 'success';
-            $this->dispatch('mostrar-mensaje');
+
+            $this->dispatch('toast-success', message: 'Salida Educativa actualizada exitosamente.');
+            $this->dispatch('mostrar-mensaje-y-redirigir');
         }
 
         } catch (\Exception $e) {
-            $this->mensaje = 'Error al guardar: ' . $e->getMessage();
-            $this->tipoMensaje = 'error';
+            \Illuminate\Support\Facades\Log::error('Error al guardar salida educativa: ' . $e->getMessage());
+            $this->dispatch('toast-error', message: 'Ocurrió un error al guardar la salida educativa. Por favor, verifique los datos e intente nuevamente.');
         }
     }
 
@@ -201,9 +199,7 @@ class Form extends Component
 
         AuditoriaService::registrarEliminacion('archivos_adjuntos', $idArchivo, $datosArchivo);
 
-        $this->mensaje = 'Archivo eliminado exitosamente.';
-        $this->tipoMensaje = 'success';
-        $this->dispatch('mostrar-mensaje');
+        $this->dispatch('toast-success', message: 'Archivo eliminado exitosamente.');
     }
 
     public function limpiarMensaje()

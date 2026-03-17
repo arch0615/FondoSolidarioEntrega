@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Salida Educativa - {{ $salida->destino }}</title>
+    <title>Salida Educativa - <?php echo e($salida->destino); ?></title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         body {
@@ -50,14 +50,14 @@
     <div class="page">
         <!-- Encabezado -->
         <header class="mb-6">
-            @if(file_exists(public_path('images/EncabezadoDerivacion.png')))
+            <?php if(file_exists(public_path('images/EncabezadoDerivacion.png'))): ?>
             <div class="w-full mb-3">
-                <img src="{{ asset('images/EncabezadoDerivacion.png') }}"
+                <img src="<?php echo e(asset('images/EncabezadoDerivacion.png')); ?>"
                      alt="Encabezado"
                      class="w-full h-auto object-contain"
                      style="max-height: 120px;">
             </div>
-            @endif
+            <?php endif; ?>
             <div class="text-center">
                 <h1 class="text-xl font-bold text-black">AUTORIZACIÓN DE SALIDA EDUCATIVA</h1>
             </div>
@@ -65,50 +65,52 @@
 
         <!-- Fecha de Emisión -->
         <div class="text-right mb-4">
-            <p class="text-sm">Fecha de Emisión: <span class="font-semibold">{{ now()->format('d/m/Y') }}</span></p>
+            <p class="text-sm">Fecha de Emisión: <span class="font-semibold"><?php echo e(now()->format('d/m/Y')); ?></span></p>
         </div>
 
         <!-- Cuerpo -->
         <main class="text-sm leading-normal">
-            <p class="mb-4">Por medio de la presente, se autoriza la siguiente salida educativa de la <strong>{{ $salida->escuela->nombre ?? 'N/A' }}</strong>:</p>
+            <p class="mb-4">Por medio de la presente, se autoriza la siguiente salida educativa de la <strong><?php echo e($salida->escuela->nombre ?? 'N/A'); ?></strong>:</p>
 
             <!-- Datos de la Salida -->
             <div class="bg-gray-50 border border-gray-200 rounded-md p-4 mb-4">
                 <table class="w-full text-sm">
                     <tr>
                         <td class="font-semibold py-1 pr-4 w-1/3">Destino:</td>
-                        <td class="py-1">{{ $salida->destino }}</td>
+                        <td class="py-1"><?php echo e($salida->destino); ?></td>
                     </tr>
                     <tr>
                         <td class="font-semibold py-1 pr-4">Fecha de Salida:</td>
                         <td class="py-1">
-                            {{ $salida->fecha_salida ? $salida->fecha_salida->format('d/m/Y') : 'N/A' }}
-                            @if($salida->fecha_hasta)
-                                al {{ $salida->fecha_hasta->format('d/m/Y') }}
-                            @endif
+                            <?php echo e($salida->fecha_salida ? $salida->fecha_salida->format('d/m/Y') : 'N/A'); ?>
+
+                            <?php if($salida->fecha_hasta): ?>
+                                al <?php echo e($salida->fecha_hasta->format('d/m/Y')); ?>
+
+                            <?php endif; ?>
                         </td>
                     </tr>
                     <tr>
                         <td class="font-semibold py-1 pr-4">Horario:</td>
                         <td class="py-1">
-                            {{ $salida->hora_salida ? \Carbon\Carbon::parse($salida->hora_salida)->format('H:i') : 'N/A' }} hs
+                            <?php echo e($salida->hora_salida ? \Carbon\Carbon::parse($salida->hora_salida)->format('H:i') : 'N/A'); ?> hs
                             a
-                            {{ $salida->hora_regreso ? \Carbon\Carbon::parse($salida->hora_regreso)->format('H:i') : 'N/A' }} hs
+                            <?php echo e($salida->hora_regreso ? \Carbon\Carbon::parse($salida->hora_regreso)->format('H:i') : 'N/A'); ?> hs
                         </td>
                     </tr>
-                    @if($salida->grado_curso)
+                    <?php if($salida->grado_curso): ?>
                     <tr>
                         <td class="font-semibold py-1 pr-4">Grado/Curso:</td>
-                        <td class="py-1">{{ $salida->grado_curso }}</td>
+                        <td class="py-1"><?php echo e($salida->grado_curso); ?></td>
                     </tr>
-                    @endif
+                    <?php endif; ?>
                     <tr>
                         <td class="font-semibold py-1 pr-4">Cantidad de Alumnos:</td>
-                        <td class="py-1">{{ $salida->cantidad_alumnos }}</td>
+                        <td class="py-1"><?php echo e($salida->cantidad_alumnos); ?></td>
                     </tr>
                     <tr>
                         <td class="font-semibold py-1 pr-4">Medio de Transporte:</td>
-                        <td class="py-1">{{ $salida->transporte }}</td>
+                        <td class="py-1"><?php echo e($salida->transporte); ?></td>
                     </tr>
                 </table>
             </div>
@@ -117,7 +119,7 @@
             <div class="mb-4">
                 <p class="font-semibold mb-1">Propósito de la Salida:</p>
                 <div class="bg-gray-50 border border-gray-200 rounded-md p-3">
-                    <p>{{ $salida->proposito }}</p>
+                    <p><?php echo e($salida->proposito); ?></p>
                 </div>
             </div>
 
@@ -125,31 +127,20 @@
             <div class="mb-4">
                 <p class="font-semibold mb-1">Docentes Acompañantes:</p>
                 <div class="bg-gray-50 border border-gray-200 rounded-md p-3">
-                    <p>{{ $salida->docentes_acompanantes }}</p>
+                    <p><?php echo e($salida->docentes_acompanantes); ?></p>
                 </div>
             </div>
 
-            @if($archivos->count() > 0)
+            <?php if($archivos->count() > 0): ?>
             <div class="mb-4">
                 <p class="font-semibold mb-1">Archivos Adjuntos:</p>
-                <div class="grid grid-cols-2 gap-4 mt-2">
-                    @foreach($archivos as $archivo)
-                        @if(in_array(strtolower(pathinfo($archivo->nombre_archivo, PATHINFO_EXTENSION)), ['jpg', 'jpeg', 'png', 'gif', 'webp', 'bmp']))
-                            <div class="border border-gray-200 rounded-md p-2 text-center">
-                                <img src="{{ asset('storage/' . $archivo->ruta_archivo) }}"
-                                     alt="{{ $archivo->nombre_archivo }}"
-                                     class="w-full h-auto max-h-64 object-contain rounded">
-                                <p class="text-xs text-gray-500 mt-1">{{ $archivo->nombre_archivo }}</p>
-                            </div>
-                        @else
-                            <div class="border border-gray-200 rounded-md p-2 flex items-center">
-                                <span class="text-sm">{{ $archivo->nombre_archivo }}</span>
-                            </div>
-                        @endif
-                    @endforeach
-                </div>
+                <ul class="list-disc list-inside text-sm">
+                    <?php $__currentLoopData = $archivos; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $archivo): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                        <li><?php echo e($archivo->nombre_archivo); ?></li>
+                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                </ul>
             </div>
-            @endif
+            <?php endif; ?>
 
             <p class="mb-6 mt-6">Se extiende la presente para ser presentada ante quien corresponda.</p>
         </main>
@@ -166,3 +157,4 @@
     </div>
 </body>
 </html>
+<?php /**PATH /home/passion/Documents/FondoSolidarioEntrega11/Fondo Solidario Entrega/resources/views/salidas_educativas/print.blade.php ENDPATH**/ ?>

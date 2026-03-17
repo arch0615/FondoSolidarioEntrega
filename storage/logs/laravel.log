@@ -2507,3 +2507,7 @@ Stack trace:
 #34 /home/passion/Documents/FondoSolidarioEntrega11/Fondo Solidario Entrega/artisan(35): Illuminate\\Foundation\\Console\\Kernel->handle()
 #35 {main}
 "} 
+[2026-03-15 22:48:10] local.ERROR: Error al guardar salida educativa: The docentes acompanantes field must not be greater than 1000 characters.  
+[2026-03-15 22:55:30] local.ERROR: Error al guardar salida educativa: The docentes acompanantes field must not be greater than 1000 characters.  
+[2026-03-15 22:55:31] local.ERROR: Error al guardar salida educativa: The docentes acompanantes field must not be greater than 1000 characters.  
+[2026-03-15 22:55:45] local.ERROR: Error al guardar salida educativa: The docentes acompanantes field must not be greater than 1000 characters.  

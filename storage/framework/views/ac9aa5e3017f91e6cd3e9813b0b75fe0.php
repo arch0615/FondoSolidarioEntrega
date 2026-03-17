@@ -171,6 +171,14 @@
         </div>
 
         <?php if($userRole === 'medico_auditor'): ?>
+            <!-- Accidentes - Médico Auditor (solo lectura) -->
+            <div class="menu-item">
+                <a href="<?php echo e(route('accidentes.index')); ?>" class="w-full flex items-center gap-3 p-3 text-left font-medium text-gray-700 hover:bg-primary-50 hover:text-primary-700 rounded-lg transition-colors <?php echo e(request()->routeIs('accidentes.*') ? 'bg-primary-50 text-primary-700 font-semibold' : ''); ?>">
+                    <i class="fas fa-shield-alt text-red-600"></i>
+                    <span class="text-sm">Accidentes</span>
+                </a>
+            </div>
+
             <!-- Reintegros Pendientes - Solo Médico -->
             <div class="menu-item">
                 <a href="<?php echo e(route('reintegros.pendientes')); ?>" class="w-full flex items-center gap-3 p-3 text-left font-medium text-gray-700 hover:bg-primary-50 hover:text-primary-700 rounded-lg transition-colors <?php echo e(request()->routeIs('reintegros.pendientes') ? 'bg-primary-50 text-primary-700 font-semibold' : ''); ?>">

@@ -39,7 +39,7 @@
                     </div>
                 </div>
             </div>
-            <a href="{{ route('salidas-educativas.create') }}" class="inline-flex items-center px-4 py-2 bg-primary-600 border border-transparent rounded-lg font-medium text-sm text-white hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-colors duration-200">
+            <a href="<?php echo e(route('salidas-educativas.create')); ?>" class="inline-flex items-center px-4 py-2 bg-primary-600 border border-transparent rounded-lg font-medium text-sm text-white hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-colors duration-200">
                 <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
                 </svg>
@@ -48,16 +48,16 @@
         </div>
     </div>
 
-    @if (session()->has('message'))
+    <!--[if BLOCK]><![endif]--><?php if(session()->has('message')): ?>
         <div class="mb-6 bg-success-50 border border-success-200 text-success-700 px-4 py-3 rounded-lg relative">
             <div class="flex items-center">
                 <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
                 </svg>
-                <span class="font-medium">{{ session('message') }}</span>
+                <span class="font-medium"><?php echo e(session('message')); ?></span>
             </div>
         </div>
-    @endif
+    <?php endif; ?><!--[if ENDBLOCK]><![endif]-->
 
     <!-- Filtros -->
     <div class="bg-white rounded-xl border border-secondary-200 mb-6">
@@ -79,17 +79,17 @@
                         <label for="filtro_destino" class="block text-sm font-medium text-secondary-700">Destino</label>
                         <input wire:model.live="filtro_destino" type="text" id="filtro_destino" class="block w-full px-3 py-2 border border-secondary-300 rounded-lg text-sm placeholder-secondary-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500" placeholder="Buscar por destino">
                     </div>
-                    @if(auth()->user()->id_rol != 1)
+                    <!--[if BLOCK]><![endif]--><?php if(auth()->user()->id_rol != 1): ?>
                     <div class="space-y-1">
                         <label for="filtro_escuela" class="block text-sm font-medium text-secondary-700">Escuela</label>
                         <select wire:model.live="filtro_escuela" id="filtro_escuela" class="block w-full px-3 py-2 border border-secondary-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500">
                             <option value="">Todas</option>
-                            @foreach($escuelas as $escuela)
-                                <option value="{{ $escuela->id_escuela }}">{{ $escuela->nombre }}</option>
-                            @endforeach
+                            <!--[if BLOCK]><![endif]--><?php $__currentLoopData = $escuelas; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $escuela): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                <option value="<?php echo e($escuela->id_escuela); ?>"><?php echo e($escuela->nombre); ?></option>
+                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?><!--[if ENDBLOCK]><![endif]-->
                         </select>
                     </div>
-                    @endif
+                    <?php endif; ?><!--[if ENDBLOCK]><![endif]-->
                     <div class="space-y-1">
                         <label for="filtro_fecha" class="block text-sm font-medium text-secondary-700">Fecha</label>
                         <input wire:model.live="filtro_fecha" type="date" id="filtro_fecha" class="block w-full px-3 py-2 border border-secondary-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500">
@@ -113,45 +113,45 @@
                         <th scope="col" class="px-6 py-4 text-left text-xs font-medium text-secondary-500 uppercase tracking-wider">
                             <button wire:click="sortBy('destino')" class="group inline-flex items-center hover:text-secondary-700">
                                 Destino
-                                @if($sortField === 'destino')
-                                    @if($sortDirection === 'asc') <svg class="ml-2 w-4 h-4 text-primary-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"></path></svg>
-                                    @else <svg class="ml-2 w-4 h-4 text-primary-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-                                    @endif
-                                @else <svg class="ml-2 w-4 h-4 text-secondary-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"></path></svg>
-                                @endif
+                                <!--[if BLOCK]><![endif]--><?php if($sortField === 'destino'): ?>
+                                    <!--[if BLOCK]><![endif]--><?php if($sortDirection === 'asc'): ?> <svg class="ml-2 w-4 h-4 text-primary-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"></path></svg>
+                                    <?php else: ?> <svg class="ml-2 w-4 h-4 text-primary-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                                    <?php endif; ?><!--[if ENDBLOCK]><![endif]-->
+                                <?php else: ?> <svg class="ml-2 w-4 h-4 text-secondary-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"></path></svg>
+                                <?php endif; ?><!--[if ENDBLOCK]><![endif]-->
                             </button>
                         </th>
                         <th scope="col" class="px-6 py-4 text-left text-xs font-medium text-secondary-500 uppercase tracking-wider">
                             <button wire:click="sortBy('id_escuela')" class="group inline-flex items-center hover:text-secondary-700">
                                 Escuela
-                                @if($sortField === 'id_escuela')
-                                    @if($sortDirection === 'asc') <svg class="ml-2 w-4 h-4 text-primary-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"></path></svg>
-                                    @else <svg class="ml-2 w-4 h-4 text-primary-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-                                    @endif
-                                @else <svg class="ml-2 w-4 h-4 text-secondary-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"></path></svg>
-                                @endif
+                                <!--[if BLOCK]><![endif]--><?php if($sortField === 'id_escuela'): ?>
+                                    <!--[if BLOCK]><![endif]--><?php if($sortDirection === 'asc'): ?> <svg class="ml-2 w-4 h-4 text-primary-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"></path></svg>
+                                    <?php else: ?> <svg class="ml-2 w-4 h-4 text-primary-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                                    <?php endif; ?><!--[if ENDBLOCK]><![endif]-->
+                                <?php else: ?> <svg class="ml-2 w-4 h-4 text-secondary-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"></path></svg>
+                                <?php endif; ?><!--[if ENDBLOCK]><![endif]-->
                             </button>
                         </th>
                         <th scope="col" class="px-6 py-4 text-left text-xs font-medium text-secondary-500 uppercase tracking-wider">
                             <button wire:click="sortBy('fecha_salida')" class="group inline-flex items-center hover:text-secondary-700">
                                 Fecha y Horario
-                                @if($sortField === 'fecha_salida')
-                                    @if($sortDirection === 'asc') <svg class="ml-2 w-4 h-4 text-primary-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"></path></svg>
-                                    @else <svg class="ml-2 w-4 h-4 text-primary-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-                                    @endif
-                                @else <svg class="ml-2 w-4 h-4 text-secondary-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"></path></svg>
-                                @endif
+                                <!--[if BLOCK]><![endif]--><?php if($sortField === 'fecha_salida'): ?>
+                                    <!--[if BLOCK]><![endif]--><?php if($sortDirection === 'asc'): ?> <svg class="ml-2 w-4 h-4 text-primary-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"></path></svg>
+                                    <?php else: ?> <svg class="ml-2 w-4 h-4 text-primary-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                                    <?php endif; ?><!--[if ENDBLOCK]><![endif]-->
+                                <?php else: ?> <svg class="ml-2 w-4 h-4 text-secondary-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"></path></svg>
+                                <?php endif; ?><!--[if ENDBLOCK]><![endif]-->
                             </button>
                         </th>
                         <th scope="col" class="px-6 py-4 text-left text-xs font-medium text-secondary-500 uppercase tracking-wider">
                             <button wire:click="sortBy('cantidad_alumnos')" class="group inline-flex items-center hover:text-secondary-700">
                                 Cantidad Alumnos
-                                @if($sortField === 'cantidad_alumnos')
-                                    @if($sortDirection === 'asc') <svg class="ml-2 w-4 h-4 text-primary-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"></path></svg>
-                                    @else <svg class="ml-2 w-4 h-4 text-primary-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-                                    @endif
-                                @else <svg class="ml-2 w-4 h-4 text-secondary-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"></path></svg>
-                                @endif
+                                <!--[if BLOCK]><![endif]--><?php if($sortField === 'cantidad_alumnos'): ?>
+                                    <!--[if BLOCK]><![endif]--><?php if($sortDirection === 'asc'): ?> <svg class="ml-2 w-4 h-4 text-primary-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"></path></svg>
+                                    <?php else: ?> <svg class="ml-2 w-4 h-4 text-primary-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                                    <?php endif; ?><!--[if ENDBLOCK]><![endif]-->
+                                <?php else: ?> <svg class="ml-2 w-4 h-4 text-secondary-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"></path></svg>
+                                <?php endif; ?><!--[if ENDBLOCK]><![endif]-->
                             </button>
                         </th>
                         <th scope="col" class="px-6 py-4 text-left text-xs font-medium text-secondary-500 uppercase tracking-wider">
@@ -163,57 +163,61 @@
                     </tr>
                 </thead>
                 <tbody class="bg-white divide-y divide-secondary-200">
-                    @forelse($salidas as $salida)
+                    <!--[if BLOCK]><![endif]--><?php $__empty_1 = true; $__currentLoopData = $salidas; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $salida): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
                     <tr class="hover:bg-secondary-50 transition-colors duration-150">
                         <td class="px-6 py-4 whitespace-nowrap" style="max-width: 200px;">
-                            <div class="text-sm font-medium text-secondary-900 overflow-hidden text-ellipsis" title="{{ $salida->destino }}">{{ $salida->destino }}</div>
+                            <div class="text-sm font-medium text-secondary-900 overflow-hidden text-ellipsis" title="<?php echo e($salida->destino); ?>"><?php echo e($salida->destino); ?></div>
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap" style="max-width: 200px;">
-                            <div class="text-sm text-secondary-900 overflow-hidden text-ellipsis" title="{{ $salida->escuela->nombre ?? 'N/A' }}">{{ $salida->escuela->nombre ?? 'N/A' }}</div>
+                            <div class="text-sm text-secondary-900 overflow-hidden text-ellipsis" title="<?php echo e($salida->escuela->nombre ?? 'N/A'); ?>"><?php echo e($salida->escuela->nombre ?? 'N/A'); ?></div>
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap">
                             <div class="text-sm text-secondary-900">
-                                {{ $salida->fecha_salida ? \Carbon\Carbon::parse($salida->fecha_salida)->format('d/m/Y') : 'N/A' }}
-                                @if($salida->fecha_hasta)
-                                    <span class="text-secondary-400">-</span> {{ \Carbon\Carbon::parse($salida->fecha_hasta)->format('d/m/Y') }}
-                                @endif
+                                <?php echo e($salida->fecha_salida ? \Carbon\Carbon::parse($salida->fecha_salida)->format('d/m/Y') : 'N/A'); ?>
+
+                                <!--[if BLOCK]><![endif]--><?php if($salida->fecha_hasta): ?>
+                                    <span class="text-secondary-400">-</span> <?php echo e(\Carbon\Carbon::parse($salida->fecha_hasta)->format('d/m/Y')); ?>
+
+                                <?php endif; ?><!--[if ENDBLOCK]><![endif]-->
                             </div>
                             <div class="text-xs text-blue-600 font-normal">
-                                {{ $salida->hora_salida ? \Carbon\Carbon::parse($salida->hora_salida)->format('H:i') : 'N/A' }}
+                                <?php echo e($salida->hora_salida ? \Carbon\Carbon::parse($salida->hora_salida)->format('H:i') : 'N/A'); ?>
+
                                 -
-                                {{ $salida->hora_regreso ? \Carbon\Carbon::parse($salida->hora_regreso)->format('H:i') : 'N/A' }}
+                                <?php echo e($salida->hora_regreso ? \Carbon\Carbon::parse($salida->hora_regreso)->format('H:i') : 'N/A'); ?>
+
                             </div>
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap">
-                            <div class="text-sm text-secondary-900">{{ $salida->cantidad_alumnos ?? 'N/A' }}</div>
+                            <div class="text-sm text-secondary-900"><?php echo e($salida->cantidad_alumnos ?? 'N/A'); ?></div>
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap" style="max-width: 200px;">
-                            <div class="text-sm text-secondary-900 overflow-hidden text-ellipsis" title="{{ $salida->transporte ?? 'N/A' }}">{{ $salida->transporte ?? 'N/A' }}</div>
+                            <div class="text-sm text-secondary-900 overflow-hidden text-ellipsis" title="<?php echo e($salida->transporte ?? 'N/A'); ?>"><?php echo e($salida->transporte ?? 'N/A'); ?></div>
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-center">
                             <div class="flex items-center justify-center space-x-2">
-                                <a href="{{ route('salidas-educativas.show', $salida->id_salida) }}" class="p-2 text-secondary-400 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition-colors duration-200" title="Ver detalles">
+                                <a href="<?php echo e(route('salidas-educativas.show', $salida->id_salida)); ?>" class="p-2 text-secondary-400 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition-colors duration-200" title="Ver detalles">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
                                 </a>
-                                <a href="{{ route('salidas-educativas.print', $salida->id_salida) }}" target="_blank" class="p-2 text-secondary-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors duration-200" title="Imprimir">
+                                <a href="<?php echo e(route('salidas-educativas.print', $salida->id_salida)); ?>" target="_blank" class="p-2 text-secondary-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors duration-200" title="Imprimir">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
                                 </a>
-                                <a href="{{ route('salidas-educativas.edit', $salida->id_salida) }}" class="p-2 text-secondary-400 hover:text-warning-600 hover:bg-warning-50 rounded-lg transition-colors duration-200" title="Editar">
+                                <a href="<?php echo e(route('salidas-educativas.edit', $salida->id_salida)); ?>" class="p-2 text-secondary-400 hover:text-warning-600 hover:bg-warning-50 rounded-lg transition-colors duration-200" title="Editar">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
                                 </a>
-                                <button wire:click="eliminar({{ $salida->id_salida }})" wire:confirm="¿Estás seguro de que deseas eliminar esta salida educativa?" class="p-2 text-secondary-400 hover:text-danger-600 hover:bg-danger-50 rounded-lg transition-colors duration-200" title="Eliminar">
+                                <button wire:click="eliminar(<?php echo e($salida->id_salida); ?>)" wire:confirm="¿Estás seguro de que deseas eliminar esta salida educativa?" class="p-2 text-secondary-400 hover:text-danger-600 hover:bg-danger-50 rounded-lg transition-colors duration-200" title="Eliminar">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
                                 </button>
                             </div>
                         </td>
                     </tr>
-                    @empty
+                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
                     <tr>
                          <td colspan="6" class="px-6 py-12 text-center">
                              <div class="text-secondary-500">No hay registros disponibles.</div>
                          </td>
                      </tr>
-                    @endforelse
+                    <?php endif; ?><!--[if ENDBLOCK]><![endif]-->
                 </tbody>
             </table>
         </div>
@@ -222,26 +226,27 @@
         <div class="px-6 py-4 bg-secondary-50 border-t border-secondary-200 min-h-16">
             <div class="flex flex-col sm:flex-row items-center justify-between">
                 <div class="text-sm text-secondary-700 mb-4 sm:mb-0">
-                    @if($salidas->total() > 0)
-                        Mostrando <span class="font-medium text-secondary-900">{{ $salidas->firstItem() }}</span> a <span class="font-medium text-secondary-900">{{ $salidas->lastItem() }}</span> de <span class="font-medium text-secondary-900">{{ $salidas->total() }}</span> resultados
-                    @else
+                    <!--[if BLOCK]><![endif]--><?php if($salidas->total() > 0): ?>
+                        Mostrando <span class="font-medium text-secondary-900"><?php echo e($salidas->firstItem()); ?></span> a <span class="font-medium text-secondary-900"><?php echo e($salidas->lastItem()); ?></span> de <span class="font-medium text-secondary-900"><?php echo e($salidas->total()); ?></span> resultados
+                    <?php else: ?>
                         No hay resultados para mostrar
-                    @endif
+                    <?php endif; ?><!--[if ENDBLOCK]><![endif]-->
                 </div>
-                @if($salidas->hasPages())
-                    {{ $salidas->links('pagination.custom-tailwind') }}
-                @endif
+                <!--[if BLOCK]><![endif]--><?php if($salidas->hasPages()): ?>
+                    <?php echo e($salidas->links('pagination.custom-tailwind')); ?>
+
+                <?php endif; ?><!--[if ENDBLOCK]><![endif]-->
             </div>
         </div>
     </div>
 </div>
 
-@push('scripts')
+<?php $__env->startPush('scripts'); ?>
 <script>
     function exportarSalidas(formato) {
-        const filtroDestino = @this.get('filtro_destino');
-        const filtroEscuela = @this.get('filtro_escuela');
-        const filtroFecha = @this.get('filtro_fecha');
+        const filtroDestino = window.Livewire.find('<?php echo e($_instance->getId()); ?>').get('filtro_destino');
+        const filtroEscuela = window.Livewire.find('<?php echo e($_instance->getId()); ?>').get('filtro_escuela');
+        const filtroFecha = window.Livewire.find('<?php echo e($_instance->getId()); ?>').get('filtro_fecha');
         
         const params = new URLSearchParams();
         if (filtroDestino) params.append('filtro_destino', filtroDestino);
@@ -251,13 +256,13 @@
         let url = '';
         switch(formato) {
             case 'csv':
-                url = '{{ route("salidas-educativas.export.csv") }}';
+                url = '<?php echo e(route("salidas-educativas.export.csv")); ?>';
                 break;
             case 'excel':
-                url = '{{ route("salidas-educativas.export.excel") }}';
+                url = '<?php echo e(route("salidas-educativas.export.excel")); ?>';
                 break;
             case 'pdf':
-                url = '{{ route("salidas-educativas.export.pdf") }}';
+                url = '<?php echo e(route("salidas-educativas.export.pdf")); ?>';
                 break;
         }
         
@@ -268,4 +273,5 @@
         window.open(url, '_blank');
     }
 </script>
-@endpush
+<?php $__env->stopPush(); ?>
+<?php /**PATH /home/passion/Documents/FondoSolidarioEntrega11/Fondo Solidario Entrega/resources/views/livewire/salidas-educativas/index.blade.php ENDPATH**/ ?>
