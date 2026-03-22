@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <meta name="csrf-token" content="<?php echo e(csrf_token()); ?>">
     <title>Fondo Solidario - Login</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
@@ -48,7 +48,7 @@
             <!-- Logo Section -->
             <div class="text-center mb-8">
                 <div class="flex justify-center items-center gap-4 mb-6">
-                    <img src="{{ asset('images/LogoFondoBlanco.png') }}" alt="JAEC Logo" class="h-20 object-contain">
+                    <img src="<?php echo e(asset('images/LogoFondoBlanco.png')); ?>" alt="JAEC Logo" class="h-20 object-contain">
                 </div>
             </div>
 
@@ -59,10 +59,10 @@
                     <p class="text-secondary-600 font-medium">Sistema de Gestión JAEC</p>
                 </div>
 
-                {{-- Errors and status are shown as toasts (see script below) --}}
+                
 
-                <form method="POST" action="{{ route('login') }}" class="space-y-6">
-                    @csrf
+                <form method="POST" action="<?php echo e(route('login')); ?>" class="space-y-6">
+                    <?php echo csrf_field(); ?>
                     
                     <div class="space-y-2">
                         <label for="email" class="block text-sm font-medium text-gray-700">Correo Electrónico</label>
@@ -72,16 +72,30 @@
                                 type="email" 
                                 id="email" 
                                 name="email"
-                                value="{{ old('email') }}"
+                                value="<?php echo e(old('email')); ?>"
                                 placeholder="usuario@escuela.edu.ar"
-                                class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:border-primary-500 focus:ring-2 focus:ring-primary-200 focus:outline-none transition-colors @error('email') border-red-500 @enderror"
+                                class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:border-primary-500 focus:ring-2 focus:ring-primary-200 focus:outline-none transition-colors <?php $__errorArgs = ['email'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?> border-red-500 <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>"
                                 required
                                 autofocus
                             >
                         </div>
-                        @error('email')
-                            <p class="text-sm text-red-600">{{ $message }}</p>
-                        @enderror
+                        <?php $__errorArgs = ['email'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
+                            <p class="text-sm text-red-600"><?php echo e($message); ?></p>
+                        <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
                     </div>
 
                     <div class="space-y-2">
@@ -93,16 +107,30 @@
                                 id="password" 
                                 name="password"
                                 placeholder="••••••••"
-                                class="w-full pl-10 pr-10 py-3 border border-gray-300 rounded-lg focus:border-primary-500 focus:ring-2 focus:ring-primary-200 focus:outline-none transition-colors @error('password') border-red-500 @enderror"
+                                class="w-full pl-10 pr-10 py-3 border border-gray-300 rounded-lg focus:border-primary-500 focus:ring-2 focus:ring-primary-200 focus:outline-none transition-colors <?php $__errorArgs = ['password'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?> border-red-500 <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>"
                                 required
                             >
                             <button type="button" onclick="togglePassword()" class="absolute right-3 top-3 text-gray-400 hover:text-gray-600">
                                 <i id="passwordIcon" class="fas fa-eye"></i>
                             </button>
                         </div>
-                        @error('password')
-                            <p class="text-sm text-red-600">{{ $message }}</p>
-                        @enderror
+                        <?php $__errorArgs = ['password'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
+                            <p class="text-sm text-red-600"><?php echo e($message); ?></p>
+                        <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
                     </div>
 
                     <div class="flex items-center justify-between">
@@ -132,8 +160,8 @@
 
             <!-- Footer Logos -->
             <div class="flex justify-center items-center gap-8 mt-8 opacity-70">
-                <img src="{{ asset('images/ArquidiocesisCordobaFondoBlanco.png') }}" alt="Arquidiócesis de Córdoba" class="h-10 object-contain">
-                <img src="{{ asset('images/EducaresAmar.png') }}" alt="Educar es Amar" class="h-12 object-contain">
+                <img src="<?php echo e(asset('images/ArquidiocesisCordobaFondoBlanco.png')); ?>" alt="Arquidiócesis de Córdoba" class="h-10 object-contain">
+                <img src="<?php echo e(asset('images/EducaresAmar.png')); ?>" alt="Educar es Amar" class="h-12 object-contain">
             </div>
         </div>
     </div>
@@ -147,8 +175,8 @@
             </div>
             <p class="text-gray-600 mb-6">Ingrese su correo electrónico y le enviaremos un enlace para restablecer su contraseña.</p>
             
-            <form action="{{ route('forgot-password') }}" method="POST" id="resetForm">
-                @csrf
+            <form action="<?php echo e(route('forgot-password')); ?>" method="POST" id="resetForm">
+                <?php echo csrf_field(); ?>
                 <div class="mb-6">
                     <label for="resetEmail" class="block text-sm font-medium text-gray-700 mb-2">Correo Electrónico</label>
                     <div class="relative">
@@ -209,15 +237,15 @@
         }
 
         document.addEventListener('DOMContentLoaded', function () {
-            @foreach ($errors->all() as $error)
-                showToast(@json($error), 'error');
-            @endforeach
-            @if (session('toast_error'))
-                showToast(@json(session('toast_error')), 'error');
-            @endif
-            @if (session('status'))
-                showToast(@json(session('status')), 'success');
-            @endif
+            <?php $__currentLoopData = $errors->all(); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $error): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                showToast(<?php echo json_encode($error, 15, 512) ?>, 'error');
+            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+            <?php if(session('toast_error')): ?>
+                showToast(<?php echo json_encode(session('toast_error'), 15, 512) ?>, 'error');
+            <?php endif; ?>
+            <?php if(session('status')): ?>
+                showToast(<?php echo json_encode(session('status'), 15, 512) ?>, 'success');
+            <?php endif; ?>
         });
     </script>
 
@@ -282,4 +310,4 @@
         });
     </script>
 </body>
-</html>
+</html><?php /**PATH /home/ubuntu/Documents/FondoSolidarioEntrega/FondoSolidarioEntrega/resources/views/auth/login.blade.php ENDPATH**/ ?>
