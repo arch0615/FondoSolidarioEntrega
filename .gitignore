@@ -5,7 +5,6 @@
 /storage/*.key
 bootstrap/cache/*
 !bootstrap/cache/.gitkeep
-/vendor
 .env
 .env.backup
 .env.production
