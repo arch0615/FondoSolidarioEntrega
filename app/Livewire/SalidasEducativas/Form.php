@@ -30,6 +30,7 @@ class Form extends Component
     public $transporte;
 
     // Archivos adjuntos
+    public $archivos_nuevos = [];
     public $archivos_adjuntos = [];
     public $archivos_existentes = [];
 
@@ -53,7 +54,7 @@ class Form extends Component
             'cantidad_alumnos' => 'required|integer|min:1',
             'docentes_acompanantes' => 'required|string|max:1000',
             'transporte' => 'required|string|max:255',
-            'archivos_adjuntos.*' => 'nullable|file|max:10240|mimes:pdf,jpg,jpeg,png',
+            'archivos_nuevos.*' => 'nullable|file|max:10240|mimes:pdf,jpg,jpeg,png',
         ];
     }
 
@@ -73,9 +74,26 @@ class Form extends Component
             'cantidad_alumnos.min' => 'Debe haber al menos un alumno.',
             'docentes_acompanantes.required' => 'Los docentes acompañantes son obligatorios.',
             'transporte.required' => 'El medio de transporte es obligatorio.',
-            'archivos_adjuntos.*.max' => 'Cada archivo no puede superar los 10MB.',
-            'archivos_adjuntos.*.mimes' => 'Solo se permiten archivos PDF, JPG, JPEG, PNG.',
+            'archivos_nuevos.*.max' => 'Cada archivo no puede superar los 10MB.',
+            'archivos_nuevos.*.mimes' => 'Solo se permiten archivos PDF, JPG, JPEG, PNG.',
         ];
+    }
+
+    public function updatedArchivosNuevos()
+    {
+        $this->validate([
+            'archivos_nuevos.*' => 'file|max:10240|mimes:pdf,jpg,jpeg,png',
+        ]);
+
+        foreach ($this->archivos_nuevos as $archivo) {
+            $this->archivos_adjuntos[] = $archivo;
+        }
+        $this->archivos_nuevos = [];
+    }
+
+    public function removeNuevoArchivo($index)
+    {
+        array_splice($this->archivos_adjuntos, $index, 1);
     }
 
     public function mount($modo = 'create', $salida_id = null)

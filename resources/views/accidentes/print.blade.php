@@ -39,6 +39,9 @@
 </head>
 <body>
     <div class="no-print my-4 text-center">
+        <a href="{{ route('accidentes.pdf', $accidente->id_accidente) }}" target="_blank" class="inline-block bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-lg shadow-md">
+            Descargar PDF
+        </a>
         <button onclick="window.print()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg shadow-md">
             Imprimir / Guardar como PDF
         </button>

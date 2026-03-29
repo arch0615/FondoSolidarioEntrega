@@ -43,9 +43,9 @@
                     <h3 class="text-lg font-medium text-secondary-900 mb-4">Información de la Salida</h3>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <!-- Escuela -->
-                        <div class="space-y-1">
+                        <div class="md:col-span-2 space-y-1">
                             <label for="id_escuela" class="block text-sm font-medium text-secondary-700">Escuela <span class="text-danger-500">*</span></label>
-                            <select wire:model.live="id_escuela" id="id_escuela" class="block w-full px-3 py-2 border border-secondary-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 {{ ($modo == 'show' || $esUsuarioGeneral) ? 'bg-secondary-50' : 'bg-white' }}" {{ ($modo == 'show' || $esUsuarioGeneral) ? 'disabled' : '' }}>
+                            <select wire:model.live="id_escuela" id="id_escuela" class="block w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 {{ $errors->has('id_escuela') ? 'border-red-500 ring-1 ring-red-500' : 'border-secondary-300' }} {{ ($modo == 'show' || $esUsuarioGeneral) ? 'bg-secondary-50' : 'bg-white' }}" {{ ($modo == 'show' || $esUsuarioGeneral) ? 'disabled' : '' }}>
                                 <option value="">Seleccione una escuela</option>
                                 @foreach($escuelas as $escuela)
                                     <option value="{{ $escuela->id_escuela }}">{{ $escuela->nombre }}</option>
@@ -57,43 +57,43 @@
                         <!-- Fecha Desde -->
                         <div class="space-y-1">
                             <label for="fecha_salida" class="block text-sm font-medium text-secondary-700">Fecha Desde <span class="text-danger-500">*</span></label>
-                            <input wire:model="fecha_salida" type="date" id="fecha_salida" class="block w-full px-3 py-2 border border-secondary-300 rounded-lg text-sm {{ $modo == 'show' ? 'bg-secondary-50' : 'bg-white' }}" {{ $modo == 'show' ? 'readonly' : '' }}>
+                            <input wire:model="fecha_salida" type="date" id="fecha_salida" class="block w-full px-3 py-2 border rounded-lg text-sm {{ $errors->has('fecha_salida') ? 'border-red-500 ring-1 ring-red-500' : 'border-secondary-300' }} {{ $modo == 'show' ? 'bg-secondary-50' : 'bg-white' }}" {{ $modo == 'show' ? 'readonly' : '' }}>
                             @error('fecha_salida') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
-                        </div>
-
-                        <!-- Fecha Hasta -->
-                        <div class="space-y-1">
-                            <label for="fecha_hasta" class="block text-sm font-medium text-secondary-700">Fecha Hasta</label>
-                            <input wire:model="fecha_hasta" type="date" id="fecha_hasta" class="block w-full px-3 py-2 border border-secondary-300 rounded-lg text-sm {{ $modo == 'show' ? 'bg-secondary-50' : 'bg-white' }}" {{ $modo == 'show' ? 'readonly' : '' }}>
-                            <p class="text-xs text-secondary-400">Dejar vacío si la salida es de un solo día</p>
-                            @error('fecha_hasta') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
                         </div>
 
                         <!-- Hora de Salida -->
                         <div class="space-y-1">
                             <label for="hora_salida" class="block text-sm font-medium text-secondary-700">Hora de Salida <span class="text-danger-500">*</span></label>
-                            <input wire:model="hora_salida" type="time" id="hora_salida" class="block w-full px-3 py-2 border border-secondary-300 rounded-lg text-sm {{ $modo == 'show' ? 'bg-secondary-50' : 'bg-white' }}" {{ $modo == 'show' ? 'readonly' : '' }}>
+                            <input wire:model="hora_salida" type="time" id="hora_salida" class="block w-full px-3 py-2 border rounded-lg text-sm {{ $errors->has('hora_salida') ? 'border-red-500 ring-1 ring-red-500' : 'border-secondary-300' }} {{ $modo == 'show' ? 'bg-secondary-50' : 'bg-white' }}" {{ $modo == 'show' ? 'readonly' : '' }}>
                             @error('hora_salida') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
+                        </div>
+
+                        <!-- Fecha Hasta -->
+                        <div class="space-y-1">
+                            <label for="fecha_hasta" class="block text-sm font-medium text-secondary-700">Fecha Hasta</label>
+                            <input wire:model="fecha_hasta" type="date" id="fecha_hasta" class="block w-full px-3 py-2 border rounded-lg text-sm {{ $errors->has('fecha_hasta') ? 'border-red-500 ring-1 ring-red-500' : 'border-secondary-300' }} {{ $modo == 'show' ? 'bg-secondary-50' : 'bg-white' }}" {{ $modo == 'show' ? 'readonly' : '' }}>
+                            <p class="text-xs text-secondary-400">Dejar vacío si la salida es de un solo día</p>
+                            @error('fecha_hasta') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
                         </div>
 
                         <!-- Hora de Regreso -->
                         <div class="space-y-1">
                             <label for="hora_regreso" class="block text-sm font-medium text-secondary-700">Hora de Regreso <span class="text-danger-500">*</span></label>
-                            <input wire:model="hora_regreso" type="time" id="hora_regreso" class="block w-full px-3 py-2 border border-secondary-300 rounded-lg text-sm {{ $modo == 'show' ? 'bg-secondary-50' : 'bg-white' }}" {{ $modo == 'show' ? 'readonly' : '' }}>
+                            <input wire:model="hora_regreso" type="time" id="hora_regreso" class="block w-full px-3 py-2 border rounded-lg text-sm {{ $errors->has('hora_regreso') ? 'border-red-500 ring-1 ring-red-500' : 'border-secondary-300' }} {{ $modo == 'show' ? 'bg-secondary-50' : 'bg-white' }}" {{ $modo == 'show' ? 'readonly' : '' }}>
                             @error('hora_regreso') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
                         </div>
 
                         <!-- Destino -->
                         <div class="md:col-span-2 space-y-1">
                             <label for="destino" class="block text-sm font-medium text-secondary-700">Destino <span class="text-danger-500">*</span></label>
-                            <input wire:model="destino" type="text" id="destino" class="block w-full px-3 py-2 border border-secondary-300 rounded-lg text-sm placeholder-secondary-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 {{ $modo == 'show' ? 'bg-secondary-50' : 'bg-white' }}" placeholder="Ej: Museo de Ciencias Naturales" {{ $modo == 'show' ? 'readonly' : '' }}>
+                            <input wire:model="destino" type="text" id="destino" class="block w-full px-3 py-2 border rounded-lg text-sm placeholder-secondary-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 {{ $errors->has('destino') ? 'border-red-500 ring-1 ring-red-500' : 'border-secondary-300' }} {{ $modo == 'show' ? 'bg-secondary-50' : 'bg-white' }}" placeholder="Ej: Museo de Ciencias Naturales" {{ $modo == 'show' ? 'readonly' : '' }}>
                             @error('destino') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
                         </div>
 
                         <!-- Propósito -->
                         <div class="md:col-span-2 space-y-1">
                             <label for="proposito" class="block text-sm font-medium text-secondary-700">Propósito <span class="text-danger-500">*</span></label>
-                            <textarea wire:model="proposito" id="proposito" rows="3" class="block w-full px-3 py-2 border border-secondary-300 rounded-lg text-sm placeholder-secondary-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 {{ $modo == 'show' ? 'bg-secondary-50' : 'bg-white' }}" placeholder="Describa el propósito de la salida educativa" {{ $modo == 'show' ? 'readonly' : '' }}></textarea>
+                            <textarea wire:model="proposito" id="proposito" rows="3" class="block w-full px-3 py-2 border rounded-lg text-sm placeholder-secondary-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 {{ $errors->has('proposito') ? 'border-red-500 ring-1 ring-red-500' : 'border-secondary-300' }} {{ $modo == 'show' ? 'bg-secondary-50' : 'bg-white' }}" placeholder="Describa el propósito de la salida educativa" {{ $modo == 'show' ? 'readonly' : '' }}></textarea>
                             @error('proposito') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
                         </div>
 
@@ -108,86 +108,192 @@
                         <!-- Cantidad de Alumnos -->
                         <div class="space-y-1">
                             <label for="cantidad_alumnos" class="block text-sm font-medium text-secondary-700">Cantidad de Alumnos <span class="text-danger-500">*</span></label>
-                            <input wire:model="cantidad_alumnos" type="number" id="cantidad_alumnos" class="block w-full px-3 py-2 border border-secondary-300 rounded-lg text-sm placeholder-secondary-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 {{ $modo == 'show' ? 'bg-secondary-50' : 'bg-white' }}" placeholder="Ej: 30" {{ $modo == 'show' ? 'readonly' : '' }}>
+                            <input wire:model="cantidad_alumnos" type="number" id="cantidad_alumnos" class="block w-full px-3 py-2 border rounded-lg text-sm placeholder-secondary-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 {{ $errors->has('cantidad_alumnos') ? 'border-red-500 ring-1 ring-red-500' : 'border-secondary-300' }} {{ $modo == 'show' ? 'bg-secondary-50' : 'bg-white' }}" placeholder="Ej: 30" {{ $modo == 'show' ? 'readonly' : '' }}>
                             @error('cantidad_alumnos') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
                         </div>
 
                         <!-- Docentes Acompañantes -->
                         <div class="md:col-span-2 space-y-1">
                             <label for="docentes_acompanantes" class="block text-sm font-medium text-secondary-700">Docentes Acompañantes <span class="text-danger-500">*</span></label>
-                            <textarea wire:model="docentes_acompanantes" id="docentes_acompanantes" rows="3" class="block w-full px-3 py-2 border border-secondary-300 rounded-lg text-sm placeholder-secondary-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 {{ $modo == 'show' ? 'bg-secondary-50' : 'bg-white' }}" placeholder="Ej: Prof. Ana Gómez, Prof. Carlos Ruiz" {{ $modo == 'show' ? 'readonly' : '' }}></textarea>
+                            <textarea wire:model="docentes_acompanantes" id="docentes_acompanantes" rows="3" class="block w-full px-3 py-2 border rounded-lg text-sm placeholder-secondary-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 {{ $errors->has('docentes_acompanantes') ? 'border-red-500 ring-1 ring-red-500' : 'border-secondary-300' }} {{ $modo == 'show' ? 'bg-secondary-50' : 'bg-white' }}" placeholder="Ej: Prof. Ana Gómez, Prof. Carlos Ruiz" {{ $modo == 'show' ? 'readonly' : '' }}></textarea>
                             @error('docentes_acompanantes') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
                         </div>
 
                         <!-- Medio de Transporte -->
                         <div class="md:col-span-2 space-y-1">
                             <label for="transporte" class="block text-sm font-medium text-secondary-700">Medio de Transporte <span class="text-danger-500">*</span></label>
-                            <input wire:model="transporte" type="text" id="transporte" class="block w-full px-3 py-2 border border-secondary-300 rounded-lg text-sm placeholder-secondary-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 {{ $modo == 'show' ? 'bg-secondary-50' : 'bg-white' }}" placeholder="Ej: Colectivo escolar" {{ $modo == 'show' ? 'readonly' : '' }}>
+                            <input wire:model="transporte" type="text" id="transporte" class="block w-full px-3 py-2 border rounded-lg text-sm placeholder-secondary-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 {{ $errors->has('transporte') ? 'border-red-500 ring-1 ring-red-500' : 'border-secondary-300' }} {{ $modo == 'show' ? 'bg-secondary-50' : 'bg-white' }}" placeholder="Ej: Colectivo escolar" {{ $modo == 'show' ? 'readonly' : '' }}>
                             @error('transporte') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
                         </div>
                     </div>
                 </div>
 
                 <!-- Archivos Adjuntos -->
-                <div class="border-b border-secondary-200 pb-6">
+                <div class="border-b border-secondary-200 pb-6" x-data="{ showDetail: false, detailArchivo: null }">
                     <h3 class="text-lg font-medium text-secondary-900 mb-4">Archivos Adjuntos</h3>
 
-                    @if($modo != 'show')
-                    <div class="mb-6" x-data="{ isUploading: false, progress: 0 }" x-on:livewire-upload-start="isUploading = true" x-on:livewire-upload-finish="isUploading = false" x-on:livewire-upload-error="isUploading = false" x-on:livewire-upload-progress="progress = $event.detail.progress">
-                        <div class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-secondary-300 border-dashed rounded-lg">
-                            <div class="space-y-1 text-center">
-                                <svg class="mx-auto h-12 w-12 text-secondary-400" stroke="currentColor" fill="none" viewBox="0 0 48 48"><path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /></svg>
-                                <div class="flex text-sm text-secondary-600">
-                                    <label for="archivos_adjuntos" class="relative cursor-pointer bg-white rounded-md font-medium text-primary-600 hover:text-primary-500">
-                                        <span>Subir archivos</span>
-                                        <input wire:model="archivos_adjuntos" id="archivos_adjuntos" type="file" class="sr-only" multiple>
-                                    </label>
-                                    <p class="pl-1">o arrastrar y soltar</p>
-                                </div>
-                                <p class="text-xs text-secondary-500">PDF, JPG, PNG hasta 10MB</p>
+                    <div class="flex flex-wrap gap-4">
+                        {{-- Existing file cards --}}
+                        @foreach ($archivos_existentes as $archivo)
+                        <div class="relative rounded-xl border border-secondary-200 bg-white shadow-sm" style="width: 10rem; height: 10rem;" x-data="{ hover: false }" x-on:mouseenter="hover = true" x-on:mouseleave="hover = false">
+                            {{-- Preview --}}
+                            <div class="absolute inset-0 overflow-hidden rounded-xl">
+                                @if(in_array(strtolower($archivo['tipo_archivo'] ?? ''), ['jpg', 'jpeg', 'png', 'gif', 'webp']))
+                                    <img src="{{ Storage::url($archivo['ruta_archivo']) }}" alt="{{ $archivo['nombre_archivo'] }}" class="w-full h-full object-cover">
+                                @elseif(strtolower($archivo['tipo_archivo'] ?? '') === 'pdf')
+                                    <div class="w-full h-full flex flex-col items-center justify-center bg-red-50">
+                                        <svg class="w-12 h-12 text-red-500" fill="currentColor" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6zm-1 2l5 5h-5V4zM6 20V4h5v7h7v9H6z"/><path d="M8 12h1.5v1.5h1V12H12v-1.5h-1.5V9h-1v1.5H8V12zm0 2.5h4V16H8v-1.5z"/></svg>
+                                        <span class="text-xs text-red-600 font-medium mt-1">PDF</span>
+                                    </div>
+                                @else
+                                    <div class="w-full h-full flex flex-col items-center justify-center bg-secondary-50">
+                                        <svg class="w-12 h-12 text-secondary-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
+                                        <span class="text-xs text-secondary-500 font-medium mt-1">{{ strtoupper($archivo['tipo_archivo'] ?? 'FILE') }}</span>
+                                    </div>
+                                @endif
+                            </div>
+                            {{-- File name at bottom --}}
+                            <div class="absolute bottom-0 left-0 right-0 bg-white/90 backdrop-blur-sm px-2 py-1 border-t border-secondary-100 rounded-b-xl z-10">
+                                <p class="text-xs text-secondary-700 truncate">{{ $archivo['nombre_archivo'] }}</p>
+                            </div>
+                            {{-- Hover overlay --}}
+                            @if($modo != 'show')
+                            <div x-show="hover" x-transition:enter="transition ease-out duration-150" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="transition ease-in duration-100" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0"
+                                 class="absolute inset-0 rounded-xl z-20 flex items-center justify-center" style="background-color: rgba(156,163,175,0.7); display: none;">
+                                {{-- Delete icon --}}
+                                <button wire:click.prevent="eliminarArchivoExistente({{ $archivo['id_archivo'] }})" type="button"
+                                    class="text-black hover:scale-110 transition-transform" title="Eliminar">
+                                    <svg class="w-7 h-7" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                                </button>
+                            </div>
+                            @endif
+                        </div>
+                        @endforeach
+
+                        {{-- New (pending upload) file cards --}}
+                        @foreach ($archivos_adjuntos as $index => $archivo)
+                        <div class="relative rounded-xl border-2 border-blue-300 bg-blue-50 shadow-sm" style="width: 10rem; height: 10rem;" x-data="{ hover: false }" x-on:mouseenter="hover = true" x-on:mouseleave="hover = false">
+                            {{-- Preview --}}
+                            <div class="absolute inset-0 overflow-hidden rounded-xl">
+                                @if(in_array(strtolower($archivo->getClientOriginalExtension()), ['jpg', 'jpeg', 'png', 'gif', 'webp']))
+                                    <img src="{{ $archivo->temporaryUrl() }}" alt="{{ $archivo->getClientOriginalName() }}" class="w-full h-full object-cover">
+                                @elseif(strtolower($archivo->getClientOriginalExtension()) === 'pdf')
+                                    <div class="w-full h-full flex flex-col items-center justify-center bg-red-50">
+                                        <svg class="w-12 h-12 text-red-500" fill="currentColor" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6zm-1 2l5 5h-5V4zM6 20V4h5v7h7v9H6z"/><path d="M8 12h1.5v1.5h1V12H12v-1.5h-1.5V9h-1v1.5H8V12zm0 2.5h4V16H8v-1.5z"/></svg>
+                                        <span class="text-xs text-red-600 font-medium mt-1">PDF</span>
+                                    </div>
+                                @else
+                                    <div class="w-full h-full flex flex-col items-center justify-center">
+                                        <svg class="w-12 h-12 text-secondary-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
+                                    </div>
+                                @endif
+                            </div>
+                            {{-- File name --}}
+                            <div class="absolute bottom-0 left-0 right-0 bg-blue-100/90 backdrop-blur-sm px-2 py-1 border-t border-blue-200 rounded-b-xl z-10">
+                                <p class="text-xs text-secondary-700 truncate">{{ $archivo->getClientOriginalName() }}</p>
+                            </div>
+                            {{-- Hover overlay --}}
+                            <div x-show="hover" x-transition:enter="transition ease-out duration-150" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="transition ease-in duration-100" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0"
+                                 class="absolute inset-0 rounded-xl z-20 flex items-center justify-center" style="background-color: rgba(156,163,175,0.7); display: none;">
+                                {{-- Delete --}}
+                                <button wire:click.prevent="removeNuevoArchivo({{ $index }})" type="button"
+                                    class="text-black hover:scale-110 transition-transform" title="Quitar">
+                                    <svg class="w-7 h-7" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                                </button>
                             </div>
                         </div>
-                        <div x-show="isUploading"><progress max="100" x-bind:value="progress" class="w-full"></progress></div>
-                        @error('archivos_adjuntos.*') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
-                    </div>
-                    @endif
+                        @endforeach
 
-                    <div>
-                        @if (count($archivos_existentes) > 0)
-                            @foreach ($archivos_existentes as $archivo)
-                                <div class="bg-white border border-secondary-200 rounded-lg p-3 mb-2">
-                                    @if(in_array(strtolower($archivo['tipo_archivo'] ?? ''), ['jpg', 'jpeg', 'png', 'gif', 'webp']))
-                                    <div class="mb-2">
-                                        <a href="{{ Storage::url($archivo['ruta_archivo']) }}" target="_blank">
-                                            <img src="{{ Storage::url($archivo['ruta_archivo']) }}" alt="{{ $archivo['nombre_archivo'] }}" class="max-h-48 rounded-md border border-secondary-200 object-contain">
-                                        </a>
-                                    </div>
-                                    @endif
-                                    <div class="flex items-center justify-between">
-                                        <div class="flex items-center flex-1">
-                                            <a href="{{ Storage::url($archivo['ruta_archivo']) }}" target="_blank" class="font-medium text-secondary-900 truncate hover:text-primary-600">{{ $archivo['nombre_archivo'] }}</a>
-                                            <span class="text-sm text-secondary-600 ml-2">({{ number_format(($archivo['tamano'] ?? 0) / 1024, 1) }} KB)</span>
-                                        </div>
-                                        @if($modo != 'show')
-                                        <button wire:click.prevent="eliminarArchivoExistente({{ $archivo['id_archivo'] }})" type="button" class="text-red-600 hover:text-red-800 p-1 ml-2"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg></button>
-                                        @endif
-                                    </div>
+                        {{-- Add file card button --}}
+                        @if($modo != 'show')
+                        <div x-data="{ isUploading: false, progress: 0 }"
+                             x-on:livewire-upload-start="isUploading = true"
+                             x-on:livewire-upload-finish="isUploading = false"
+                             x-on:livewire-upload-error="isUploading = false"
+                             x-on:livewire-upload-progress="progress = $event.detail.progress">
+                            <label for="archivos_nuevos" class="group relative rounded-xl border-2 border-dashed border-secondary-300 bg-secondary-50 hover:bg-secondary-100 hover:border-primary-400 cursor-pointer transition-colors duration-200" style="width: 10rem; height: 10rem; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+                                <svg class="w-10 h-10 text-secondary-400 group-hover:text-primary-500 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+                                <span class="text-xs text-secondary-500 group-hover:text-primary-600 mt-1 font-medium">Agregar archivo</span>
+                                <span class="text-[10px] text-secondary-400 mt-0.5">PDF, JPG, PNG</span>
+                                <input wire:model="archivos_nuevos" id="archivos_nuevos" type="file" class="sr-only" multiple accept=".pdf,.jpg,.jpeg,.png">
+                            </label>
+                            {{-- Upload progress bar --}}
+                            <div x-show="isUploading" class="mt-2 w-40">
+                                <div class="w-full bg-secondary-200 rounded-full h-1.5">
+                                    <div class="bg-primary-500 h-1.5 rounded-full transition-all duration-300" :style="'width: ' + progress + '%'"></div>
                                 </div>
-                            @endforeach
-                        @endif
-                        @if (count($archivos_adjuntos) > 0)
-                            @foreach ($archivos_adjuntos as $archivo)
-                                <div class="flex items-center justify-between bg-blue-50 border border-blue-200 rounded-lg p-3 mb-2">
-                                    <div class="font-medium text-secondary-900 truncate">{{ $archivo->getClientOriginalName() }} <span class="text-xs text-blue-600">(nuevo)</span></div>
-                                    <button wire:click.prevent="$removeUpload('archivos_adjuntos', '{{ $archivo->getFilename() }}')" type="button" class="text-red-600 hover:text-red-800 p-1"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg></button>
-                                </div>
-                            @endforeach
-                        @endif
-                        @if (count($archivos_existentes) == 0 && count($archivos_adjuntos) == 0)
-                            <div class="text-center py-8 border-2 border-dashed border-secondary-200 rounded-lg">
-                                <p class="text-sm text-secondary-500">No hay archivos adjuntos</p>
                             </div>
+                        </div>
+                        @error('archivos_nuevos.*') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
                         @endif
+
+                        {{-- Empty state --}}
+                        @if (count($archivos_existentes) == 0 && count($archivos_adjuntos) == 0 && $modo == 'show')
+                        <div class="w-full text-center py-8 border-2 border-dashed border-secondary-200 rounded-lg">
+                            <p class="text-sm text-secondary-500">No hay archivos adjuntos</p>
+                        </div>
+                        @endif
+                    </div>
+
+                    {{-- Detail Dialog --}}
+                    <div x-show="showDetail" x-cloak x-transition:enter="ease-out duration-200" x-transition:leave="ease-in duration-150"
+                         class="fixed inset-0 z-50 flex items-center justify-center p-4" style="display: none;">
+                        {{-- Backdrop --}}
+                        <div class="fixed inset-0 bg-black/40" x-on:click="showDetail = false"></div>
+                        {{-- Dialog --}}
+                        <div class="relative bg-white rounded-2xl shadow-xl max-w-lg w-full p-6 z-10" x-on:click.away="showDetail = false">
+                            <div class="flex items-center justify-between mb-4">
+                                <h3 class="text-lg font-semibold text-secondary-900">Detalle del Archivo</h3>
+                                <button type="button" x-on:click="showDetail = false" class="text-secondary-400 hover:text-secondary-600">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                                </button>
+                            </div>
+                            <template x-if="detailArchivo">
+                                <div>
+                                    {{-- Preview in dialog --}}
+                                    <div class="mb-4 rounded-lg overflow-hidden border border-secondary-200 bg-secondary-50 flex items-center justify-center" style="max-height: 300px;">
+                                        <template x-if="['jpg','jpeg','png','gif','webp'].includes(detailArchivo.tipo.toLowerCase())">
+                                            <img :src="detailArchivo.url" :alt="detailArchivo.nombre" class="max-h-[300px] object-contain">
+                                        </template>
+                                        <template x-if="!['jpg','jpeg','png','gif','webp'].includes(detailArchivo.tipo.toLowerCase())">
+                                            <div class="py-8 text-center">
+                                                <svg class="w-16 h-16 text-secondary-300 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
+                                                <span class="text-sm text-secondary-400 font-medium mt-2 block uppercase" x-text="detailArchivo.tipo"></span>
+                                            </div>
+                                        </template>
+                                    </div>
+                                    {{-- File info --}}
+                                    <div class="space-y-2 text-sm">
+                                        <div class="flex justify-between">
+                                            <span class="text-secondary-500">Nombre:</span>
+                                            <span class="text-secondary-900 font-medium text-right max-w-[280px] truncate" x-text="detailArchivo.nombre"></span>
+                                        </div>
+                                        <div class="flex justify-between">
+                                            <span class="text-secondary-500">Tipo:</span>
+                                            <span class="text-secondary-900 font-medium uppercase" x-text="detailArchivo.tipo"></span>
+                                        </div>
+                                        <div class="flex justify-between">
+                                            <span class="text-secondary-500">Tamaño:</span>
+                                            <span class="text-secondary-900 font-medium" x-text="detailArchivo.tamano"></span>
+                                        </div>
+                                        <div class="flex justify-between" x-show="detailArchivo.fecha">
+                                            <span class="text-secondary-500">Fecha de carga:</span>
+                                            <span class="text-secondary-900 font-medium" x-text="detailArchivo.fecha"></span>
+                                        </div>
+                                    </div>
+                                    {{-- Actions --}}
+                                    <div class="mt-5 flex justify-end gap-3">
+                                        <a :href="detailArchivo.url" target="_blank" class="inline-flex items-center px-4 py-2 bg-primary-600 text-white text-sm font-medium rounded-lg hover:bg-primary-700 transition-colors">
+                                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+                                            Abrir
+                                        </a>
+                                        <button type="button" x-on:click="showDetail = false" class="px-4 py-2 border border-secondary-300 text-sm font-medium rounded-lg text-secondary-700 hover:bg-secondary-50 transition-colors">
+                                            Cerrar
+                                        </button>
+                                    </div>
+                                </div>
+                            </template>
+                        </div>
                     </div>
                 </div>
 

@@ -107,9 +107,9 @@
 
     <!-- Tabla de Salidas Educativas -->
     <div class="bg-white rounded-xl border border-secondary-200 overflow-hidden">
-        <div class="overflow-x-auto">
+        <div class="overflow-auto max-h-[65vh]">
             <table class="min-w-full divide-y divide-secondary-200">
-                <thead class="bg-secondary-50">
+                <thead class="bg-secondary-50 sticky top-0 z-10">
                     <tr>
                         <th scope="col" class="px-6 py-4 text-left text-xs font-medium text-secondary-500 uppercase tracking-wider">
                             <button wire:click="sortBy('fecha_salida')" class="group inline-flex items-center hover:text-secondary-700">

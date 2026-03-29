@@ -38,11 +38,14 @@
     </style>
 </head>
 <body>
-    <div class="no-print my-4 text-center">
-        <button onclick="window.print()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg shadow-md transition-transform transform hover:scale-105">
+    <div class="no-print sticky top-0 z-50 bg-white/95 backdrop-blur-sm border-b border-gray-200 py-3 text-center shadow-sm">
+        <a href="{{ route('salidas-educativas.pdf', $salida->id_salida) }}" target="_blank" class="inline-block bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-6 rounded-lg shadow-md transition-transform transform hover:scale-105">
+            Descargar PDF
+        </a>
+        <button onclick="window.print()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-lg shadow-md transition-transform transform hover:scale-105 ml-2">
             Imprimir / Guardar como PDF
         </button>
-        <button onclick="window.close()" class="bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded-lg shadow-md transition-transform transform hover:scale-105">
+        <button onclick="window.close()" class="bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-6 rounded-lg shadow-md transition-transform transform hover:scale-105 ml-2">
             Cerrar
         </button>
     </div>

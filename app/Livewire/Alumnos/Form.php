@@ -176,7 +176,7 @@ class Form extends Component
             
             $this->mensaje = 'Alumno actualizado exitosamente.';
             $this->tipoMensaje = 'success';
-            $this->dispatch('mostrar-mensaje');
+            $this->dispatch('mostrar-mensaje-y-redirigir');
         }
     }
 

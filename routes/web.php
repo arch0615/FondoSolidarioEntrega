@@ -164,6 +164,8 @@ Route::middleware('auth')->group(function () {
             return view('accidentes.print', compact('accidente', 'archivos'));
         })->name('print');
 
+        Route::get('/{id}/pdf', [\App\Http\Controllers\PrintPdfController::class, 'accidente'])->name('pdf');
+
         Route::get('/{id}/dossier', function ($id) {
             $accidente = \App\Models\Accidente::with([
                 'escuela', 'alumnos.alumno', 'estado',
@@ -173,6 +175,8 @@ Route::middleware('auth')->group(function () {
             $archivos = \App\Models\ArchivoAdjunto::paraEntidad('accidente', $id)->recientes()->get();
             return view('accidentes.dossier', compact('accidente', 'archivos'));
         })->name('dossier');
+
+        Route::get('/{id}/dossier-pdf', [\App\Http\Controllers\PrintPdfController::class, 'dossier'])->name('dossier.pdf');
 
         // Rutas de exportación
         Route::get('/export/csv', [\App\Http\Controllers\AccidentesExportController::class, 'exportarCSV'])->name('export.csv');
@@ -202,6 +206,8 @@ Route::middleware('auth')->group(function () {
             return view('salidas_educativas.print', compact('salida', 'archivos'));
         })->name('print');
 
+        Route::get('/{id}/pdf', [\App\Http\Controllers\PrintPdfController::class, 'salidaEducativa'])->name('pdf');
+
         // Rutas de exportación
         Route::get('/export/csv', [\App\Http\Controllers\SalidaEducativaExportController::class, 'exportarCSV'])->name('export.csv');
         Route::get('/export/excel', [\App\Http\Controllers\SalidaEducativaExportController::class, 'exportarExcel'])->name('export.excel');
@@ -228,6 +234,8 @@ Route::middleware('auth')->group(function () {
             $pasantia = \App\Models\Pasantia::with(['escuela', 'alumno'])->findOrFail($id);
             return view('pasantias.print', compact('pasantia'));
         })->name('print');
+
+        Route::get('/{id}/pdf', [\App\Http\Controllers\PrintPdfController::class, 'pasantia'])->name('pdf');
 
         // Rutas de exportación
         Route::get('/export/csv', [App\Http\Controllers\PasantiaExportController::class, 'exportCsv'])->name('export.csv');
@@ -274,6 +282,8 @@ Route::middleware('auth')->group(function () {
         })->name('show');
 
         Route::get('/{id}/print', [\App\Http\Controllers\DerivacionController::class, 'print'])->name('print');
+
+        Route::get('/{id}/pdf', [\App\Http\Controllers\PrintPdfController::class, 'derivacion'])->name('pdf');
 
         // Rutas de exportación
         Route::get('/export/csv', [\App\Http\Controllers\DerivacionesExportController::class, 'exportarCSV'])->name('export.csv');

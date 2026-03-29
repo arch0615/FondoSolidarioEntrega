@@ -7,6 +7,10 @@
 
     <title>{{ config('app.name', 'Fondo Solidario') }} - {{ $title ?? 'Dashboard' }}</title>
 
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}">
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('apple-touch-icon.png') }}">
+
     <!-- Scripts -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     {{-- <script src="https://cdn.tailwindcss.com"></script> --}} {{-- ESTA LÍNEA DEBE SER ELIMINADA O COMENTADA --}}
