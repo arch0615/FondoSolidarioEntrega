@@ -1,0 +1,20 @@
+---
+deployment:
+  tasks:
+    - export DEPLOYPATH=/home/jaec/public_html
+    # Copy Laravel core files (app, config, routes, etc.)
+    - /bin/cp -R app $DEPLOYPATH/
+    - /bin/cp -R bootstrap $DEPLOYPATH/
+    - /bin/cp -R config $DEPLOYPATH/
+    - /bin/cp -R database $DEPLOYPATH/
+    - /bin/cp -R resources $DEPLOYPATH/
+    - /bin/cp -R routes $DEPLOYPATH/
+    - /bin/cp -R storage $DEPLOYPATH/
+    - /bin/cp artisan $DEPLOYPATH/
+    - /bin/cp composer.json $DEPLOYPATH/
+    - /bin/cp composer.lock $DEPLOYPATH/
+    # Copy public files to the test subdirectory (document root)
+    - /bin/cp -R public/* $DEPLOYPATH/test/
+    # Set permissions
+    - chmod -R 0775 $DEPLOYPATH/storage
+    - chmod -R 0775 $DEPLOYPATH/bootstrap/cache
