@@ -132,6 +132,7 @@
                 <a href="{{ route('reintegros.index') }}" class="block px-3 py-2 text-sm text-gray-600 hover:text-primary-600 hover:bg-primary-50 rounded transition-colors">Listado de Reintegros</a>
                 <a href="{{ route('reintegros.pendientes') }}" class="block px-3 py-2 text-sm text-gray-600 hover:text-primary-600 hover:bg-primary-50 rounded transition-colors {{ request()->routeIs('reintegros.pendientes') ? 'bg-primary-50 text-primary-700 font-semibold' : '' }}">Reintegros por Atender</a>
                 <a href="{{ route('admin.gestion-pagos') }}" class="block px-3 py-2 text-sm text-gray-600 hover:text-primary-600 hover:bg-primary-50 rounded transition-colors {{ request()->routeIs('admin.gestion-pagos') ? 'bg-primary-50 text-primary-700 font-semibold' : '' }}">Gestión de Pagos</a>
+                <a href="{{ route('admin.emails-aseguradora') }}" class="block px-3 py-2 text-sm text-gray-600 hover:text-primary-600 hover:bg-primary-50 rounded transition-colors {{ request()->routeIs('admin.emails-aseguradora') ? 'bg-primary-50 text-primary-700 font-semibold' : '' }}">Correos Aseguradora</a>
             </div>
         </div>
 

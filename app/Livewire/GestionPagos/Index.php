@@ -2,6 +2,8 @@
 
 namespace App\Livewire\GestionPagos;
 
+use App\Mail\ReintegroAseguradoraMail;
+use App\Models\EmailAseguradora;
 use App\Models\Escuela;
 use App\Models\Notificacion;
 use App\Models\Reintegro;
@@ -9,6 +11,7 @@ use App\Models\User;
 use App\Services\AuditoriaService;
 use App\Services\ReintegroMailService;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 use Livewire\Component;
 use Livewire\WithPagination;
 
@@ -108,6 +111,14 @@ class Index extends Component
         $reintegro = Reintegro::find($id);
 
         if ($reintegro) {
+            // Verificar que hay correos de aseguradora configurados
+            $emailsAseguradora = EmailAseguradora::activos()->get();
+
+            if ($emailsAseguradora->isEmpty()) {
+                session()->flash('error', 'No hay correos de aseguradora configurados. Configure al menos uno en Gestión > Correos Aseguradora.');
+                return;
+            }
+
             $estadoAnterior = $reintegro->id_estado_reintegro;
             $reintegro->id_estado_reintegro = 6; // 6 = Enviado a Aseguradora
             $reintegro->save();
@@ -117,7 +128,7 @@ class Index extends Component
                 ['id_estado_reintegro' => 6]
             );
 
-            // Notificar a la escuela
+            // Notificar a la escuela (in-app)
             $escuela = $reintegro->accidente->escuela;
             $usuarioEscuela = User::where('id_escuela', $escuela->id_escuela)->first();
 
@@ -138,10 +149,31 @@ class Index extends Component
             try {
                 ReintegroMailService::enviarNotificacionEstadoAEscuela($reintegro, 'Enviado a Aseguradora');
             } catch (\Exception $e) {
-                Log::warning('Error al enviar email de reintegro enviado a aseguradora: ' . $e->getMessage());
+                Log::warning('Error al enviar email de estado a escuela: ' . $e->getMessage());
             }
 
-            session()->flash('message', 'Reintegro enviado a aseguradora exitosamente.');
+            // Enviar email a la aseguradora con los detalles del reintegro
+            $reintegro->load(['alumno', 'accidente.escuela', 'tiposGastos']);
+            $enviados = 0;
+            $errores = [];
+
+            foreach ($emailsAseguradora as $emailAseg) {
+                try {
+                    Mail::to($emailAseg->email)->send(new ReintegroAseguradoraMail($reintegro));
+                    $enviados++;
+                } catch (\Exception $e) {
+                    Log::warning("Error al enviar email a aseguradora ({$emailAseg->email}): " . $e->getMessage());
+                    $errores[] = $emailAseg->email;
+                }
+            }
+
+            if ($enviados > 0 && empty($errores)) {
+                session()->flash('message', "Reintegro enviado a aseguradora exitosamente. Se enviaron {$enviados} correo(s).");
+            } elseif ($enviados > 0 && !empty($errores)) {
+                session()->flash('message', "Reintegro enviado parcialmente. {$enviados} correo(s) enviado(s). Fallaron: " . implode(', ', $errores));
+            } else {
+                session()->flash('error', 'No se pudieron enviar los correos a la aseguradora. Verifique la configuración de correo.');
+            }
         }
     }
 

@@ -135,6 +135,12 @@
                         <p>{{ session('message') }}</p>
                     </div>
                 @endif
+                @if (session()->has('error'))
+                    <div class="bg-danger-100 border-l-4 border-danger-500 text-danger-700 p-4 mb-4" role="alert">
+                        <p class="font-bold">Error</p>
+                        <p>{{ session('error') }}</p>
+                    </div>
+                @endif
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div>
                         <label for="filtroEscuela" class="block text-sm font-medium text-secondary-700">Filtrar por Escuela</label>

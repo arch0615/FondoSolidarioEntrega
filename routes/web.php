@@ -420,6 +420,7 @@ Route::middleware('auth')->group(function () {
     // Rutas de Administración
     Route::prefix('admin')->name('admin.')->middleware('role:admin')->group(function () {
         Route::get('gestion-pagos', GestionPagosIndex::class)->name('gestion-pagos');
+        Route::get('emails-aseguradora', \App\Livewire\EmailsAseguradora\Index::class)->name('emails-aseguradora');
     });
 
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
