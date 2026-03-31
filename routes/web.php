@@ -16,6 +16,15 @@ use App\Livewire\Documentos\Repositorio as DocumentosRepositorio;
 |
 */
 
+// Clear cache route (visit /clear-cache then remove this route)
+Route::get('/clear-cache', function () {
+    Artisan::call('config:clear');
+    Artisan::call('cache:clear');
+    Artisan::call('view:clear');
+    Artisan::call('route:clear');
+    return 'Cache cleared successfully!';
+});
+
 // Redireccionar la raíz al login
 Route::get('/', function () {
     return redirect()->route('login');
