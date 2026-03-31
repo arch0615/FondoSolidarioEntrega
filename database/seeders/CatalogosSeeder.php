@@ -34,6 +34,7 @@ class CatalogosSeeder extends Seeder
             ['id_estado_reintegro' => 3, 'nombre_estado' => 'Autorizado', 'descripcion' => 'El reintegro ha sido aprobado por el médico auditor.'],
             ['id_estado_reintegro' => 4, 'nombre_estado' => 'Rechazado', 'descripcion' => 'El reintegro ha sido rechazado.'],
             ['id_estado_reintegro' => 5, 'nombre_estado' => 'Pagado', 'descripcion' => 'El reintegro ha sido pagado.'],
+            ['id_estado_reintegro' => 6, 'nombre_estado' => 'Enviado a Aseguradora', 'descripcion' => 'El reintegro ha sido enviado a la compañía aseguradora.'],
         ];
         foreach ($estados_reintegros as $estado) {
             DB::table('cat_estados_reintegros')->updateOrInsert(
