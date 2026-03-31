@@ -162,6 +162,7 @@ class Index extends Component
             $enviados = 0;
             $errores = [];
 
+            $errorMessages = [];
             foreach ($emailsAseguradora as $emailAseg) {
                 try {
                     Mail::to($emailAseg->email)->send(new ReintegroAseguradoraMail($reintegro));
@@ -169,6 +170,7 @@ class Index extends Component
                 } catch (\Exception $e) {
                     Log::warning("Error al enviar email a aseguradora ({$emailAseg->email}): " . $e->getMessage());
                     $errores[] = $emailAseg->email;
+                    $errorMessages[] = $e->getMessage();
                 }
             }
 
@@ -177,7 +179,8 @@ class Index extends Component
             } elseif ($enviados > 0 && !empty($errores)) {
                 $this->dispatch('toast-error', message: "Reintegro enviado parcialmente. {$enviados} correo(s) enviado(s). Fallaron: " . implode(', ', $errores));
             } else {
-                $this->dispatch('toast-error', message: 'No se pudieron enviar los correos a la aseguradora. Verifique la configuración de correo.');
+                $detail = !empty($errorMessages) ? ' Detalle: ' . $errorMessages[0] : '';
+                $this->dispatch('toast-error', message: 'No se pudieron enviar los correos a la aseguradora.' . $detail);
             }
         } catch (\Exception $e) {
             Log::error('Error al enviar a aseguradora: ' . $e->getMessage());
