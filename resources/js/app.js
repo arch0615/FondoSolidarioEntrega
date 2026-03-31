@@ -233,6 +233,6 @@ document.addEventListener('DOMContentLoaded', function() {
 // Exportar para uso global
 window.AppUtils = App.utils;
 window.AppComponents = App.components;
-window.showToast = (message, type = 'info', duration = 5000) => App.utils.showNotification(message, type, duration);
+window.showToast = (message, type = 'info', duration = 3000) => App.utils.showNotification(message, type, duration);
 
 console.log('✅ Sistema Base - JavaScript cargado correctamente');
