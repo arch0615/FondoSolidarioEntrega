@@ -83,7 +83,7 @@ class Index extends Component
 
             $this->showPagoModal = false;
             $this->reset(['reintegroSeleccionado', 'fecha_pago', 'numero_transferencia']);
-            session()->flash('message', 'Reintegro marcado como pagado exitosamente.');
+            $this->dispatch('toast-success', message: 'Reintegro marcado como pagado exitosamente.');
         }
     }
 
@@ -112,7 +112,7 @@ class Index extends Component
             $reintegro = Reintegro::with(['alumno', 'accidente.escuela'])->find($id);
 
             if (!$reintegro) {
-                session()->flash('error', 'No se encontró el reintegro.');
+                $this->dispatch('toast-error', message: 'No se encontró el reintegro.');
                 return;
             }
 
@@ -120,7 +120,7 @@ class Index extends Component
             $emailsAseguradora = EmailAseguradora::activos()->get();
 
             if ($emailsAseguradora->isEmpty()) {
-                session()->flash('error', 'No hay correos de aseguradora configurados. Configure al menos uno en Gestión > Correos Aseguradora.');
+                $this->dispatch('toast-error', message: 'No hay correos de aseguradora configurados. Configure al menos uno en Gestión > Correos Aseguradora.');
                 return;
             }
 
@@ -173,15 +173,15 @@ class Index extends Component
             }
 
             if ($enviados > 0 && empty($errores)) {
-                session()->flash('message', "Reintegro enviado a aseguradora exitosamente. Se enviaron {$enviados} correo(s).");
+                $this->dispatch('toast-success', message: "Reintegro enviado a aseguradora exitosamente. Se enviaron {$enviados} correo(s).");
             } elseif ($enviados > 0 && !empty($errores)) {
-                session()->flash('message', "Reintegro enviado parcialmente. {$enviados} correo(s) enviado(s). Fallaron: " . implode(', ', $errores));
+                $this->dispatch('toast-error', message: "Reintegro enviado parcialmente. {$enviados} correo(s) enviado(s). Fallaron: " . implode(', ', $errores));
             } else {
-                session()->flash('error', 'No se pudieron enviar los correos a la aseguradora. Verifique la configuración de correo.');
+                $this->dispatch('toast-error', message: 'No se pudieron enviar los correos a la aseguradora. Verifique la configuración de correo.');
             }
         } catch (\Exception $e) {
             Log::error('Error al enviar a aseguradora: ' . $e->getMessage());
-            session()->flash('error', 'Ocurrió un error al enviar a la aseguradora: ' . $e->getMessage());
+            $this->dispatch('toast-error', message: 'Ocurrió un error al enviar a la aseguradora: ' . $e->getMessage());
         }
     }
 

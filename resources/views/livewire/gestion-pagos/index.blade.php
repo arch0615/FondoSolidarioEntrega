@@ -1,19 +1,5 @@
 <div>
     <div class="mx-auto px-4">
-        <!-- Flash Messages -->
-        @if (session()->has('message'))
-            <div class="bg-green-50 border-l-4 border-green-500 text-green-700 p-4 mb-6 rounded-lg" role="alert">
-                <p class="font-bold">Éxito</p>
-                <p>{{ session('message') }}</p>
-            </div>
-        @endif
-        @if (session()->has('error'))
-            <div class="bg-red-50 border-l-4 border-red-500 text-red-700 p-4 mb-6 rounded-lg" role="alert">
-                <p class="font-bold">Error</p>
-                <p>{{ session('error') }}</p>
-            </div>
-        @endif
-
         <!-- Header Section -->
         <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 mb-8">
             <div>
@@ -143,18 +129,6 @@
             
             <!-- Filtros -->
             <div class="bg-white rounded-xl border border-secondary-200 p-4 mb-6">
-                @if (session()->has('message'))
-                    <div class="bg-success-100 border-l-4 border-success-500 text-success-700 p-4 mb-4" role="alert">
-                        <p class="font-bold">Éxito</p>
-                        <p>{{ session('message') }}</p>
-                    </div>
-                @endif
-                @if (session()->has('error'))
-                    <div class="bg-danger-100 border-l-4 border-danger-500 text-danger-700 p-4 mb-4" role="alert">
-                        <p class="font-bold">Error</p>
-                        <p>{{ session('error') }}</p>
-                    </div>
-                @endif
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div>
                         <label for="filtroEscuela" class="block text-sm font-medium text-secondary-700">Filtrar por Escuela</label>
