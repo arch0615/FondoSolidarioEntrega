@@ -25,6 +25,12 @@ Route::get('/clear-cache', function () {
     return 'Cache cleared successfully!';
 });
 
+// Create storage symlink (visit /storage-link once then remove)
+Route::get('/storage-link', function () {
+    Artisan::call('storage:link');
+    return 'Storage link created successfully!';
+});
+
 // Redireccionar la raíz al login
 Route::get('/', function () {
     return redirect()->route('login');
