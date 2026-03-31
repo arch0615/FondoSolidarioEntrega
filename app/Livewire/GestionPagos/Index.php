@@ -158,7 +158,7 @@ class Index extends Component
             }
 
             // Enviar email a la aseguradora con los detalles del reintegro
-            $reintegro->load(['alumno', 'accidente.escuela', 'tiposGastos']);
+            $reintegro->load(['alumno', 'accidente.escuela', 'tiposGastos', 'archivos']);
             $enviados = 0;
             $errores = [];
 
