@@ -1,18 +1,18 @@
 <div>
     <div class="mx-auto px-4">
         <!-- Flash Messages -->
-        @if (session()->has('message'))
+        <!--[if BLOCK]><![endif]--><?php if(session()->has('message')): ?>
             <div class="bg-green-50 border-l-4 border-green-500 text-green-700 p-4 mb-6 rounded-lg" role="alert">
                 <p class="font-bold">Éxito</p>
-                <p>{{ session('message') }}</p>
+                <p><?php echo e(session('message')); ?></p>
             </div>
-        @endif
-        @if (session()->has('error'))
+        <?php endif; ?><!--[if ENDBLOCK]><![endif]-->
+        <?php if(session()->has('error')): ?>
             <div class="bg-red-50 border-l-4 border-red-500 text-red-700 p-4 mb-6 rounded-lg" role="alert">
                 <p class="font-bold">Error</p>
-                <p>{{ session('error') }}</p>
+                <p><?php echo e(session('error')); ?></p>
             </div>
-        @endif
+        <?php endif; ?><!--[if ENDBLOCK]><![endif]-->
 
         <!-- Header Section -->
         <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 mb-8">
@@ -38,36 +38,36 @@
                             </tr>
                         </thead>
                         <tbody class="bg-white divide-y divide-secondary-200">
-                            @forelse ($pendientes as $reintegro)
+                            <!--[if BLOCK]><![endif]--><?php $__empty_1 = true; $__currentLoopData = $pendientes; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $reintegro): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
                             <tr class="hover:bg-secondary-50 transition-colors duration-150">
                                 <td class="px-6 py-4 whitespace-nowrap">
-                                    <div class="text-sm font-medium text-secondary-900">{{ $reintegro->id_reintegro }}</div>
-                                    <div class="text-xs text-secondary-500">Accidente #{{ $reintegro->id_accidente }}</div>
+                                    <div class="text-sm font-medium text-secondary-900"><?php echo e($reintegro->id_reintegro); ?></div>
+                                    <div class="text-xs text-secondary-500">Accidente #<?php echo e($reintegro->id_accidente); ?></div>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
-                                    <div class="text-sm font-medium text-secondary-900">{{ $reintegro->alumno->nombre_completo }}</div>
-                                    <div class="text-sm text-secondary-500">{{ $reintegro->accidente->escuela->nombre }}</div>
+                                    <div class="text-sm font-medium text-secondary-900"><?php echo e($reintegro->alumno->nombre_completo); ?></div>
+                                    <div class="text-sm text-secondary-500"><?php echo e($reintegro->accidente->escuela->nombre); ?></div>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
-                                    <div class="text-sm text-secondary-900">{{ $reintegro->fecha_autorizacion->format('d/m/Y') }}</div>
+                                    <div class="text-sm text-secondary-900"><?php echo e($reintegro->fecha_autorizacion->format('d/m/Y')); ?></div>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-right">
-                                    <div class="text-sm font-bold text-secondary-900">$ {{ number_format($reintegro->monto_autorizado, 2) }}</div>
+                                    <div class="text-sm font-bold text-secondary-900">$ <?php echo e(number_format($reintegro->monto_autorizado, 2)); ?></div>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-center">
                                     <div class="flex items-center justify-center gap-2">
-                                        <button wire:click="iniciarPago({{ $reintegro->id_reintegro }})" class="inline-flex items-center px-3 py-2 bg-success-600 border border-transparent rounded-lg font-medium text-xs text-white hover:bg-success-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-success-500 transition-colors duration-200">
+                                        <button wire:click="iniciarPago(<?php echo e($reintegro->id_reintegro); ?>)" class="inline-flex items-center px-3 py-2 bg-success-600 border border-transparent rounded-lg font-medium text-xs text-white hover:bg-success-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-success-500 transition-colors duration-200">
                                             <i class="fas fa-check-circle mr-1"></i>
                                             Pagar
                                         </button>
-                                        <button wire:click="enviarAseguradora({{ $reintegro->id_reintegro }})" wire:confirm="¿Enviar este reintegro a la aseguradora?" class="inline-flex items-center px-3 py-2 bg-blue-600 border border-transparent rounded-lg font-medium text-xs text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-200">
+                                        <button wire:click="enviarAseguradora(<?php echo e($reintegro->id_reintegro); ?>)" wire:confirm="¿Enviar este reintegro a la aseguradora?" class="inline-flex items-center px-3 py-2 bg-blue-600 border border-transparent rounded-lg font-medium text-xs text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-200">
                                             <i class="fas fa-paper-plane mr-1"></i>
                                             Aseguradora
                                         </button>
                                     </div>
                                 </td>
                             </tr>
-                            @empty
+                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
                             <tr>
                                 <td colspan="5" class="px-6 py-12 text-center">
                                     <div class="text-center">
@@ -79,7 +79,7 @@
                                     </div>
                                 </td>
                             </tr>
-                            @endforelse
+                            <?php endif; ?><!--[if ENDBLOCK]><![endif]-->
                         </tbody>
                     </table>
                 </div>
@@ -87,7 +87,7 @@
         </div>
     
         <!-- Sección de Enviados a Aseguradora -->
-        @if($enviadosAseguradora->count() > 0)
+        <!--[if BLOCK]><![endif]--><?php if($enviadosAseguradora->count() > 0): ?>
         <div class="mb-12">
             <h2 class="text-xl font-semibold text-secondary-800 mb-4">
                 <i class="fas fa-paper-plane text-blue-600 mr-2"></i>
@@ -106,36 +106,36 @@
                             </tr>
                         </thead>
                         <tbody class="bg-white divide-y divide-secondary-200">
-                            @foreach ($enviadosAseguradora as $reintegro)
+                            <!--[if BLOCK]><![endif]--><?php $__currentLoopData = $enviadosAseguradora; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $reintegro): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                             <tr class="hover:bg-secondary-50 transition-colors duration-150">
                                 <td class="px-6 py-4 whitespace-nowrap">
-                                    <div class="text-sm font-medium text-secondary-900">{{ $reintegro->id_reintegro }}</div>
-                                    <div class="text-xs text-secondary-500">Accidente #{{ $reintegro->id_accidente }}</div>
+                                    <div class="text-sm font-medium text-secondary-900"><?php echo e($reintegro->id_reintegro); ?></div>
+                                    <div class="text-xs text-secondary-500">Accidente #<?php echo e($reintegro->id_accidente); ?></div>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
-                                    <div class="text-sm font-medium text-secondary-900">{{ $reintegro->alumno->nombre_completo }}</div>
-                                    <div class="text-sm text-secondary-500">{{ $reintegro->accidente->escuela->nombre }}</div>
+                                    <div class="text-sm font-medium text-secondary-900"><?php echo e($reintegro->alumno->nombre_completo); ?></div>
+                                    <div class="text-sm text-secondary-500"><?php echo e($reintegro->accidente->escuela->nombre); ?></div>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
-                                    <div class="text-sm text-secondary-900">{{ $reintegro->fecha_autorizacion ? $reintegro->fecha_autorizacion->format('d/m/Y') : 'N/A' }}</div>
+                                    <div class="text-sm text-secondary-900"><?php echo e($reintegro->fecha_autorizacion ? $reintegro->fecha_autorizacion->format('d/m/Y') : 'N/A'); ?></div>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-right">
-                                    <div class="text-sm font-bold text-secondary-900">$ {{ number_format($reintegro->monto_autorizado, 2) }}</div>
+                                    <div class="text-sm font-bold text-secondary-900">$ <?php echo e(number_format($reintegro->monto_autorizado, 2)); ?></div>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-center">
-                                    <button wire:click="iniciarPago({{ $reintegro->id_reintegro }})" class="inline-flex items-center px-3 py-2 bg-success-600 border border-transparent rounded-lg font-medium text-xs text-white hover:bg-success-700 transition-colors duration-200">
+                                    <button wire:click="iniciarPago(<?php echo e($reintegro->id_reintegro); ?>)" class="inline-flex items-center px-3 py-2 bg-success-600 border border-transparent rounded-lg font-medium text-xs text-white hover:bg-success-700 transition-colors duration-200">
                                         <i class="fas fa-check-circle mr-1"></i>
                                         Marcar como Pagado
                                     </button>
                                 </td>
                             </tr>
-                            @endforeach
+                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?><!--[if ENDBLOCK]><![endif]-->
                         </tbody>
                     </table>
                 </div>
             </div>
         </div>
-        @endif
+        <?php endif; ?><!--[if ENDBLOCK]><![endif]-->
 
         <!-- Sección de Historial de Pagos -->
         <div>
@@ -143,26 +143,26 @@
             
             <!-- Filtros -->
             <div class="bg-white rounded-xl border border-secondary-200 p-4 mb-6">
-                @if (session()->has('message'))
+                <!--[if BLOCK]><![endif]--><?php if(session()->has('message')): ?>
                     <div class="bg-success-100 border-l-4 border-success-500 text-success-700 p-4 mb-4" role="alert">
                         <p class="font-bold">Éxito</p>
-                        <p>{{ session('message') }}</p>
+                        <p><?php echo e(session('message')); ?></p>
                     </div>
-                @endif
-                @if (session()->has('error'))
+                <?php endif; ?><!--[if ENDBLOCK]><![endif]-->
+                <?php if(session()->has('error')): ?>
                     <div class="bg-danger-100 border-l-4 border-danger-500 text-danger-700 p-4 mb-4" role="alert">
                         <p class="font-bold">Error</p>
-                        <p>{{ session('error') }}</p>
+                        <p><?php echo e(session('error')); ?></p>
                     </div>
-                @endif
+                <?php endif; ?><!--[if ENDBLOCK]><![endif]-->
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div>
                         <label for="filtroEscuela" class="block text-sm font-medium text-secondary-700">Filtrar por Escuela</label>
                         <select id="filtroEscuela" wire:model.live="filtroEscuela" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-secondary-300 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm rounded-md">
                             <option value="">Todas las escuelas</option>
-                            @foreach($escuelas as $escuela)
-                                <option value="{{ $escuela->id_escuela }}">{{ $escuela->nombre }}</option>
-                            @endforeach
+                            <!--[if BLOCK]><![endif]--><?php $__currentLoopData = $escuelas; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $escuela): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                <option value="<?php echo e($escuela->id_escuela); ?>"><?php echo e($escuela->nombre); ?></option>
+                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?><!--[if ENDBLOCK]><![endif]-->
                         </select>
                     </div>
                     <div>
@@ -189,27 +189,27 @@
                             </tr>
                         </thead>
                         <tbody class="bg-white divide-y divide-secondary-200">
-                            @forelse ($historialPaginado as $reintegro)
+                            <!--[if BLOCK]><![endif]--><?php $__empty_1 = true; $__currentLoopData = $historialPaginado; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $reintegro): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
                             <tr class="hover:bg-secondary-50 transition-colors duration-150">
                                 <td class="px-6 py-4 whitespace-nowrap">
-                                    <div class="text-sm font-medium text-secondary-900">{{ $reintegro->id_reintegro }}</div>
-                                     <div class="text-xs text-secondary-500">Accidente #{{ $reintegro->id_accidente }}</div>
+                                    <div class="text-sm font-medium text-secondary-900"><?php echo e($reintegro->id_reintegro); ?></div>
+                                     <div class="text-xs text-secondary-500">Accidente #<?php echo e($reintegro->id_accidente); ?></div>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
-                                    <div class="text-sm font-medium text-secondary-900">{{ $reintegro->alumno->nombre_completo }}</div>
-                                    <div class="text-sm text-secondary-500">{{ $reintegro->accidente->escuela->nombre }}</div>
+                                    <div class="text-sm font-medium text-secondary-900"><?php echo e($reintegro->alumno->nombre_completo); ?></div>
+                                    <div class="text-sm text-secondary-500"><?php echo e($reintegro->accidente->escuela->nombre); ?></div>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
-                                    <div class="text-sm text-secondary-900">{{ $reintegro->fecha_pago->format('d/m/Y') }}</div>
+                                    <div class="text-sm text-secondary-900"><?php echo e($reintegro->fecha_pago->format('d/m/Y')); ?></div>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-right">
-                                    <div class="text-sm font-medium text-secondary-900">$ {{ number_format($reintegro->monto_autorizado, 2) }}</div>
+                                    <div class="text-sm font-medium text-secondary-900">$ <?php echo e(number_format($reintegro->monto_autorizado, 2)); ?></div>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
-                                    <div class="text-sm text-secondary-700">{{ $reintegro->numero_transferencia }}</div>
+                                    <div class="text-sm text-secondary-700"><?php echo e($reintegro->numero_transferencia); ?></div>
                                 </td>
                             </tr>
-                            @empty
+                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
                             <tr>
                                 <td colspan="5" class="px-6 py-12 text-center">
                                     <div class="text-center">
@@ -221,75 +221,77 @@
                                     </div>
                                 </td>
                             </tr>
-                            @endforelse
+                            <?php endif; ?><!--[if ENDBLOCK]><![endif]-->
                         </tbody>
                     </table>
                 </div>
                 <!-- Paginación Mockup -->
                 <div class="px-6 py-4 bg-secondary-50 border-t border-secondary-200 flex flex-col sm:flex-row items-center justify-between">
                     <div class="text-sm text-secondary-700 mb-4 sm:mb-0">
-                        Mostrando <span class="font-medium text-secondary-900">{{ $historialPaginado->firstItem() }}</span> a <span class="font-medium text-secondary-900">{{ $historialPaginado->lastItem() }}</span> de <span class="font-medium text-secondary-900">{{ $historialPaginado->total() }}</span> resultados
+                        Mostrando <span class="font-medium text-secondary-900"><?php echo e($historialPaginado->firstItem()); ?></span> a <span class="font-medium text-secondary-900"><?php echo e($historialPaginado->lastItem()); ?></span> de <span class="font-medium text-secondary-900"><?php echo e($historialPaginado->total()); ?></span> resultados
                     </div>
-                    @if ($historialPaginado->hasPages())
+                    <!--[if BLOCK]><![endif]--><?php if($historialPaginado->hasPages()): ?>
                         <nav class="inline-flex rounded-lg shadow-sm" aria-label="Paginación">
-                            {{-- Previous Page Link --}}
-                            @if ($historialPaginado->onFirstPage())
+                            
+                            <!--[if BLOCK]><![endif]--><?php if($historialPaginado->onFirstPage()): ?>
                                 <span class="relative inline-flex items-center px-2 py-2 rounded-l-lg border border-secondary-300 bg-white text-sm font-medium text-secondary-300 cursor-not-allowed">
                                     <span class="sr-only">Anterior</span>
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
                                 </span>
-                            @else
+                            <?php else: ?>
                                 <button wire:click="previousPage" class="relative inline-flex items-center px-2 py-2 rounded-l-lg border border-secondary-300 bg-white text-sm font-medium text-secondary-500 hover:bg-secondary-50">
                                     <span class="sr-only">Anterior</span>
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
                                 </button>
-                            @endif
+                            <?php endif; ?><!--[if ENDBLOCK]><![endif]-->
 
-                            {{-- Pagination Elements --}}
-                            @foreach ($historialPaginado->links()->elements as $element)
-                                {{-- "Three Dots" Separator --}}
-                                @if (is_string($element))
-                                    <span class="relative inline-flex items-center px-4 py-2 border border-secondary-300 bg-white text-sm font-medium text-secondary-700">{{ $element }}</span>
-                                @endif
+                            
+                            <!--[if BLOCK]><![endif]--><?php $__currentLoopData = $historialPaginado->links()->elements; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $element): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                
+                                <!--[if BLOCK]><![endif]--><?php if(is_string($element)): ?>
+                                    <span class="relative inline-flex items-center px-4 py-2 border border-secondary-300 bg-white text-sm font-medium text-secondary-700"><?php echo e($element); ?></span>
+                                <?php endif; ?><!--[if ENDBLOCK]><![endif]-->
 
-                                {{-- Array Of Links --}}
-                                @if (is_array($element))
-                                    @foreach ($element as $page => $url)
-                                        @if ($page == $historialPaginado->currentPage())
+                                
+                                <!--[if BLOCK]><![endif]--><?php if(is_array($element)): ?>
+                                    <!--[if BLOCK]><![endif]--><?php $__currentLoopData = $element; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $page => $url): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                        <!--[if BLOCK]><![endif]--><?php if($page == $historialPaginado->currentPage()): ?>
                                             <span aria-current="page" class="relative inline-flex items-center px-4 py-2 border border-secondary-300 bg-primary-600 text-sm font-medium text-white">
-                                                {{ $page }}
-                                            </span>
-                                        @else
-                                            <button wire:click="gotoPage({{ $page }})" class="relative inline-flex items-center px-4 py-2 border border-secondary-300 bg-white text-sm font-medium text-secondary-700 hover:bg-secondary-50">
-                                                {{ $page }}
-                                            </button>
-                                        @endif
-                                    @endforeach
-                                @endif
-                            @endforeach
+                                                <?php echo e($page); ?>
 
-                            {{-- Next Page Link --}}
-                            @if ($historialPaginado->hasMorePages())
+                                            </span>
+                                        <?php else: ?>
+                                            <button wire:click="gotoPage(<?php echo e($page); ?>)" class="relative inline-flex items-center px-4 py-2 border border-secondary-300 bg-white text-sm font-medium text-secondary-700 hover:bg-secondary-50">
+                                                <?php echo e($page); ?>
+
+                                            </button>
+                                        <?php endif; ?><!--[if ENDBLOCK]><![endif]-->
+                                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?><!--[if ENDBLOCK]><![endif]-->
+                                <?php endif; ?><!--[if ENDBLOCK]><![endif]-->
+                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?><!--[if ENDBLOCK]><![endif]-->
+
+                            
+                            <!--[if BLOCK]><![endif]--><?php if($historialPaginado->hasMorePages()): ?>
                                 <button wire:click="nextPage" class="relative inline-flex items-center px-2 py-2 rounded-r-lg border border-secondary-300 bg-white text-sm font-medium text-secondary-500 hover:bg-secondary-50">
                                     <span class="sr-only">Siguiente</span>
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
                                 </button>
-                            @else
+                            <?php else: ?>
                                 <span class="relative inline-flex items-center px-2 py-2 rounded-r-lg border border-secondary-300 bg-white text-sm font-medium text-secondary-300 cursor-not-allowed">
                                     <span class="sr-only">Siguiente</span>
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
                                 </span>
-                            @endif
+                            <?php endif; ?><!--[if ENDBLOCK]><![endif]-->
                         </nav>
-                    @endif
+                    <?php endif; ?><!--[if ENDBLOCK]><![endif]-->
                 </div>
             </div>
         </div>
     </div>
 
     <!-- Modal de Confirmación de Pago -->
-    @if($showPagoModal)
-    <div class="fixed inset-0 bg-secondary-900 bg-opacity-50 overflow-y-auto h-full w-full z-50" x-data="{ show: @entangle('showPagoModal') }" x-show="show" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="ease-in duration-200" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0">
+    <!--[if BLOCK]><![endif]--><?php if($showPagoModal): ?>
+    <div class="fixed inset-0 bg-secondary-900 bg-opacity-50 overflow-y-auto h-full w-full z-50" x-data="{ show: <?php if ((object) ('showPagoModal') instanceof \Livewire\WireDirective) : ?>window.Livewire.find('<?php echo e($__livewire->getId()); ?>').entangle('<?php echo e('showPagoModal'->value()); ?>')<?php echo e('showPagoModal'->hasModifier('live') ? '.live' : ''); ?><?php else : ?>window.Livewire.find('<?php echo e($__livewire->getId()); ?>').entangle('<?php echo e('showPagoModal'); ?>')<?php endif; ?> }" x-show="show" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="ease-in duration-200" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0">
         <div class="relative top-20 mx-auto p-5 border w-full max-w-md shadow-lg rounded-md bg-white" @click.away="show = false">
             <form wire:submit.prevent="confirmarPago">
                 <div class="mt-3 text-center">
@@ -299,18 +301,32 @@
                     <h3 class="text-lg leading-6 font-medium text-secondary-900 mt-4">Confirmar Pago</h3>
                     <div class="mt-2 px-7 py-3">
                         <p class="text-sm text-secondary-500">
-                            Estás a punto de registrar el pago para el reintegro #{{ $reintegroSeleccionado->id_reintegro }} del alumno <strong>{{ $reintegroSeleccionado->alumno->nombre_completo }}</strong> por un monto de <strong>${{ number_format($reintegroSeleccionado->monto_autorizado, 2) }}</strong>.
+                            Estás a punto de registrar el pago para el reintegro #<?php echo e($reintegroSeleccionado->id_reintegro); ?> del alumno <strong><?php echo e($reintegroSeleccionado->alumno->nombre_completo); ?></strong> por un monto de <strong>$<?php echo e(number_format($reintegroSeleccionado->monto_autorizado, 2)); ?></strong>.
                         </p>
                         <div class="mt-4 space-y-4 text-left">
                             <div>
                                 <label for="fecha_pago" class="block text-sm font-medium text-secondary-700">Fecha de Pago</label>
                                 <input type="date" wire:model="fecha_pago" id="fecha_pago" class="mt-1 block w-full rounded-md border-secondary-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm">
-                                @error('fecha_pago') <span class="text-danger-500 text-xs">{{ $message }}</span> @enderror
+                                <!--[if BLOCK]><![endif]--><?php $__errorArgs = ['fecha_pago'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?> <span class="text-danger-500 text-xs"><?php echo e($message); ?></span> <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?><!--[if ENDBLOCK]><![endif]-->
                             </div>
                             <div>
                                 <label for="numero_transferencia" class="block text-sm font-medium text-secondary-700">Número de Transferencia/Comprobante</label>
                                 <input type="text" wire:model="numero_transferencia" id="numero_transferencia" class="mt-1 block w-full rounded-md border-secondary-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm" placeholder="Ej: TR-123456">
-                                @error('numero_transferencia') <span class="text-danger-500 text-xs">{{ $message }}</span> @enderror
+                                <!--[if BLOCK]><![endif]--><?php $__errorArgs = ['numero_transferencia'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?> <span class="text-danger-500 text-xs"><?php echo e($message); ?></span> <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?><!--[if ENDBLOCK]><![endif]-->
                             </div>
                         </div>
                     </div>
@@ -328,5 +344,6 @@
             </form>
         </div>
     </div>
-    @endif
+    <?php endif; ?><!--[if ENDBLOCK]><![endif]-->
 </div>
+<?php /**PATH /home/ubuntu/Documents/FondoSolidarioEntrega/FondoSolidarioEntrega/resources/views/livewire/gestion-pagos/index.blade.php ENDPATH**/ ?>

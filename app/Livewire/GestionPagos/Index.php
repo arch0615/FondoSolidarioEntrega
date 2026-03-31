@@ -108,9 +108,14 @@ class Index extends Component
 
     public function enviarAseguradora($id)
     {
-        $reintegro = Reintegro::find($id);
+        try {
+            $reintegro = Reintegro::with(['alumno', 'accidente.escuela'])->find($id);
 
-        if ($reintegro) {
+            if (!$reintegro) {
+                session()->flash('error', 'No se encontró el reintegro.');
+                return;
+            }
+
             // Verificar que hay correos de aseguradora configurados
             $emailsAseguradora = EmailAseguradora::activos()->get();
 
@@ -129,8 +134,8 @@ class Index extends Component
             );
 
             // Notificar a la escuela (in-app)
-            $escuela = $reintegro->accidente->escuela;
-            $usuarioEscuela = User::where('id_escuela', $escuela->id_escuela)->first();
+            $escuela = $reintegro->accidente->escuela ?? null;
+            $usuarioEscuela = $escuela ? User::where('id_escuela', $escuela->id_escuela)->first() : null;
 
             if ($usuarioEscuela) {
                 Notificacion::create([
@@ -174,6 +179,9 @@ class Index extends Component
             } else {
                 session()->flash('error', 'No se pudieron enviar los correos a la aseguradora. Verifique la configuración de correo.');
             }
+        } catch (\Exception $e) {
+            Log::error('Error al enviar a aseguradora: ' . $e->getMessage());
+            session()->flash('error', 'Ocurrió un error al enviar a la aseguradora: ' . $e->getMessage());
         }
     }
 
